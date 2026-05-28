@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Exclude protected dashboard checkouts and auth pages from search engine indexing
+Disallow: /checkout
+Disallow: /order-confirmation/
+Disallow: /tracking/
+Disallow: /dashboard/
+
+Sitemap: https://paridhan-rental.web.app/sitemap.xml
