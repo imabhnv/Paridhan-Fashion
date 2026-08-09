@@ -1,11 +1,13 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ShieldAlert } from 'lucide-react';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading, isAuthenticated } = useAuth();
   const location = useLocation();
 
+  // Show spinner while Firebase auth state resolves
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-luxury-alabaster dark:bg-luxury-charcoal">
@@ -17,14 +19,35 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     );
   }
 
+  // Not logged in — redirect to login, preserving intended destination
   if (!isAuthenticated) {
-    // Redirect to login page but keep track of prior location
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
+  // Logged in but wrong role — show clear Access Denied
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    // Redirect to home if user role is not authorized
-    return <Navigate to="/" replace />;
+    return (
+      <div className="min-h-[75vh] flex items-center justify-center bg-luxury-alabaster dark:bg-luxury-charcoal px-4">
+        <div className="max-w-md text-center space-y-6 animate-fade-in">
+          <div className="w-20 h-20 mx-auto bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center">
+            <ShieldAlert size={36} className="text-red-500" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="font-playfair text-2xl font-bold dark:text-white">Access Denied</h2>
+            <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 font-light leading-relaxed">
+              You don't have permission to access this page.<br />
+              This area is restricted to authorised accounts only.
+            </p>
+          </div>
+          <Link
+            to="/"
+            className="inline-block px-8 py-3 bg-luxury-gold text-white text-xs font-bold uppercase tracking-widest rounded-md hover:bg-luxury-bronze transition-colors"
+          >
+            Return to Home
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return children;

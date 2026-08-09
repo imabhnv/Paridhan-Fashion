@@ -37,6 +37,24 @@ const friendlyError = (code) => {
 };
 
 // ─────────────────────────────────────────────────────────────────
+// Admin Email Whitelist — ONLY these emails receive the 'admin' role.
+// No customer or boutique account can ever access the admin panel.
+// ─────────────────────────────────────────────────────────────────
+export const ADMIN_EMAILS = [
+  'varshneyabhinav66@gmail.com',
+  'guptatanya245@gmail.com',
+];
+
+/**
+ * Returns the correct role for a given email.
+ * Admin whitelist always wins — regardless of any stored role value.
+ */
+export const resolveRole = (email, fallbackRole = 'customer') => {
+  if (!email) return fallbackRole;
+  return ADMIN_EMAILS.includes(email.toLowerCase().trim()) ? 'admin' : fallbackRole;
+};
+
+// ─────────────────────────────────────────────────────────────────
 // Simulated Mode — localStorage fallback (used only when Firebase is not configured)
 // Seeded with mock boutiques/products for catalog browsing
 // ─────────────────────────────────────────────────────────────────
@@ -73,7 +91,14 @@ export const authService = {
         // Fetch role/profile from Firestore, update lastLoginAt
         let profile = await getUserProfile(cred.user.uid);
         if (profile) {
-          await createUserProfile(cred.user.uid, { lastLoginAt: new Date().toISOString() });
+          // Always re-enforce the admin whitelist — even if Firestore has a stale role
+          const correctRole = resolveRole(profile.email, profile.role);
+          if (correctRole !== profile.role) {
+            await createUserProfile(cred.user.uid, { role: correctRole, lastLoginAt: new Date().toISOString() });
+            profile = { ...profile, role: correctRole };
+          } else {
+            await createUserProfile(cred.user.uid, { lastLoginAt: new Date().toISOString() });
+          }
         } else {
           // First time login (e.g. imported user) — create minimal profile
           profile = {
@@ -81,7 +106,7 @@ export const authService = {
             email: cred.user.email,
             displayName: cred.user.displayName || email.split('@')[0],
             photoURL: cred.user.photoURL || '',
-            role: 'customer',
+            role: resolveRole(cred.user.email),
             provider: 'email',
             createdAt: new Date().toISOString(),
             lastLoginAt: new Date().toISOString(),
@@ -114,12 +139,13 @@ export const authService = {
         await firebaseUpdateProfile(cred.user, { displayName });
 
         // Build Firestore user document
+        // resolveRole enforces admin whitelist — ignores any user-selected role
         const newUser = {
           uid: cred.user.uid,
           email,
           displayName,
           photoURL: '',
-          role,
+          role: resolveRole(email, role),
           provider: 'email',
           createdAt: new Date().toISOString(),
           lastLoginAt: new Date().toISOString(),
@@ -155,7 +181,7 @@ export const authService = {
       email,
       password,
       displayName,
-      role,
+      role: resolveRole(email, role), // admin whitelist enforced in simulated mode too
       photoURL: '',
       addresses: [],
       balance: 0,
@@ -204,9 +230,15 @@ export const authService = {
         const now = new Date().toISOString();
 
         if (profile) {
-          // Update last login
-          await createUserProfile(cred.user.uid, { lastLoginAt: now });
-          profile = { ...profile, lastLoginAt: now };
+          // Re-enforce admin whitelist on every login
+          const correctRole = resolveRole(profile.email, profile.role);
+          if (correctRole !== profile.role) {
+            await createUserProfile(cred.user.uid, { role: correctRole, lastLoginAt: now });
+            profile = { ...profile, role: correctRole, lastLoginAt: now };
+          } else {
+            await createUserProfile(cred.user.uid, { lastLoginAt: now });
+            profile = { ...profile, lastLoginAt: now };
+          }
         } else {
           // First time Google login — create profile
           profile = {
@@ -214,7 +246,7 @@ export const authService = {
             email: cred.user.email,
             displayName: cred.user.displayName || cred.user.email.split('@')[0],
             photoURL: cred.user.photoURL || '',
-            role: 'customer',
+            role: resolveRole(cred.user.email),
             provider: 'google',
             createdAt: now,
             lastLoginAt: now,

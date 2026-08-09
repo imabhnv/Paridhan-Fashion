@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import authService from '../services/auth';
+import authService, { resolveRole } from '../services/auth';
 import { isFirebaseConfigured, auth as firebaseAuth, onAuthStateChanged } from '../services/firebase';
 import { getUserProfile } from '../services/userProfile';
 
@@ -18,16 +18,17 @@ export const AuthProvider = ({ children }) => {
           try {
             const profile = await getUserProfile(firebaseUser.uid);
             if (profile) {
-              setUser(profile);
+              // Always enforce admin whitelist — overrides any role stored in Firestore
+              const safeRole = resolveRole(profile.email, profile.role);
+              setUser({ ...profile, role: safeRole });
             } else {
               // Profile doesn't exist yet (e.g. during first signup flow)
-              // Set minimal user from Firebase auth object
               setUser({
                 uid: firebaseUser.uid,
                 email: firebaseUser.email,
                 displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
                 photoURL: firebaseUser.photoURL || '',
-                role: 'customer',
+                role: resolveRole(firebaseUser.email),
                 provider: firebaseUser.providerData?.[0]?.providerId || 'email',
               });
             }
