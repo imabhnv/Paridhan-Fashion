@@ -34,8 +34,8 @@ const FloatingCta = () => {
   }, []);
 
   useEffect(() => {
-    // Initialize Gemini when products are loaded
-    if (availableProducts.length > 0 && !chatSessionRef.current) {
+    // Initialize Gemini when products are loaded (even if empty)
+    if (!chatSessionRef.current && availableProducts !== null) {
       try {
         const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({ 
