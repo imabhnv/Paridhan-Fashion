@@ -25,7 +25,6 @@ import AdminDashboard from './pages/AdminDashboard';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import TrustPages from './pages/TrustPages';
-import Blog from './pages/Blog';
 
 // Scroll to top helper on page transitions
 const ScrollToTop = () => {
@@ -63,10 +62,6 @@ function App() {
                   {/* Trust Policies Routing */}
                   <Route path="/trust" element={<TrustPages />} />
                   <Route path="/trust/:policyName" element={<TrustPages />} />
-
-                  {/* Blog / Content Editorial */}
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/blog/:slug" element={<Blog />} />
 
                   {/* Protected Checkout & Tracking Flows */}
                   <Route 

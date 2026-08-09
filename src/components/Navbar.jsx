@@ -54,9 +54,6 @@ const Navbar = () => {
             <Link to="/about" className="text-sm font-medium tracking-wider uppercase text-luxury-charcoal/80 hover:text-luxury-gold dark:text-luxury-alabaster/80 dark:hover:text-luxury-gold transition-colors">
               About Us
             </Link>
-            <Link to="/blog" className="text-sm font-medium tracking-wider uppercase text-luxury-charcoal/80 hover:text-luxury-gold dark:text-luxury-alabaster/80 dark:hover:text-luxury-gold transition-colors">
-              Blog
-            </Link>
             <Link to="/contact" className="text-sm font-medium tracking-wider uppercase text-luxury-charcoal/80 hover:text-luxury-gold dark:text-luxury-alabaster/80 dark:hover:text-luxury-gold transition-colors">
               Contact
             </Link>
@@ -207,13 +204,6 @@ const Navbar = () => {
             className="text-lg font-medium tracking-wider text-luxury-charcoal dark:text-luxury-alabaster border-b border-luxury-gold/10 pb-2"
           >
             About Us
-          </Link>
-          <Link
-            to="/blog"
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-lg font-medium tracking-wider text-luxury-charcoal dark:text-luxury-alabaster border-b border-luxury-gold/10 pb-2"
-          >
-            Blog
           </Link>
           <Link
             to="/contact"
