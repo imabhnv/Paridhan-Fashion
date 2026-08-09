@@ -6,6 +6,8 @@ import {
 import { 
   Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image, CheckCircle, Tag, BarChart2 
 } from 'lucide-react';
+import { storage, isFirebaseConfigured } from '../services/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import dbService from '../services/db';
 import SeoHelper from '../components/SeoHelper';
 
@@ -30,9 +32,11 @@ const StoreDashboard = () => {
   const [color, setColor] = useState('');
   const [fabric, setFabric] = useState('');
   const [occasion, setOccasion] = useState('Wedding');
+  const [sizes, setSizes] = useState({ XS: false, S: true, M: true, L: false, XL: false, XXL: false });
   const [stylistNotes, setStylistNotes] = useState('');
   const [desc, setDesc] = useState('');
   const [listingSuccess, setListingSuccess] = useState('');
+  const [imageUploading, setImageUploading] = useState(false);
 
   // Damage filing state
   const [damageBookingId, setDamageBookingId] = useState('');
@@ -61,6 +65,31 @@ const StoreDashboard = () => {
   useEffect(() => {
     loadBoutiqueData();
   }, [user, activeTab]);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!isFirebaseConfigured) {
+      // In simulated mode, create a fake local blob URL
+      setImageUrl(URL.createObjectURL(file));
+      return;
+    }
+
+    try {
+      setImageUploading(true);
+      const filename = `products/${user.uid}/${Date.now()}_${file.name}`;
+      const storageRef = ref(storage, filename);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+      setImageUrl(downloadURL);
+    } catch (err) {
+      console.error('Image upload failed', err);
+      alert('Failed to upload image. Please try again.');
+    } finally {
+      setImageUploading(false);
+    }
+  };
 
   const handleCreateListing = async (e) => {
     e.preventDefault();
@@ -490,14 +519,26 @@ const StoreDashboard = () => {
                 </div>
 
                 <div className="space-y-1.5 text-left">
-                  <span className="text-[9px] uppercase font-bold text-luxury-gold">Main Image URL (or mockup placeholder)</span>
-                  <input
-                    type="text"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="https://images.unsplash.com/photo-..."
-                    className="w-full p-2 bg-transparent border border-luxury-gold/20 dark:text-white rounded"
-                  />
+                  <span className="text-[9px] uppercase font-bold text-luxury-gold">Main Image Upload</span>
+                  <div className="flex items-center space-x-4">
+                    {imageUrl && (
+                      <img src={imageUrl} alt="Preview" className="w-16 h-20 object-cover rounded bg-luxury-gold/10 border border-luxury-gold/30" />
+                    )}
+                    <div className="flex-1 relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={imageUploading}
+                        className="w-full p-2 bg-transparent border border-luxury-gold/20 dark:text-white rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-luxury-gold/10 file:text-luxury-gold hover:file:bg-luxury-gold/20 file:cursor-pointer disabled:opacity-50"
+                      />
+                      {imageUploading && (
+                        <div className="absolute inset-y-0 right-3 flex items-center">
+                          <Loader2 size={16} className="animate-spin text-luxury-gold" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-1.5 text-left">
