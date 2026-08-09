@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, Bot, User, Send, X, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import dbService from '../services/db';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
 const FloatingCta = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,11 +36,13 @@ const FloatingCta = () => {
   useEffect(() => {
     // Initialize Gemini when products are loaded (even if empty)
     if (!chatSessionRef.current && availableProducts !== null) {
-      try {
-        const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ 
-          model: "gemini-1.5-flash",
-          systemInstruction: `You are the elite Paridhan Outfit Advisor. Your goal is to help users find the perfect luxury designer outfit to rent. 
+      const initChat = async () => {
+        try {
+          const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+          chatSessionRef.current = await ai.chats.create({ 
+            model: "gemini-3.6-flash",
+            config: {
+              systemInstruction: `You are the elite Paridhan Outfit Advisor. Your goal is to help users find the perfect luxury designer outfit to rent. 
           Be polite, extremely helpful, and concise. 
           Here is the list of currently available products in the catalog: 
           ${JSON.stringify(availableProducts.map(p => ({ id: p.id, title: p.title, category: p.category, price: p.rentalPricePerDay, store: p.storeName })))}
@@ -48,13 +50,13 @@ const FloatingCta = () => {
           If you recommend a specific product from this list, you MUST include its exact ID at the very end of your message in brackets like this: [ID: product-id]. 
           Example: "I highly recommend the Crimson Lehenga. [ID: prod-1]"
           Only recommend products that are in the list provided above.`
-        });
-        chatSessionRef.current = model.startChat({
-          history: [],
-        });
-      } catch (err) {
-        console.error("Failed to initialize Gemini", err);
-      }
+            }
+          });
+        } catch (err) {
+          console.error("Failed to initialize Gemini", err);
+        }
+      };
+      initChat();
     }
   }, [availableProducts]);
 
@@ -72,8 +74,8 @@ const FloatingCta = () => {
         throw new Error("AI not initialized yet.");
       }
 
-      const result = await chatSessionRef.current.sendMessage(userMsg.text);
-      const rawText = result.response.text();
+      const result = await chatSessionRef.current.sendMessage({ message: userMsg.text });
+      const rawText = result.text;
       
       // Parse for [ID: product-id]
       let botText = rawText;
