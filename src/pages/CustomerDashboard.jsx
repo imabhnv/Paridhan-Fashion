@@ -136,7 +136,7 @@ const CustomerDashboard = () => {
           <p className="text-sm font-light text-luxury-charcoal/50 dark:text-luxury-alabaster/50 mt-1">Hello, {user?.displayName}. Welcome back to your dashboard.</p>
         </div>
         <div className="bg-luxury-cream border border-luxury-gold/30 px-4 py-2 rounded-lg text-xs font-semibold text-luxury-charcoal flex items-center">
-          <Ticket size={14} className="text-luxury-gold mr-1.5" /> Demo Balance: ₹{user?.balance?.toLocaleString()}
+          <Ticket size={14} className="text-luxury-gold mr-1.5" /> Customer Account
         </div>
       </div>
 

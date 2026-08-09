@@ -1,6 +1,6 @@
 import { isFirebaseConfigured, db as firebaseDb } from './firebase';
 import { 
-  collection, doc, getDocs, getDoc, addDoc, updateDoc, query, where, setDoc 
+  collection, doc, getDocs, getDoc, addDoc, updateDoc, query, where, setDoc, serverTimestamp 
 } from 'firebase/firestore';
 import { MOCK_PRODUCTS, MOCK_BOUTIQUES } from '../data/mockData';
 
@@ -282,4 +282,42 @@ export const dbService = {
     return false;
   }
 };
+
+/**
+ * Creates a boutique/store record in Firestore (or localStorage fallback).
+ * Called during store owner signup. Returns the boutique document ID.
+ */
+export const createBoutiqueRecord = async (data) => {
+  const boutiqueData = {
+    name: data.name || 'My Atelier',
+    ownerId: data.ownerId,
+    logo: '',
+    coverImage: '',
+    rating: 5.0,
+    reviewsCount: 0,
+    location: data.location || 'India',
+    description: data.description || 'Luxury boutique fashion store.',
+    verified: false,
+    joinedDate: new Date().toLocaleString('default', { month: 'short', year: 'numeric' }),
+    totalBookings: 0,
+    createdAt: new Date().toISOString(),
+  };
+
+  if (isFirebaseConfigured && firebaseDb) {
+    try {
+      const docRef = await addDoc(collection(firebaseDb, 'boutiques'), boutiqueData);
+      return docRef.id;
+    } catch (err) {
+      console.error('createBoutiqueRecord Firestore failed:', err);
+    }
+  }
+
+  // localStorage fallback
+  const boutiqueId = `boutique-${Date.now()}`;
+  const boutiques = JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
+  boutiques.push({ id: boutiqueId, ...boutiqueData });
+  localStorage.setItem('paridhan_boutiques', JSON.stringify(boutiques));
+  return boutiqueId;
+};
+
 export default dbService;

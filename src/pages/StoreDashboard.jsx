@@ -4,7 +4,7 @@ import {
   BarChart as ReBarChart, Bar, LineChart as ReLineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell 
 } from 'recharts';
 import { 
-  Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image, CheckCircle, Tag 
+  Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image, CheckCircle, Tag, BarChart2 
 } from 'lucide-react';
 import dbService from '../services/db';
 import SeoHelper from '../components/SeoHelper';
@@ -148,28 +148,20 @@ const StoreDashboard = () => {
     );
   };
 
-  // Recharts Analytics configuration mock data
-  const revenueData = [
-    { name: 'Jan', revenue: 12000, rentals: 4 },
-    { name: 'Feb', revenue: 18500, rentals: 6 },
-    { name: 'Mar', revenue: 24000, rentals: 8 },
-    { name: 'Apr', revenue: 31200, rentals: 11 },
-    { name: 'May', revenue: 45000, rentals: 15 }
-  ];
-
-  const categoryShare = [
-    { name: 'Lehengas', value: 45, color: '#C5A880' },
-    { name: 'Tuxedos', value: 25, color: '#111111' },
-    { name: 'Gowns', value: 20, color: '#8C7853' },
-    { name: 'Fusion prints', value: 10, color: '#E5D5C0' }
-  ];
-
-  // Calculating Boutique KPIs
+  // KPIs — all derived from real booking data, no fabricated additions
   const totalBoutiqueRentals = bookings.length;
   const activeRentals = bookings.filter(b => ['Confirmed', 'Out for Delivery', 'Delivered'].includes(b.status)).length;
   const pendingReturns = bookings.filter(b => b.status === 'Return Pending').length;
-  // Earnings calculations
-  const grossBoutiqueEarnings = bookings.reduce((acc, b) => acc + (b.rentalCost || 0), 0) + 45000; // Mock base addition
+  const grossBoutiqueEarnings = bookings.reduce((acc, b) => acc + (b.rentalCost || 0), 0);
+
+  // Revenue by month — derived from actual bookings
+  const revenueByMonth = bookings.reduce((acc, b) => {
+    if (!b.createdAt) return acc;
+    const month = new Date(b.createdAt).toLocaleString('default', { month: 'short' });
+    acc[month] = { revenue: (acc[month]?.revenue || 0) + (b.rentalCost || 0), rentals: (acc[month]?.rentals || 0) + 1 };
+    return acc;
+  }, {});
+  const revenueData = Object.entries(revenueByMonth).map(([name, vals]) => ({ name, ...vals }));
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-left animate-fade-in">
@@ -266,78 +258,52 @@ const StoreDashboard = () => {
         {/* Dynamic Display Panel */}
         <div className="lg:col-span-9">
           
-          {/* TAB 1: ANALYTICS (Charts) */}
+          {/* TAB 1: ANALYTICS */}
           {activeTab === 'analytics' && (
             <div className="space-y-8">
               <h2 className="text-lg font-bold tracking-wider uppercase border-b border-luxury-gold/10 pb-3 dark:text-white">
-                Revenue & Rent Trends
+                Revenue &amp; Rent Trends
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                
-                {/* Revenue trends Chart */}
-                <div className="bg-white dark:bg-luxury-lightcharcoal border border-luxury-gold/15 p-5 rounded-xl shadow-sm text-center">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-4 text-left">Monthly Earnings (INR)</h3>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <ReLineChart data={revenueData}>
-                        <XAxis dataKey="name" stroke="#C5A880" fontSize={10} />
-                        <YAxis stroke="#C5A880" fontSize={10} />
-                        <Tooltip />
-                        <Line type="monotone" dataKey="revenue" stroke="#C5A880" strokeWidth={2.5} activeDot={{ r: 8 }} />
-                      </ReLineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                {/* Rental counts Chart */}
-                <div className="bg-white dark:bg-luxury-lightcharcoal border border-luxury-gold/15 p-5 rounded-xl shadow-sm text-center">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-4 text-left">Rentals Booking Frequency</h3>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <ReBarChart data={revenueData}>
-                        <XAxis dataKey="name" stroke="#C5A880" fontSize={10} />
-                        <YAxis stroke="#C5A880" fontSize={10} />
-                        <Tooltip />
-                        <Bar dataKey="rentals" fill="#111111" radius={[4, 4, 0, 0]} />
-                      </ReBarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Pie Share */}
-              <div className="bg-white dark:bg-luxury-lightcharcoal border border-luxury-gold/15 p-6 rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-2 items-center gap-6">
-                <div>
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-2">Category Performance Share</h3>
-                  <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 font-light leading-relaxed">
-                    Bridal Wear and Lehengas make up the largest share of boutique revenue due to high booking prices. Tuxedos demonstrate high booking volumes but lower daily rates.
+              {bookings.length === 0 ? (
+                <div className="bg-white dark:bg-luxury-lightcharcoal border border-dashed border-luxury-gold/20 rounded-xl p-16 text-center space-y-3">
+                  <BarChart2 size={32} className="mx-auto text-luxury-gold/30" />
+                  <p className="text-sm font-semibold dark:text-white">No booking data yet</p>
+                  <p className="text-xs text-luxury-charcoal/50 dark:text-luxury-alabaster/50">
+                    Analytics will populate automatically once customers book your outfits.
                   </p>
                 </div>
-                <div className="h-44 flex justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={categoryShare}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={50}
-                        outerRadius={70}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {categoryShare.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-white dark:bg-luxury-lightcharcoal border border-luxury-gold/15 p-5 rounded-xl shadow-sm">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-4">Monthly Earnings (₹)</h3>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ReLineChart data={revenueData}>
+                          <XAxis dataKey="name" stroke="#C5A880" fontSize={10} />
+                          <YAxis stroke="#C5A880" fontSize={10} />
+                          <Tooltip formatter={(v) => [`₹${v.toLocaleString()}`, 'Revenue']} />
+                          <Line type="monotone" dataKey="revenue" stroke="#C5A880" strokeWidth={2.5} activeDot={{ r: 6 }} />
+                        </ReLineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
 
+                  <div className="bg-white dark:bg-luxury-lightcharcoal border border-luxury-gold/15 p-5 rounded-xl shadow-sm">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-4">Rentals per Month</h3>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ReBarChart data={revenueData}>
+                          <XAxis dataKey="name" stroke="#C5A880" fontSize={10} />
+                          <YAxis stroke="#C5A880" fontSize={10} />
+                          <Tooltip />
+                          <Bar dataKey="rentals" fill="#111111" radius={[4, 4, 0, 0]} />
+                        </ReBarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

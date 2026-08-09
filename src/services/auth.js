@@ -1,120 +1,154 @@
 import { isFirebaseConfigured, auth as firebaseAuth } from './firebase';
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
-  signOut, 
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
   sendPasswordResetEmail,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  updateProfile as firebaseUpdateProfile,
 } from 'firebase/auth';
+import { createUserProfile, getUserProfile, updateUserProfile } from './userProfile';
+import { createBoutiqueRecord } from './db';
+import { MOCK_PRODUCTS, MOCK_BOUTIQUES } from '../data/mockData';
 
-// Seed initial users for Simulated Mode
-const initLocalUsers = () => {
-  if (!localStorage.getItem('paridhan_users')) {
-    const defaultUsers = [
-      {
-        uid: "user-cust",
-        email: "customer@paridhan.com",
-        password: "password123",
-        displayName: "Varshil Shah",
-        role: "customer",
-        phone: "+91 98765 43210",
-        photoURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80",
-        addresses: [
-          { id: "addr-1", type: "Home", street: "Flat 402, Signature Heights", city: "Mumbai", state: "Maharashtra", zip: "400053", default: true }
-        ],
-        balance: 10000,
-        createdAt: new Date().toISOString()
-      },
-      {
-        uid: "user-store",
-        email: "boutique@paridhan.com",
-        password: "password123",
-        displayName: "Sabyasachi Mukherjee",
-        role: "store",
-        boutiqueId: "boutique-1",
-        phone: "+91 99999 88888",
-        photoURL: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=150&h=150&q=80",
-        balance: 45000,
-        createdAt: new Date().toISOString()
-      },
-      {
-        uid: "user-admin",
-        email: "admin@paridhan.com",
-        password: "password123",
-        displayName: "Paridhan Admin",
-        role: "admin",
-        phone: "+91 90000 11111",
-        photoURL: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&h=150&q=80",
-        createdAt: new Date().toISOString()
-      }
-    ];
-    localStorage.setItem('paridhan_users', JSON.stringify(defaultUsers));
+// ─────────────────────────────────────────────────────────────────
+// Friendly error message mapper for Firebase Auth error codes
+// ─────────────────────────────────────────────────────────────────
+const friendlyError = (code) => {
+  const map = {
+    'auth/user-not-found': 'No account found with this email address.',
+    'auth/wrong-password': 'Incorrect password. Please try again.',
+    'auth/invalid-credential': 'Incorrect email or password. Please try again.',
+    'auth/email-already-in-use': 'This email is already registered. Please sign in instead.',
+    'auth/weak-password': 'Password must be at least 6 characters.',
+    'auth/invalid-email': 'Please enter a valid email address.',
+    'auth/too-many-requests': 'Too many failed attempts. Please wait a moment and try again.',
+    'auth/popup-closed-by-user': 'Google sign-in was cancelled. Please try again.',
+    'auth/cancelled-popup-request': 'Another sign-in window is already open.',
+    'auth/popup-blocked': 'Sign-in popup was blocked. Please allow popups for this site.',
+    'auth/account-exists-with-different-credential':
+      'An account with this email already exists using a different sign-in method.',
+    'auth/network-request-failed':
+      'Network error. Please check your internet connection and try again.',
+    'auth/internal-error': 'An internal error occurred. Please try again.',
+  };
+  return map[code] || 'Authentication failed. Please try again.';
+};
+
+// ─────────────────────────────────────────────────────────────────
+// Simulated Mode — localStorage fallback (used only when Firebase is not configured)
+// Seeded with mock boutiques/products for catalog browsing
+// ─────────────────────────────────────────────────────────────────
+const initSimulatedDb = () => {
+  if (!localStorage.getItem('paridhan_products')) {
+    localStorage.setItem('paridhan_products', JSON.stringify(MOCK_PRODUCTS));
+  }
+  if (!localStorage.getItem('paridhan_boutiques')) {
+    localStorage.setItem('paridhan_boutiques', JSON.stringify(MOCK_BOUTIQUES));
+  }
+  if (!localStorage.getItem('paridhan_orders')) {
+    localStorage.setItem('paridhan_orders', JSON.stringify([]));
+  }
+  if (!localStorage.getItem('paridhan_disputes')) {
+    localStorage.setItem('paridhan_disputes', JSON.stringify([]));
   }
 };
 
-initLocalUsers();
+// Only seed catalog data (NOT fake user accounts) in simulated mode
+if (!isFirebaseConfigured) {
+  initSimulatedDb();
+}
 
+// ─────────────────────────────────────────────────────────────────
+// Auth Service
+// ─────────────────────────────────────────────────────────────────
 export const authService = {
-  // Login
+
+  // ── Login ──────────────────────────────────────────────────────
   async login(email, password) {
     if (isFirebaseConfigured) {
       try {
         const cred = await signInWithEmailAndPassword(firebaseAuth, email, password);
-        // In real Firebase, you'd fetch the user's role from firestore. We simulate that by reading user metadata.
-        const userDoc = localStorage.getItem(`firebase_role_${cred.user.uid}`);
-        const role = userDoc ? JSON.parse(userDoc).role : 'customer';
-        return {
-          uid: cred.user.uid,
-          email: cred.user.email,
-          displayName: cred.user.displayName || email.split('@')[0],
-          role,
-          photoURL: cred.user.photoURL || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80"
-        };
+        // Fetch role/profile from Firestore, update lastLoginAt
+        let profile = await getUserProfile(cred.user.uid);
+        if (profile) {
+          await createUserProfile(cred.user.uid, { lastLoginAt: new Date().toISOString() });
+        } else {
+          // First time login (e.g. imported user) — create minimal profile
+          profile = {
+            uid: cred.user.uid,
+            email: cred.user.email,
+            displayName: cred.user.displayName || email.split('@')[0],
+            photoURL: cred.user.photoURL || '',
+            role: 'customer',
+            provider: 'email',
+            createdAt: new Date().toISOString(),
+            lastLoginAt: new Date().toISOString(),
+          };
+          await createUserProfile(cred.user.uid, profile);
+        }
+        return profile;
       } catch (err) {
-        throw new Error(err.message || "Failed to log in via Firebase");
+        throw new Error(friendlyError(err.code));
       }
     }
 
     // Simulated Mode
     const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
-    const match = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-    if (!match) {
-      throw new Error("Invalid email or password");
-    }
-    
-    // Create session
+    const match = users.find(
+      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+    );
+    if (!match) throw new Error('No account found with this email address, or incorrect password.');
     localStorage.setItem('paridhan_session', JSON.stringify(match));
     return match;
   },
 
-  // Signup
-  async signup(email, password, displayName, role = "customer", extraDetails = {}) {
+  // ── Signup ─────────────────────────────────────────────────────
+  async signup(email, password, displayName, role = 'customer', extraDetails = {}) {
     if (isFirebaseConfigured) {
       try {
         const cred = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+
+        // Set Firebase display name
+        await firebaseUpdateProfile(cred.user, { displayName });
+
+        // Build Firestore user document
         const newUser = {
           uid: cred.user.uid,
           email,
           displayName,
+          photoURL: '',
           role,
-          photoURL: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80",
-          ...extraDetails
+          provider: 'email',
+          createdAt: new Date().toISOString(),
+          lastLoginAt: new Date().toISOString(),
+          addresses: [],
+          ...extraDetails,
         };
-        // Store role locally or simulate firestore storage
-        localStorage.setItem(`firebase_role_${cred.user.uid}`, JSON.stringify(newUser));
+
+        // If store owner, create boutique document in Firestore
+        if (role === 'store') {
+          const boutiqueId = await createBoutiqueRecord({
+            ownerId: cred.user.uid,
+            name: extraDetails.boutiqueName || `${displayName}'s Atelier`,
+            location: extraDetails.boutiqueLocation || 'India',
+            description: extraDetails.boutiqueDescription || 'Luxury boutique fashion store.',
+          });
+          newUser.boutiqueId = boutiqueId;
+        }
+
+        await createUserProfile(cred.user.uid, newUser);
         return newUser;
       } catch (err) {
-        throw new Error(err.message || "Failed to sign up via Firebase");
+        throw new Error(friendlyError(err.code));
       }
     }
 
     // Simulated Mode
     const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
-    const exists = users.some(u => u.email.toLowerCase() === email.toLowerCase());
-    if (exists) {
-      throw new Error("Email already registered");
-    }
+    const exists = users.some((u) => u.email.toLowerCase() === email.toLowerCase());
+    if (exists) throw new Error('This email is already registered. Please sign in instead.');
 
     const newUser = {
       uid: `user-${Date.now()}`,
@@ -122,30 +156,29 @@ export const authService = {
       password,
       displayName,
       role,
-      phone: extraDetails.phone || "",
-      photoURL: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80",
+      photoURL: '',
       addresses: [],
       balance: 0,
       createdAt: new Date().toISOString(),
-      ...extraDetails
+      lastLoginAt: new Date().toISOString(),
+      ...extraDetails,
     };
 
-    // If registering as store, add new boutique record
     if (role === 'store') {
       newUser.boutiqueId = `boutique-${Date.now()}`;
       const boutiques = JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
       boutiques.push({
         id: newUser.boutiqueId,
         name: extraDetails.boutiqueName || `${displayName}'s Atelier`,
-        logo: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=150&h=150&q=80",
-        coverImage: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80",
+        logo: '',
+        coverImage: '',
         rating: 5.0,
         reviewsCount: 0,
-        location: extraDetails.boutiqueLocation || "India",
-        description: extraDetails.boutiqueDescription || "Luxury boutique fashion store.",
+        location: extraDetails.boutiqueLocation || 'India',
+        description: extraDetails.boutiqueDescription || 'Luxury boutique fashion store.',
         verified: false,
         joinedDate: new Date().toLocaleString('default', { month: 'short', year: 'numeric' }),
-        totalBookings: 0
+        totalBookings: 0,
       });
       localStorage.setItem('paridhan_boutiques', JSON.stringify(boutiques));
     }
@@ -156,95 +189,95 @@ export const authService = {
     return newUser;
   },
 
-  // Google Login
+  // ── Google Sign-In ─────────────────────────────────────────────
   async loginWithGoogle() {
     if (isFirebaseConfigured) {
       try {
         const provider = new GoogleAuthProvider();
+        // Add scopes for better profile data
+        provider.addScope('profile');
+        provider.addScope('email');
         const cred = await signInWithPopup(firebaseAuth, provider);
-        const userDoc = localStorage.getItem(`firebase_role_${cred.user.uid}`);
-        const role = userDoc ? JSON.parse(userDoc).role : 'customer';
-        return {
-          uid: cred.user.uid,
-          email: cred.user.email,
-          displayName: cred.user.displayName,
-          role,
-          photoURL: cred.user.photoURL
-        };
+
+        // Check if user already has a profile
+        let profile = await getUserProfile(cred.user.uid);
+        const now = new Date().toISOString();
+
+        if (profile) {
+          // Update last login
+          await createUserProfile(cred.user.uid, { lastLoginAt: now });
+          profile = { ...profile, lastLoginAt: now };
+        } else {
+          // First time Google login — create profile
+          profile = {
+            uid: cred.user.uid,
+            email: cred.user.email,
+            displayName: cred.user.displayName || cred.user.email.split('@')[0],
+            photoURL: cred.user.photoURL || '',
+            role: 'customer',
+            provider: 'google',
+            createdAt: now,
+            lastLoginAt: now,
+            addresses: [],
+          };
+          await createUserProfile(cred.user.uid, profile);
+        }
+        return profile;
       } catch (err) {
-        throw new Error(err.message || "Failed to login with Google");
+        throw new Error(friendlyError(err.code));
       }
     }
 
-    // Simulated Mode
+    // Simulated Mode — create a demo google session
     const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
-    let googleUser = users.find(u => u.email === "google-user@paridhan.com");
-    
+    let googleUser = users.find((u) => u.email === 'google-demo@paridhan.local');
     if (!googleUser) {
       googleUser = {
-        uid: "user-google",
-        email: "google-user@paridhan.com",
-        displayName: "Rajesh Kumar (Google)",
-        role: "customer",
-        phone: "+91 99887 76655",
-        photoURL: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80",
+        uid: 'user-google-demo',
+        email: 'google-demo@paridhan.local',
+        displayName: 'Demo Google User',
+        role: 'customer',
+        photoURL: '',
         addresses: [],
-        balance: 5000,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString(),
+        provider: 'google',
+        _isSimulated: true,
       };
       users.push(googleUser);
       localStorage.setItem('paridhan_users', JSON.stringify(users));
     }
-
     localStorage.setItem('paridhan_session', JSON.stringify(googleUser));
     return googleUser;
   },
 
-  // Logout
+  // ── Logout ─────────────────────────────────────────────────────
   async logout() {
-    if (isFirebaseConfigured) {
+    if (isFirebaseConfigured && firebaseAuth) {
       await signOut(firebaseAuth);
     }
     localStorage.removeItem('paridhan_session');
   },
 
-  // Reset Password
+  // ── Reset Password ─────────────────────────────────────────────
   async resetPassword(email) {
     if (isFirebaseConfigured) {
-      await sendPasswordResetEmail(firebaseAuth, email);
+      try {
+        await sendPasswordResetEmail(firebaseAuth, email);
+      } catch (err) {
+        throw new Error(friendlyError(err.code));
+      }
       return;
     }
-    // Simulation just prints to console and returns
-    console.log(`Password reset email simulated to ${email}`);
+    // Simulated mode — just resolve silently
+    console.log(`[Simulated] Password reset email sent to: ${email}`);
   },
 
-  // Update Profile
+  // ── Update Profile ─────────────────────────────────────────────
   async updateProfile(uid, details) {
-    if (isFirebaseConfigured) {
-      // In real app, we update firestore user document. We reflect locally here.
-      const localRole = localStorage.getItem(`firebase_role_${uid}`);
-      if (localRole) {
-        const uObj = JSON.parse(localRole);
-        const updated = { ...uObj, ...details };
-        localStorage.setItem(`firebase_role_${uid}`, JSON.stringify(updated));
-      }
-      return true;
-    }
-
-    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
-    const idx = users.findIndex(u => u.uid === uid);
-    if (idx !== -1) {
-      const updated = { ...users[idx], ...details };
-      users[idx] = updated;
-      localStorage.setItem('paridhan_users', JSON.stringify(users));
-      
-      const session = JSON.parse(localStorage.getItem('paridhan_session') || '{}');
-      if (session.uid === uid) {
-        localStorage.setItem('paridhan_session', JSON.stringify(updated));
-      }
-      return updated;
-    }
-    return null;
-  }
+    // Update Firestore / localStorage via userProfile service
+    return await updateUserProfile(uid, details);
+  },
 };
+
 export default authService;
