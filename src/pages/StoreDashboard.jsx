@@ -24,6 +24,7 @@ const StoreDashboard = () => {
   const [title, setTitle] = useState('');
   const [gender, setGender] = useState('Women');
   const [category, setCategory] = useState('Designer Lehengas');
+  const [customCategory, setCustomCategory] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [rentalPrice, setRentalPrice] = useState('');
   const [retailPrice, setRetailPrice] = useState('');
@@ -32,6 +33,7 @@ const StoreDashboard = () => {
   const [color, setColor] = useState('');
   const [fabric, setFabric] = useState('');
   const [occasion, setOccasion] = useState('Wedding');
+  const [customOccasion, setCustomOccasion] = useState('');
   const [sizes, setSizes] = useState({ XS: false, S: true, M: true, L: false, XL: false, XXL: false });
   const [stylistNotes, setStylistNotes] = useState('');
   const [desc, setDesc] = useState('');
@@ -95,14 +97,28 @@ const StoreDashboard = () => {
     e.preventDefault();
     setListingSuccess('');
 
-    // Pre-fill image if empty
-    const imgPath = imageUrl.trim() || "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&h=800&q=80";
+    if (!title || !rentalPrice || !retailPrice || !imageUrl) {
+      alert('Please fill all required fields and upload an image.');
+      return;
+    }
+
+    const finalCategory = category === 'Other (Custom)' ? customCategory : category;
+    const finalOccasion = occasion === 'Other (Custom)' ? customOccasion : occasion;
+
+    if (category === 'Other (Custom)' && !finalCategory) {
+      alert('Please specify a custom category.');
+      return;
+    }
+    if (occasion === 'Other (Custom)' && !finalOccasion) {
+      alert('Please specify a custom occasion.');
+      return;
+    }
 
     const newProduct = {
       title,
-      category,
+      category: finalCategory,
       gender,
-      images: [imgPath],
+      images: [imageUrl],
       rentalPricePerDay: Number(rentalPrice),
       originalRetailPrice: Number(retailPrice),
       securityDeposit: Number(deposit),
@@ -113,7 +129,7 @@ const StoreDashboard = () => {
       sizes: selectedSizes,
       colors: [color],
       fabric,
-      occasion,
+      occasion: finalOccasion,
       description: desc,
       availability: true,
       bookedDates: [],
@@ -127,12 +143,16 @@ const StoreDashboard = () => {
     
     // Reset Form
     setTitle('');
+    setCategory('Designer Lehengas');
+    setCustomCategory('');
     setImageUrl('');
     setRentalPrice('');
     setRetailPrice('');
     setDeposit('');
     setColor('');
     setFabric('');
+    setOccasion('Wedding');
+    setCustomOccasion('');
     setStylistNotes('');
     setDesc('');
   };
@@ -410,7 +430,18 @@ const StoreDashboard = () => {
                       <option value="Ethnic Wear">Ethnic Wear</option>
                       <option value="Party Wear">Party Wear</option>
                       <option value="Luxury Gowns">Luxury Gowns</option>
+                      <option value="Other (Custom)">Other (Custom)</option>
                     </select>
+                    {category === 'Other (Custom)' && (
+                      <input
+                        type="text"
+                        required
+                        value={customCategory}
+                        onChange={(e) => setCustomCategory(e.target.value)}
+                        placeholder="E.g. Jodhpuri Suit"
+                        className="w-full p-2 mt-2 bg-transparent border border-luxury-gold/20 dark:text-white rounded text-xs"
+                      />
+                    )}
                   </div>
                 </div>
 
@@ -438,9 +469,20 @@ const StoreDashboard = () => {
                       <option value="Reception">Reception</option>
                       <option value="Sangeet / Mehendi">Sangeet / Mehendi</option>
                       <option value="Festival">Festival</option>
-                      <option value="Farewell">College Farewell</option>
+                      <option value="College Farewell">College Farewell</option>
                       <option value="Party / Cocktail">Party / Cocktail</option>
+                      <option value="Other (Custom)">Other (Custom)</option>
                     </select>
+                    {occasion === 'Other (Custom)' && (
+                      <input
+                        type="text"
+                        required
+                        value={customOccasion}
+                        onChange={(e) => setCustomOccasion(e.target.value)}
+                        placeholder="E.g. Engagement"
+                        className="w-full p-2 mt-2 bg-transparent border border-luxury-gold/20 dark:text-white rounded text-xs"
+                      />
+                    )}
                   </div>
 
                   <div className="space-y-1.5 text-left">
