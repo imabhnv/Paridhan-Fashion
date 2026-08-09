@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, MessageCircle, HelpCircle, ArrowRight } from 'lucide-react';
 import SeoHelper from '../components/SeoHelper';
+import dbService from '../services/db';
 
 const Contact = () => {
   const [name, setName] = useState('');
@@ -9,18 +10,26 @@ const Contact = () => {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
 
-    // Simulate sending message to customer support desk
-    setTimeout(() => {
-      setSubmitting(false);
+    try {
+      await dbService.submitContactRequest({
+        name,
+        email,
+        message,
+        type: 'General Inquiry'
+      });
       setSuccess(true);
       setName('');
       setEmail('');
       setMessage('');
-    }, 1500);
+    } catch (err) {
+      console.error("Failed to submit contact request", err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -123,45 +132,23 @@ const Contact = () => {
 
             <ul className="space-y-4 text-xs font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70">
               <li className="flex items-start space-x-3">
-                <MapPin size={18} className="text-luxury-gold flex-shrink-0 mt-0.5" />
-                <div>
-                  <strong className="font-semibold block text-luxury-charcoal dark:text-white">Headquarters</strong>
-                  Level 4, Dynasty Plaza, Juhu Scheme, Mumbai - 400049
-                </div>
-              </li>
-              <li className="flex items-start space-x-3">
                 <Phone size={16} className="text-luxury-gold flex-shrink-0 mt-0.5" />
                 <div>
                   <strong className="font-semibold block text-luxury-charcoal dark:text-white">Phone Enquiries</strong>
-                  +91 22 4900 8800 (10 AM - 7 PM IST)
+                  +91-9758346524, +91-7078363826
                 </div>
               </li>
               <li className="flex items-start space-x-3">
                 <Mail size={16} className="text-luxury-gold flex-shrink-0 mt-0.5" />
                 <div>
                   <strong className="font-semibold block text-luxury-charcoal dark:text-white">Email Desk</strong>
-                  concierge@paridhan.com
+                  imabhnv@gmail.com, guptatanya245@gmail.com
                 </div>
               </li>
             </ul>
           </div>
 
-          {/* Quick FAQ pointer */}
-          <div className="p-6 bg-luxury-gold/5 border border-luxury-gold/20 rounded-xl space-y-3">
-            <span className="font-semibold text-xs text-luxury-gold flex items-center">
-              <HelpCircle size={14} className="mr-1.5" /> Need Instant Help?
-            </span>
-            <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 font-light leading-relaxed">
-              We have answers prepared for questions regarding alterations, deposits, late return penalties, and dry-cleaning protocols.
-            </p>
-            <a
-              href="/#faq"
-              className="inline-flex items-center text-[10px] uppercase font-bold tracking-widest text-luxury-gold hover:text-luxury-bronze"
-            >
-              <span>Visit FAQs Accordion</span>
-              <ArrowRight size={12} className="ml-1" />
-            </a>
-          </div>
+
 
         </div>
 

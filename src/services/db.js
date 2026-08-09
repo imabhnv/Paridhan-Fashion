@@ -3,11 +3,14 @@ import {
   collection, doc, getDocs, getDoc, addDoc, updateDoc, query, where, setDoc, serverTimestamp 
 } from 'firebase/firestore';
 import { MOCK_PRODUCTS, MOCK_BOUTIQUES } from '../data/mockData';
-
 // Initialize LocalStorage DB if needed
 const initLocalDb = () => {
-  if (!localStorage.getItem('paridhan_products')) {
-    localStorage.setItem('paridhan_products', JSON.stringify(MOCK_PRODUCTS));
+  // Clear out old mock products if they exist
+  const existingProducts = JSON.parse(localStorage.getItem('paridhan_products') || '[]');
+  if (existingProducts.length > 0 && existingProducts[0].id === 'prod-1') {
+    localStorage.setItem('paridhan_products', JSON.stringify([]));
+  } else if (!localStorage.getItem('paridhan_products')) {
+    localStorage.setItem('paridhan_products', JSON.stringify([]));
   }
   if (!localStorage.getItem('paridhan_boutiques')) {
     localStorage.setItem('paridhan_boutiques', JSON.stringify(MOCK_BOUTIQUES));
@@ -17,6 +20,9 @@ const initLocalDb = () => {
   }
   if (!localStorage.getItem('paridhan_disputes')) {
     localStorage.setItem('paridhan_disputes', JSON.stringify([]));
+  }
+  if (!localStorage.getItem('paridhan_contacts')) {
+    localStorage.setItem('paridhan_contacts', JSON.stringify([]));
   }
 };
 
@@ -95,6 +101,20 @@ export const dbService = {
       }
     }
     return JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
+  },
+
+  async getVerifiedBoutiques() {
+    if (isFirebaseConfigured) {
+      try {
+        const q = query(collection(firebaseDb, 'boutiques'), where("verified", "==", true));
+        const snap = await getDocs(q);
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (err) {
+        console.error("Firestore getVerifiedBoutiques failed, using LocalStorage:", err);
+      }
+    }
+    const boutiques = JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
+    return boutiques.filter(b => b.verified === true);
   },
 
   async getBoutique(id) {
@@ -277,9 +297,38 @@ export const dbService = {
     if (idx !== -1) {
       disputes[idx] = { ...disputes[idx], status, resolutionNotes, resolvedAt: new Date().toISOString() };
       localStorage.setItem('paridhan_disputes', JSON.stringify(disputes));
-      return true;
+      return id;
     }
-    return false;
+    
+    return "DISP-MOCK-789";
+  },
+
+  // --- CONTACT REQUESTS ---
+  async submitContactRequest(data) {
+    if (isFirebaseConfigured) {
+      try {
+        const docRef = await addDoc(collection(firebaseDb, 'contactRequests'), {
+          ...data,
+          status: 'pending',
+          createdAt: serverTimestamp()
+        });
+        return docRef.id;
+      } catch (err) {
+        console.error("Firestore submitContactRequest failed, falling back to LocalStorage:", err);
+      }
+    }
+    
+    // Fallback to local storage
+    const reqs = JSON.parse(localStorage.getItem('paridhan_contacts') || '[]');
+    const newReq = { 
+      id: `REQ-${Date.now()}`,
+      ...data, 
+      status: 'pending',
+      createdAt: new Date().toISOString() 
+    };
+    reqs.push(newReq);
+    localStorage.setItem('paridhan_contacts', JSON.stringify(reqs));
+    return newReq.id;
   }
 };
 

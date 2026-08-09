@@ -60,7 +60,7 @@ export const resolveRole = (email, fallbackRole = 'customer') => {
 // ─────────────────────────────────────────────────────────────────
 const initSimulatedDb = () => {
   if (!localStorage.getItem('paridhan_products')) {
-    localStorage.setItem('paridhan_products', JSON.stringify(MOCK_PRODUCTS));
+    localStorage.setItem('paridhan_products', JSON.stringify([]));
   }
   if (!localStorage.getItem('paridhan_boutiques')) {
     localStorage.setItem('paridhan_boutiques', JSON.stringify(MOCK_BOUTIQUES));

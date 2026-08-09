@@ -6,11 +6,20 @@ import {
 } from 'lucide-react';
 import { MOCK_PRODUCTS, MOCK_BOUTIQUES, MOCK_TESTIMONIALS, MOCK_FAQS } from '../data/mockData';
 import SeoHelper from '../components/SeoHelper';
+import dbService from '../services/db';
 
 const Landing = () => {
-  // Take first 4 products for trending, and first 3 boutiques for showcase
-  const trendingOutfits = MOCK_PRODUCTS.slice(0, 4);
-  const featuredBoutiques = MOCK_BOUTIQUES.slice(0, 3);
+  // Fetch boutiques dynamically from the database
+  const [featuredBoutiques, setFeaturedBoutiques] = React.useState([]);
+
+  React.useEffect(() => {
+    const loadVerifiedBoutiques = async () => {
+      const boutiques = await dbService.getVerifiedBoutiques();
+      // Show up to 3 verified boutiques
+      setFeaturedBoutiques(boutiques.slice(0, 3));
+    };
+    loadVerifiedBoutiques();
+  }, []);
 
   // FAQ state
   const [openFaqIdx, setOpenFaqIdx] = React.useState(null);
@@ -245,79 +254,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* 4. TRENDING RENTALS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        
-        <div className="flex flex-col sm:flex-row justify-between items-end">
-          <div className="space-y-2 text-left">
-            <p className="text-xs font-semibold text-luxury-gold uppercase tracking-wider">Top Curated Looks</p>
-            <h2 className="text-3xl font-bold tracking-tight">Trending Designer Pieces</h2>
-          </div>
-          <Link 
-            to="/catalog" 
-            className="group flex items-center text-xs font-bold uppercase tracking-widest text-luxury-gold hover:text-luxury-bronze pt-2 sm:pt-0"
-          >
-            Explore Full Catalog <ChevronRight size={16} className="ml-1 transition-transform group-hover:translate-x-1" />
-          </Link>
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {trendingOutfits.map((product) => (
-            <div 
-              key={product.id} 
-              className="group bg-white dark:bg-luxury-lightcharcoal rounded-xl overflow-hidden shadow-lg border border-luxury-gold/10 hover:border-luxury-gold/30 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between"
-            >
-              <div className="relative aspect-[3/4] overflow-hidden bg-luxury-cream">
-                
-                {/* Visual Label */}
-                <div className="absolute top-3 left-3 z-20 bg-luxury-charcoal text-white text-[9px] uppercase tracking-widest font-bold px-2.5 py-1 rounded">
-                  {product.category}
-                </div>
-
-                <img 
-                  src={product.images[0]} 
-                  alt={product.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-
-                {/* Quick Link Overlay */}
-                <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10 space-x-2">
-                  <Link
-                    to={`/product/${product.id}`}
-                    className="px-5 py-2.5 bg-white text-luxury-charcoal hover:bg-luxury-gold hover:text-white text-[10px] font-bold uppercase tracking-widest rounded shadow-lg transition-colors"
-                  >
-                    Rent Outfit
-                  </Link>
-                </div>
-              </div>
-
-              {/* Card Details */}
-              <div className="p-5 text-left space-y-2">
-                <p className="text-[9px] text-luxury-gold font-bold uppercase tracking-widest">
-                  {product.storeName}
-                </p>
-                <h3 className="font-semibold text-sm truncate dark:text-white">{product.title}</h3>
-                
-                <div className="flex items-center space-x-1">
-                  <span className="text-[10px] text-amber-500 font-semibold">★ {product.rating}</span>
-                  <span className="text-[9px] text-luxury-charcoal/40 dark:text-luxury-alabaster/40 font-light">({product.reviewsCount} reviews)</span>
-                </div>
-
-                <div className="pt-2 border-t border-luxury-gold/10 flex items-end justify-between">
-                  <div>
-                    <span className="text-xs text-luxury-charcoal/50 dark:text-luxury-alabaster/50 line-through">₹{product.originalRetailPrice.toLocaleString()}</span>
-                    <p className="text-sm font-bold text-luxury-charcoal dark:text-white">₹{product.rentalPricePerDay.toLocaleString()} / day</p>
-                  </div>
-                  <span className="text-[10px] font-semibold text-green-600 dark:text-green-400 bg-green-500/10 px-2 py-0.5 rounded">
-                    Save {Math.round(100 - (product.rentalPricePerDay / product.originalRetailPrice * 100))}%
-                  </span>
-                </div>
-              </div>
-
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* 5. TOP VERIFIED BOUTIQUES */}
       <section className="bg-luxury-cream/25 dark:bg-luxury-lightcharcoal/20 py-20 border-y border-luxury-gold/10">
@@ -435,44 +372,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* 7. TESTIMONIALS */}
-      <section className="bg-luxury-charcoal text-white py-20 border-y border-luxury-gold/25">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          
-          <div className="text-center max-w-xl mx-auto space-y-3">
-            <p className="text-xs font-semibold text-luxury-gold uppercase tracking-widest">Loved by Customers</p>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">Client Testimonials</h2>
-            <div className="h-0.5 w-16 bg-luxury-gold mx-auto"></div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {MOCK_TESTIMONIALS.map((t) => (
-              <div 
-                key={t.id} 
-                className="bg-white/5 border border-white/10 rounded-xl p-8 text-left space-y-6 flex flex-col justify-between"
-              >
-                <p className="text-sm font-light text-luxury-cream/80 italic leading-relaxed">
-                  "{t.quote}"
-                </p>
-                
-                <div className="flex items-center space-x-4">
-                  <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full object-cover border border-luxury-gold" />
-                  <div>
-                    <h4 className="font-bold text-sm text-white">{t.name}</h4>
-                    <p className="text-xs text-luxury-gold tracking-wide">{t.role}</p>
-                    <div className="flex text-amber-500 space-x-0.5 mt-1">
-                      {Array.from({ length: t.rating }).map((_, i) => (
-                        <span key={i} className="text-xs">★</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
 
       {/* 8. FAQ ACCORDION */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-left">

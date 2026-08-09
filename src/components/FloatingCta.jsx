@@ -1,58 +1,104 @@
-import React, { useState } from 'react';
-import { Sparkles, Bot, User, Send, X } from 'lucide-react';
-import { MOCK_PRODUCTS } from '../data/mockData';
+import React, { useState, useEffect, useRef } from 'react';
+import { Sparkles, Bot, User, Send, X, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import dbService from '../services/db';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const FloatingCta = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [availableProducts, setAvailableProducts] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: 1,
       sender: 'bot',
-      text: "Namaste! I'm your Paridhan Outfit Advisor. Tell me what occasion you're planning for and I'll suggest the perfect designer outfit.",
+      text: "Namaste! I'm your Paridhan Outfit Advisor, powered by AI. Tell me what occasion you're planning for, and I'll suggest the perfect designer outfit from our live catalog.",
     },
   ]);
   const [inputText, setInputText] = useState('');
+  
+  // Initialize Gemini Chat session
+  const chatSessionRef = useRef(null);
 
-  const handleSendMessage = (e) => {
+  useEffect(() => {
+    // Fetch products to give Gemini context
+    const fetchCatalog = async () => {
+      try {
+        const products = await dbService.getProducts();
+        setAvailableProducts(products);
+      } catch (err) {
+        console.error("Failed to fetch products for AI context", err);
+      }
+    };
+    fetchCatalog();
+  }, []);
+
+  useEffect(() => {
+    // Initialize Gemini when products are loaded
+    if (availableProducts.length > 0 && !chatSessionRef.current) {
+      try {
+        const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ 
+          model: "gemini-1.5-flash",
+          systemInstruction: `You are the elite Paridhan Outfit Advisor. Your goal is to help users find the perfect luxury designer outfit to rent. 
+          Be polite, extremely helpful, and concise. 
+          Here is the list of currently available products in the catalog: 
+          ${JSON.stringify(availableProducts.map(p => ({ id: p.id, title: p.title, category: p.category, price: p.rentalPricePerDay, store: p.storeName })))}
+          
+          If you recommend a specific product from this list, you MUST include its exact ID at the very end of your message in brackets like this: [ID: product-id]. 
+          Example: "I highly recommend the Crimson Lehenga. [ID: prod-1]"
+          Only recommend products that are in the list provided above.`
+        });
+        chatSessionRef.current = model.startChat({
+          history: [],
+        });
+      } catch (err) {
+        console.error("Failed to initialize Gemini", err);
+      }
+    }
+  }, [availableProducts]);
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputText.trim()) return;
 
     const userMsg = { id: Date.now(), sender: 'user', text: inputText };
     setMessages((prev) => [...prev, userMsg]);
     setInputText('');
+    setIsTyping(true);
 
-    // Rule-based outfit suggestions based on keywords
-    setTimeout(() => {
-      let botText = 'That sounds wonderful! Based on your occasion, here is our top suggestion — ';
-      let recommendedProduct = MOCK_PRODUCTS[0];
+    try {
+      if (!chatSessionRef.current) {
+        throw new Error("AI not initialized yet.");
+      }
 
-      const q = inputText.toLowerCase();
-      if (q.includes('wedding') || q.includes('marriage') || q.includes('bride')) {
-        recommendedProduct = MOCK_PRODUCTS.find((p) => p.id === 'prod-1') || MOCK_PRODUCTS[0];
-        botText += `our **${recommendedProduct.title}** by ${recommendedProduct.storeName}. It features raw silk with heavy zardozi hand embroidery — perfect for royal bridal wear.`;
-      } else if (q.includes('tux') || q.includes('suit') || q.includes('formal') || q.includes('farewell') || q.includes('men') || q.includes('groom')) {
-        recommendedProduct = MOCK_PRODUCTS.find((p) => p.id === 'prod-3') || MOCK_PRODUCTS[2];
-        botText += `our **${recommendedProduct.title}** by ${recommendedProduct.storeName}. Handcrafted with premium Merino wool — sharp and sophisticated.`;
-      } else if (q.includes('party') || q.includes('cocktail') || q.includes('reception') || q.includes('gown')) {
-        recommendedProduct = MOCK_PRODUCTS.find((p) => p.id === 'prod-2') || MOCK_PRODUCTS[1];
-        botText += `the **${recommendedProduct.title}** by ${recommendedProduct.storeName}. The metallic sequins capture light beautifully for any cocktail event.`;
-      } else if (q.includes('sangeet') || q.includes('mehendi') || q.includes('haldi') || q.includes('festival')) {
-        recommendedProduct = MOCK_PRODUCTS.find((p) => p.id === 'prod-4') || MOCK_PRODUCTS[3];
-        botText += `our **${recommendedProduct.title}** by ${recommendedProduct.storeName}. Light organza with hand-painted florals — ideal for daytime celebrations.`;
-      } else if (q.includes('sherwani') || q.includes('ethnic') || q.includes('kurta')) {
-        recommendedProduct = MOCK_PRODUCTS.find((p) => p.id === 'prod-5') || MOCK_PRODUCTS[4];
-        botText += `our **${recommendedProduct.title}** by ${recommendedProduct.storeName}. Premium Banarasi silk with classic bandhgala — elegance personified.`;
-      } else {
-        recommendedProduct = MOCK_PRODUCTS[Math.floor(Math.random() * MOCK_PRODUCTS.length)];
-        botText += `the **${recommendedProduct.title}** from ${recommendedProduct.storeName} — a favorite choice this season!`;
+      const result = await chatSessionRef.current.sendMessage(userMsg.text);
+      const rawText = result.response.text();
+      
+      // Parse for [ID: product-id]
+      let botText = rawText;
+      let recommendedProduct = null;
+      
+      const idMatch = rawText.match(/\[ID:\s*([^\]]+)\]/);
+      if (idMatch && idMatch[1]) {
+        const prodId = idMatch[1].trim();
+        botText = rawText.replace(idMatch[0], '').trim();
+        recommendedProduct = availableProducts.find(p => p.id === prodId);
       }
 
       setMessages((prev) => [
         ...prev,
         { id: Date.now() + 1, sender: 'bot', text: botText, product: recommendedProduct },
       ]);
-    }, 900);
+    } catch (error) {
+      console.error("AI Error:", error);
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 1, sender: 'bot', text: "I'm sorry, I'm having trouble connecting to my fashion database right now. Please try again in a moment." },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   return (
@@ -90,7 +136,7 @@ const FloatingCta = () => {
                     Outfit Advisor
                   </h3>
                   <p className="text-[9px] uppercase text-luxury-gold/80 tracking-widest font-semibold">
-                    Rule-based fashion suggestions
+                    AI-powered styling
                   </p>
                 </div>
               </div>
@@ -101,13 +147,6 @@ const FloatingCta = () => {
               >
                 <X size={18} />
               </button>
-            </div>
-
-            {/* Notice banner */}
-            <div className="px-4 py-2 bg-luxury-gold/10 border-b border-luxury-gold/15 flex-shrink-0">
-              <p className="text-[9px] text-luxury-charcoal/60 dark:text-luxury-alabaster/60 font-medium text-center">
-                💡 Suggestions are based on curated fashion rules, not AI
-              </p>
             </div>
 
             {/* Chat Messages */}
@@ -176,6 +215,19 @@ const FloatingCta = () => {
                   </div>
                 </div>
               ))}
+              {isTyping && (
+                <div className="flex justify-start">
+                  <div className="flex items-start space-x-2 max-w-[85%]">
+                    <div className="p-1.5 rounded-full flex-shrink-0 bg-luxury-charcoal text-white dark:bg-white dark:text-luxury-charcoal">
+                      <Bot size={11} />
+                    </div>
+                    <div className="p-3 rounded-2xl bg-white dark:bg-luxury-lightcharcoal border border-luxury-gold/10 rounded-tl-none flex items-center space-x-1">
+                      <Loader2 size={12} className="animate-spin text-luxury-gold" />
+                      <span className="text-[10px] text-luxury-charcoal/60 dark:text-luxury-alabaster/60 italic">Thinking...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Virtual Try-On — Coming Soon Banner */}
