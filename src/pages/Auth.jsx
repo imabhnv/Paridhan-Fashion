@@ -117,18 +117,16 @@ const Auth = () => {
           <div className="luxury-glass p-8 sm:p-10 rounded-2xl border border-luxury-gold/25 shadow-2xl space-y-8 text-center">
 
             {/* Logo / Icon */}
-            <div className="space-y-3">
-              <div className="w-16 h-16 mx-auto bg-luxury-gold/10 border border-luxury-gold/30 rounded-full flex items-center justify-center">
-                <Sparkles size={26} className="text-luxury-gold" />
+            <div className="space-y-3 pb-2">
+              <div className="flex justify-center items-center space-x-2">
+                <span className="text-4xl font-bold tracking-widest font-playfair text-luxury-charcoal dark:text-luxury-alabaster">
+                  PARIDHAN
+                </span>
+                <span className="h-2 w-2 rounded-full bg-luxury-gold inline-block mt-1"></span>
               </div>
-              <div>
-                <h3 className="font-playfair text-2xl font-bold dark:text-white tracking-tight">
-                  Paridhan
-                </h3>
-                <p className="text-[10px] text-luxury-charcoal/50 dark:text-luxury-alabaster/50 uppercase tracking-widest font-semibold mt-1">
-                  Luxury Fashion Rental
-                </p>
-              </div>
+              <p className="text-[10px] text-luxury-charcoal/50 dark:text-luxury-alabaster/50 uppercase tracking-widest font-semibold mt-1">
+                Luxury Fashion Rental
+              </p>
             </div>
 
             {/* Tabs */}

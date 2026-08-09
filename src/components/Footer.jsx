@@ -62,26 +62,13 @@ const Footer = () => {
         </div>
 
         {/* Middle: Links Sitemaps */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-16">
           
-          {/* Shop */}
-          <div className="space-y-4">
-            <h4 className="text-xs font-bold tracking-widest text-white uppercase">Shop Categories</h4>
-            <ul className="space-y-2.5 text-sm font-light text-luxury-cream/70">
-              <li><Link to="/catalog?category=Designer+Lehengas" className="hover:text-luxury-gold transition-colors">Designer Lehengas</Link></li>
-              <li><Link to="/catalog?category=Tuxedos" className="hover:text-luxury-gold transition-colors">Premium Tuxedos</Link></li>
-              <li><Link to="/catalog?category=Bridal+Wear" className="hover:text-luxury-gold transition-colors">Bridal Wear</Link></li>
-              <li><Link to="/catalog?category=Party+Wear" className="hover:text-luxury-gold transition-colors">Cocktail & Party Wear</Link></li>
-              <li><Link to="/catalog?category=Luxury+Gowns" className="hover:text-luxury-gold transition-colors">Luxury Gowns</Link></li>
-            </ul>
-          </div>
-
           {/* Quick Links */}
           <div className="space-y-4">
             <h4 className="text-xs font-bold tracking-widest text-white uppercase">Paridhan</h4>
             <ul className="space-y-2.5 text-sm font-light text-luxury-cream/70">
               <li><Link to="/about" className="hover:text-luxury-gold transition-colors">Our Story & Sustainability</Link></li>
-              <li><Link to="/blog" className="hover:text-luxury-gold transition-colors">Fashion Editorial (Blog)</Link></li>
               <li><Link to="/contact" className="hover:text-luxury-gold transition-colors">Contact Support</Link></li>
               <li><Link to="/auth?role=store" className="hover:text-luxury-gold transition-colors">List Your Boutique</Link></li>
               <li><Link to="/trust" className="hover:text-luxury-gold transition-colors">Sanitization Standards</Link></li>
@@ -101,22 +88,24 @@ const Footer = () => {
           </div>
 
           {/* Contact Details */}
+          {/* Founders Section */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold tracking-widest text-white uppercase">The Atelier Office</h4>
-            <ul className="space-y-3 text-sm font-light text-luxury-cream/70">
-              <li className="flex items-start space-x-2.5">
-                <MapPin size={18} className="text-luxury-gold flex-shrink-0 mt-0.5" />
-                <span>Level 4, Dynasty Plaza, Juhu Scheme, Mumbai - 400049</span>
-              </li>
-              <li className="flex items-center space-x-2.5">
-                <Phone size={16} className="text-luxury-gold" />
-                <span>+91 22 4900 8800</span>
-              </li>
-              <li className="flex items-center space-x-2.5">
-                <Mail size={16} className="text-luxury-gold" />
-                <span>concierge@paridhan.com</span>
-              </li>
-            </ul>
+            <h4 className="text-xs font-bold tracking-widest text-white uppercase">The Founders</h4>
+            <div className="space-y-3 text-sm font-light text-luxury-cream/70 leading-relaxed">
+              <p>
+                Founded by <span className="text-luxury-gold font-medium">Abhinav Varshney</span> and <span className="text-luxury-gold font-medium">Tanya Gupta</span> to democratize luxury fashion and make premium designer wear accessible and sustainable.
+              </p>
+              <ul className="space-y-3 pt-2 border-t border-luxury-gold/10">
+                <li className="flex items-center space-x-2.5">
+                  <Mail size={16} className="text-luxury-gold" />
+                  <span>imabhnv@gmail.com</span>
+                </li>
+                <li className="flex items-center space-x-2.5">
+                  <Mail size={16} className="text-luxury-gold" />
+                  <span>guptatanya245@gmail.com</span>
+                </li>
+              </ul>
+            </div>
           </div>
 
         </div>
