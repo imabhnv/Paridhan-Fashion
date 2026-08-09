@@ -216,7 +216,7 @@ export const authService = {
   },
 
   // ── Google Sign-In ─────────────────────────────────────────────
-  async loginWithGoogle() {
+  async loginWithGoogle(requestedRole = 'customer') {
     if (isFirebaseConfigured) {
       try {
         const provider = new GoogleAuthProvider();
@@ -240,19 +240,33 @@ export const authService = {
             profile = { ...profile, lastLoginAt: now };
           }
         } else {
+          const finalRole = resolveRole(cred.user.email, requestedRole);
+          
           // First time Google login — create profile
           profile = {
             uid: cred.user.uid,
             email: cred.user.email,
             displayName: cred.user.displayName || cred.user.email.split('@')[0],
             photoURL: cred.user.photoURL || '',
-            role: resolveRole(cred.user.email),
+            role: finalRole,
             provider: 'google',
             createdAt: now,
             lastLoginAt: now,
             addresses: [],
           };
+
+          // If store owner, create boutique document
+          if (finalRole === 'store') {
+            const boutiqueId = await createBoutiqueRecord({
+              ownerId: cred.user.uid,
+              name: `${profile.displayName}'s Atelier`,
+              location: 'India',
+              description: 'Luxury boutique fashion store.',
+            });
+            profile.boutiqueId = boutiqueId;
+          }
           await createUserProfile(cred.user.uid, profile);
+          profile.isNewUser = true;
         }
         return profile;
       } catch (err) {

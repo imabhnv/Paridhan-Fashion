@@ -79,10 +79,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = async (role = 'customer') => {
     setLoading(true);
     try {
-      const loggedUser = await authService.loginWithGoogle();
+      const loggedUser = await authService.loginWithGoogle(role);
       if (!isFirebaseConfigured) setUser(loggedUser);
       return loggedUser;
     } catch (err) {

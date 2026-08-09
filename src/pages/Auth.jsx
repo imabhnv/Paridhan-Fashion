@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ShieldAlert, Loader2, Sparkles } from 'lucide-react';
+import { ShieldAlert, Loader2, Sparkles, UserPlus, LogIn, ShoppingBag, User } from 'lucide-react';
 import SeoHelper from '../components/SeoHelper';
 
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { loginWithGoogle, isAuthenticated, loading: authLoading } = useAuth();
+  const { loginWithGoogle, isAuthenticated, loading: authLoading, logout } = useAuth();
 
   const redirectDest = searchParams.get('redirect') || '';
 
+  const [activeTab, setActiveTab] = useState('signin'); // 'signin' or 'signup'
+  const [registerRole, setRegisterRole] = useState('customer'); // 'customer' or 'store'
   const [error, setError] = useState('');
   const [googleLoading, setGoogleLoading] = useState(false);
 
@@ -21,14 +23,36 @@ const Auth = () => {
     }
   }, [isAuthenticated, authLoading]);
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleAuth = async () => {
     setError('');
     setGoogleLoading(true);
     try {
-      const userObj = await loginWithGoogle();
+      // Pass the selected role. If they are signing in, it will be ignored by auth.js for existing profiles.
+      const userObj = await loginWithGoogle(activeTab === 'signup' ? registerRole : 'customer');
+      
+      // Enforce tab logic: remember if user is new or not
+      if (activeTab === 'signin' && userObj.isNewUser) {
+        // User tried to sign in but didn't have an account
+        await logout(); // Undo the login
+        setError('No account found with this Google email. Please create an account first.');
+        setGoogleLoading(false);
+        return;
+      }
+      
+      if (activeTab === 'signup' && !userObj.isNewUser) {
+        // User tried to sign up but already had an account
+        // We'll let them in, but show a welcome back toast/message if we had a toast system
+        // For now, we just redirect them as normal, since they are verified.
+      }
+
+      // If user is new, we can flag it in local storage to show them an onboarding message later
+      if (userObj.isNewUser) {
+        localStorage.setItem('paridhan_is_new_user', 'true');
+      }
+
       redirectUser(userObj);
     } catch (err) {
-      setError(err.message || 'Unable to sign in with Google. Please try again.');
+      setError(err.message || 'Unable to authenticate with Google. Please try again.');
       setGoogleLoading(false);
     }
   };
@@ -44,8 +68,8 @@ const Auth = () => {
     <div className="min-h-[85vh] flex items-center justify-center bg-luxury-cream/20 dark:bg-luxury-charcoal/20 py-16 px-4 relative">
 
       <SeoHelper
-        title="Sign In"
-        description="Sign in to Paridhan — India's luxury fashion rental platform."
+        title="Account Access"
+        description="Sign in or create an account to access Paridhan — India's luxury fashion rental platform."
       />
 
       {/* Background glow accents */}
@@ -90,7 +114,7 @@ const Auth = () => {
         {/* ── RIGHT: Auth Panel ── */}
         <div className="lg:col-span-6 w-full max-w-md mx-auto">
 
-          <div className="luxury-glass p-10 rounded-2xl border border-luxury-gold/25 shadow-2xl space-y-8 text-center">
+          <div className="luxury-glass p-8 sm:p-10 rounded-2xl border border-luxury-gold/25 shadow-2xl space-y-8 text-center">
 
             {/* Logo / Icon */}
             <div className="space-y-3">
@@ -107,8 +131,29 @@ const Auth = () => {
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="h-px bg-luxury-gold/15" />
+            {/* Tabs */}
+            <div className="flex border-b border-luxury-gold/15 mb-6">
+              <button
+                onClick={() => { setActiveTab('signin'); setError(''); }}
+                className={`flex-1 py-3 text-[11px] font-bold uppercase tracking-widest transition-colors border-b-2 flex items-center justify-center gap-2 ${
+                  activeTab === 'signin'
+                    ? 'border-luxury-gold text-luxury-gold bg-luxury-gold/5'
+                    : 'border-transparent text-luxury-charcoal/40 dark:text-luxury-alabaster/40 hover:text-luxury-charcoal dark:hover:text-white'
+                }`}
+              >
+                <LogIn size={14} /> SIGN IN
+              </button>
+              <button
+                onClick={() => { setActiveTab('signup'); setError(''); }}
+                className={`flex-1 py-3 text-[11px] font-bold uppercase tracking-widest transition-colors border-b-2 flex items-center justify-center gap-2 ${
+                  activeTab === 'signup'
+                    ? 'border-luxury-gold text-luxury-gold bg-luxury-gold/5'
+                    : 'border-transparent text-luxury-charcoal/40 dark:text-luxury-alabaster/40 hover:text-luxury-charcoal dark:hover:text-white'
+                }`}
+              >
+                <UserPlus size={14} /> CREATE ACCOUNT
+              </button>
+            </div>
 
             {/* Error */}
             {error && (
@@ -118,10 +163,43 @@ const Auth = () => {
               </div>
             )}
 
-            {/* Google Sign-In */}
+            {/* Role Selection (Only shown on Create Account) */}
+            {activeTab === 'signup' && (
+              <div className="space-y-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-luxury-charcoal/50 dark:text-luxury-alabaster/50 text-left">I want to register as a...</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setRegisterRole('customer')}
+                    className={`flex flex-col items-center justify-center p-3 rounded-lg border text-xs font-semibold transition-all ${
+                      registerRole === 'customer'
+                        ? 'border-luxury-gold bg-luxury-gold/10 text-luxury-gold'
+                        : 'border-luxury-gold/20 hover:border-luxury-gold/50 text-luxury-charcoal/60 dark:text-luxury-alabaster/60'
+                    }`}
+                  >
+                    <User size={20} className="mb-2" />
+                    Customer
+                  </button>
+                  <button
+                    onClick={() => setRegisterRole('store')}
+                    className={`flex flex-col items-center justify-center p-3 rounded-lg border text-xs font-semibold transition-all ${
+                      registerRole === 'store'
+                        ? 'border-luxury-gold bg-luxury-gold/10 text-luxury-gold'
+                        : 'border-luxury-gold/20 hover:border-luxury-gold/50 text-luxury-charcoal/60 dark:text-luxury-alabaster/60'
+                    }`}
+                  >
+                    <ShoppingBag size={20} className="mb-2" />
+                    Boutique
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Google Auth Button */}
             <div className="space-y-4">
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 font-light">
-                Sign in or create an account instantly with Google.
+                {activeTab === 'signin' 
+                  ? 'Sign in securely using your Google account.' 
+                  : 'Create a new Paridhan account instantly with Google.'}
                 <br />
                 No password required.
               </p>
@@ -129,7 +207,7 @@ const Auth = () => {
               <button
                 id="google-login-btn"
                 type="button"
-                onClick={handleGoogleLogin}
+                onClick={handleGoogleAuth}
                 disabled={googleLoading}
                 className="w-full py-4 border border-luxury-gold/30 hover:border-luxury-gold bg-white/60 dark:bg-white/10 hover:bg-white dark:hover:bg-white/20 text-luxury-charcoal dark:text-luxury-alabaster transition-all text-sm font-semibold rounded-xl flex items-center justify-center space-x-3 shadow-sm disabled:opacity-70 disabled:cursor-not-allowed group"
               >
@@ -146,14 +224,14 @@ const Auth = () => {
                       <path fill="#4A90D9" d="M19.834 21c2.195-2.048 3.62-5.096 3.62-9 0-.71-.109-1.473-.272-2.182H12v4.637h6.436c-.317 1.559-1.17 2.766-2.395 3.558L19.834 21Z" />
                       <path fill="#FBBC05" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L1.24 6.65A11.934 11.934 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067Z" />
                     </svg>
-                    <span>Continue with Google</span>
+                    <span>{activeTab === 'signin' ? 'Sign In with Google' : 'Create Account with Google'}</span>
                   </>
                 )}
               </button>
             </div>
 
             {/* Footer note */}
-            <p className="text-[9px] text-luxury-charcoal/35 dark:text-luxury-alabaster/30 leading-relaxed">
+            <p className="text-[9px] text-luxury-charcoal/35 dark:text-luxury-alabaster/30 leading-relaxed pt-4">
               By continuing, you agree to Paridhan's{' '}
               <a href="/trust/terms" className="underline underline-offset-2 hover:text-luxury-gold transition-colors">
                 Terms of Service
