@@ -95,13 +95,15 @@ export const updateUserProfile = async (uid, updates) => {
  * Fetches all registered users (customers and stores).
  */
 export const getAllUsers = async () => {
+  const blacklist = JSON.parse(localStorage.getItem('paridhan_deleted_ids') || '[]');
   if (!isFirebaseConfigured || !db) {
     // Fallback to localStorage in simulated mode
-    return JSON.parse(localStorage.getItem('paridhan_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
+    return users.filter(u => !blacklist.includes(u.uid));
   }
   try {
     const snap = await getDocs(collection(db, 'users'));
-    return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+    return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() })).filter(u => !blacklist.includes(u.uid));
   } catch (err) {
     console.error('getAllUsers error:', err);
     return [];

@@ -92,29 +92,31 @@ export const dbService = {
 
   // --- BOUTIQUES ---
   async getBoutiques() {
+    const blacklist = JSON.parse(localStorage.getItem('paridhan_deleted_ids') || '[]');
     if (isFirebaseConfigured) {
       try {
         const snap = await getDocs(collection(firebaseDb, 'boutiques'));
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        return snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(d => !blacklist.includes(d.id) && !blacklist.includes(d.ownerId));
       } catch (err) {
         console.error("Firestore getBoutiques failed, using LocalStorage:", err);
       }
     }
-    return JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
+    return JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]').filter(d => !blacklist.includes(d.id) && !blacklist.includes(d.ownerId));
   },
 
   async getVerifiedBoutiques() {
+    const blacklist = JSON.parse(localStorage.getItem('paridhan_deleted_ids') || '[]');
     if (isFirebaseConfigured) {
       try {
         const q = query(collection(firebaseDb, 'boutiques'), where("verified", "==", true));
         const snap = await getDocs(q);
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        return snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(d => !blacklist.includes(d.id) && !blacklist.includes(d.ownerId));
       } catch (err) {
         console.error("Firestore getVerifiedBoutiques failed, using LocalStorage:", err);
       }
     }
     const boutiques = JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
-    return boutiques.filter(b => b.verified === true);
+    return boutiques.filter(b => b.verified === true && !blacklist.includes(b.id) && !blacklist.includes(b.ownerId));
   },
 
   async getBoutique(id) {
@@ -332,20 +334,21 @@ export const dbService = {
   },
 
   async deleteUserCompletely(uid, role, boutiqueId) {
+    const blacklist = JSON.parse(localStorage.getItem('paridhan_deleted_ids') || '[]');
+    if (uid && !blacklist.includes(uid)) blacklist.push(uid);
+    if (boutiqueId && !blacklist.includes(boutiqueId)) blacklist.push(boutiqueId);
+    localStorage.setItem('paridhan_deleted_ids', JSON.stringify(blacklist));
+
     if (isFirebaseConfigured) {
-      try {
-        if (uid) {
-          await deleteDoc(doc(firebaseDb, 'users', uid));
-        }
-        if (role === 'store' && boutiqueId) {
-          await deleteDoc(doc(firebaseDb, 'boutiques', boutiqueId));
-        }
-        return true;
-      } catch (err) {
-        console.error("Firestore deleteUserCompletely failed:", err);
+      if (uid) {
+        await deleteDoc(doc(firebaseDb, 'users', uid)).catch(() => {});
       }
+      if (role === 'store' && boutiqueId) {
+        await deleteDoc(doc(firebaseDb, 'boutiques', boutiqueId)).catch(() => {});
+      }
+      return true;
     }
-    // LocalStorage fallback for soft delete
+    // LocalStorage fallback for simulated mode
     const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
     localStorage.setItem('paridhan_users', JSON.stringify(users.filter(u => u.uid !== uid)));
     
