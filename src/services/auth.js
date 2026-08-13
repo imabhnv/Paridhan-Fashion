@@ -230,15 +230,30 @@ export const authService = {
         const now = new Date().toISOString();
 
         if (profile) {
-          // Re-enforce admin whitelist on every login
-          const correctRole = resolveRole(profile.email, profile.role);
-          if (correctRole !== profile.role) {
-            await createUserProfile(cred.user.uid, { role: correctRole, lastLoginAt: now });
-            profile = { ...profile, role: correctRole, lastLoginAt: now };
-          } else {
-            await createUserProfile(cred.user.uid, { lastLoginAt: now });
-            profile = { ...profile, lastLoginAt: now };
+          // Upgrade role to store if requested and they were previously just a customer
+          let upgradedRole = profile.role;
+          let newBoutiqueId = profile.boutiqueId;
+
+          if (profile.role === 'customer' && requestedRole === 'store') {
+            upgradedRole = 'store';
+            newBoutiqueId = await createBoutiqueRecord({
+              ownerId: cred.user.uid,
+              name: `${profile.displayName || profile.email.split('@')[0]}'s Atelier`,
+              location: 'India',
+              description: 'Luxury boutique fashion store.',
+            });
           }
+
+          // Re-enforce admin whitelist on every login
+          const correctRole = resolveRole(profile.email, upgradedRole);
+          
+          const updates = { role: correctRole, lastLoginAt: now };
+          if (newBoutiqueId && !profile.boutiqueId) {
+             updates.boutiqueId = newBoutiqueId;
+          }
+
+          await createUserProfile(cred.user.uid, updates);
+          profile = { ...profile, ...updates };
         } else {
           const finalRole = resolveRole(cred.user.email, requestedRole);
           
