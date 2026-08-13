@@ -302,7 +302,7 @@ const AdminDashboard = () => {
                         <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 font-light line-clamp-2">{boutique.description}</p>
                       </div>
                     </div>
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 flex items-center space-x-3">
                       {boutique.verified ? (
                         <span className="inline-flex items-center px-3 py-1 bg-green-500/10 text-green-600 rounded-full font-semibold uppercase tracking-wider text-[9px] border border-green-500/20">
                           <ShieldCheck size={12} className="mr-1" /> Approved
@@ -315,6 +315,13 @@ const AdminDashboard = () => {
                           Approve Store
                         </button>
                       )}
+                      <button
+                        onClick={() => handleDeleteUser({ uid: boutique.ownerId, role: 'store', boutiqueId: boutique.id, displayName: boutique.name })}
+                        className="text-luxury-charcoal/40 hover:text-red-500 transition-colors p-2"
+                        title="Delete Store"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
                   </div>
                 ))}
