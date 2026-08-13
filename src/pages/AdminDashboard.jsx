@@ -103,13 +103,24 @@ const AdminDashboard = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ uid: user.uid, role: user.role, boutiqueId: user.boutiqueId })
       });
+      
+      if (!res.ok) {
+        throw new Error("Backend API failed.");
+      }
+      
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to delete user');
+      if (!data.success) throw new Error(data.error || 'Failed to delete user');
       
       setAdminSuccess(`✅ User ${user.email} deleted completely.`);
       loadAdminData();
     } catch (err) {
-      alert("Error: " + err.message + "\n(Ensure Vercel serverless functions are running or deployed)");
+      console.error("Vercel API error:", err);
+      // Fallback: Soft Delete
+      if (window.confirm("Backend deletion failed (Vercel error). Would you like to force delete their data from the database instead? (Their login email will remain in the system).")) {
+        await dbService.deleteUserCompletely(user.uid, user.role, user.boutiqueId);
+        setAdminSuccess(`✅ User ${user.email} data removed from database.`);
+        loadAdminData();
+      }
     }
   };
 

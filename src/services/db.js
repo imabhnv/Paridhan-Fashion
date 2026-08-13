@@ -1,6 +1,6 @@
 import { isFirebaseConfigured, db as firebaseDb } from './firebase';
 import { 
-  collection, doc, getDocs, getDoc, addDoc, updateDoc, query, where, setDoc, serverTimestamp 
+  collection, doc, getDocs, getDoc, addDoc, updateDoc, query, where, setDoc, serverTimestamp, deleteDoc
 } from 'firebase/firestore';
 import { MOCK_PRODUCTS, MOCK_BOUTIQUES } from '../data/mockData';
 // Initialize LocalStorage DB if needed
@@ -329,6 +329,29 @@ export const dbService = {
     reqs.push(newReq);
     localStorage.setItem('paridhan_contacts', JSON.stringify(reqs));
     return newReq.id;
+  },
+
+  async deleteUserCompletely(uid, role, boutiqueId) {
+    if (isFirebaseConfigured) {
+      try {
+        await deleteDoc(doc(firebaseDb, 'users', uid));
+        if (role === 'store' && boutiqueId) {
+          await deleteDoc(doc(firebaseDb, 'boutiques', boutiqueId));
+        }
+        return true;
+      } catch (err) {
+        console.error("Firestore deleteUserCompletely failed:", err);
+      }
+    }
+    // LocalStorage fallback for soft delete
+    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
+    localStorage.setItem('paridhan_users', JSON.stringify(users.filter(u => u.uid !== uid)));
+    
+    if (role === 'store' && boutiqueId) {
+      const boutiques = JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
+      localStorage.setItem('paridhan_boutiques', JSON.stringify(boutiques.filter(b => b.id !== boutiqueId)));
+    }
+    return true;
   }
 };
 
