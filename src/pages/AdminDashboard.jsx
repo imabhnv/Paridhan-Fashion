@@ -94,6 +94,25 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteUser = async (user) => {
+    if (!window.confirm(`Are you sure you want to completely delete ${user.displayName || user.email}? This cannot be undone.`)) return;
+    
+    try {
+      const res = await fetch('/api/deleteUser', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid: user.uid, role: user.role, boutiqueId: user.boutiqueId })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to delete user');
+      
+      setAdminSuccess(`✅ User ${user.email} deleted completely.`);
+      loadAdminData();
+    } catch (err) {
+      alert("Error: " + err.message + "\n(Ensure Vercel serverless functions are running or deployed)");
+    }
+  };
+
   // KPIs — derived entirely from real data, no fabricated additions
   const platformGrv = bookings.reduce((acc, b) => acc + (b.rentalCost || 0), 0);
   const activeDisputesCount = disputes.filter(d => d.status === 'Open').length;
@@ -634,6 +653,7 @@ const AdminDashboard = () => {
                           <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider text-luxury-gold">Email</th>
                           <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider text-luxury-gold">Role</th>
                           <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider text-luxury-gold">Joined Date</th>
+                          <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider text-luxury-gold text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-luxury-gold/10">
@@ -657,6 +677,17 @@ const AdminDashboard = () => {
                             </td>
                             <td className="px-6 py-4 font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70">
                               {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              {user.role !== 'admin' && (
+                                <button 
+                                  onClick={() => handleDeleteUser(user)}
+                                  className="text-luxury-charcoal/40 hover:text-red-500 transition-colors"
+                                  title="Delete User"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              )}
                             </td>
                           </tr>
                         ))}

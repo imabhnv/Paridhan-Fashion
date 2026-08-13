@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/genai": "^2.16.0",
     "firebase": "^12.13.0",
+    "firebase-admin": "^14.2.0",
     "framer-motion": "^12.40.0",
     "lucide-react": "^1.16.0",
     "react": "^19.2.6",

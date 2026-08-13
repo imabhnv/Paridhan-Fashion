@@ -94,7 +94,7 @@ const Landing = () => {
             </motion.h1>
 
             <motion.p variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }} className="text-lg md:text-xl font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70 max-w-xl leading-relaxed">
-              Rent premium designer couture for weddings, sangeets, cocktail parties, and festivals at just 3% to 5% of the retail price.
+              Rent premium designer couture for weddings, sangeets, cocktail parties, and festivals at the comfort of your home.
             </motion.p>
 
             {/* CTAs */}
