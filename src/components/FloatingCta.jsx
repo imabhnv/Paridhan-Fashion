@@ -16,9 +16,6 @@ const FloatingCta = () => {
     },
   ]);
   const [inputText, setInputText] = useState('');
-  
-  // Initialize Gemini Chat session
-  const chatSessionRef = useRef(null);
 
   useEffect(() => {
     // Fetch products to give Gemini context
@@ -33,33 +30,6 @@ const FloatingCta = () => {
     fetchCatalog();
   }, []);
 
-  useEffect(() => {
-    // Initialize Gemini when products are loaded (even if empty)
-    if (!chatSessionRef.current && availableProducts !== null) {
-      const initChat = async () => {
-        try {
-          const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
-          chatSessionRef.current = await ai.chats.create({ 
-            model: "gemini-3.6-flash",
-            config: {
-              systemInstruction: `You are the elite Paridhan Outfit Advisor. Your goal is to help users find the perfect luxury designer outfit to rent. 
-          Be polite, extremely helpful, and concise. 
-          Here is the list of currently available products in the catalog: 
-          ${JSON.stringify(availableProducts.map(p => ({ id: p.id, title: p.title, category: p.category, price: p.rentalPricePerDay, store: p.storeName })))}
-          
-          If you recommend a specific product from this list, you MUST include its exact ID at the very end of your message in brackets like this: [ID: product-id]. 
-          Example: "I highly recommend the Crimson Lehenga. [ID: prod-1]"
-          Only recommend products that are in the list provided above.`
-            }
-          });
-        } catch (err) {
-          console.error("Failed to initialize Gemini", err);
-        }
-      };
-      initChat();
-    }
-  }, [availableProducts]);
-
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputText.trim()) return;
@@ -70,12 +40,25 @@ const FloatingCta = () => {
     setIsTyping(true);
 
     try {
-      if (!chatSessionRef.current) {
-        throw new Error("AI not initialized yet.");
-      }
+      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+      
+      const systemContext = `You are the elite Paridhan Outfit Advisor. Your goal is to help users find the perfect luxury designer outfit to rent. 
+Be polite, extremely helpful, and concise. 
+Here is the list of currently available products in the catalog: 
+${JSON.stringify(availableProducts.map(p => ({ id: p.id, title: p.title, category: p.category, price: p.rentalPricePerDay, store: p.storeName })))}
 
-      const result = await chatSessionRef.current.sendMessage({ message: userMsg.text });
-      const rawText = result.text;
+If you recommend a specific product from this list, you MUST include its exact ID at the very end of your message in brackets like this: [ID: product-id]. 
+Example: "I highly recommend the Crimson Lehenga. [ID: prod-1]"
+Only recommend products that are in the list provided above.
+
+User's message: ${userMsg.text}`;
+
+      const interaction = await ai.interactions.create({
+        model: "gemini-3.6-flash",
+        input: systemContext,
+      });
+      
+      const rawText = interaction.output_text;
       
       // Parse for [ID: product-id]
       let botText = rawText;

@@ -7,6 +7,7 @@ import {
   Package, Trash2, Eye, EyeOff, ClipboardList, CheckCircle
 } from 'lucide-react';
 import dbService from '../services/db';
+import { getAllUsers } from '../services/userProfile';
 import SeoHelper from '../components/SeoHelper';
 
 const ORDER_STATUSES = [
@@ -19,6 +20,8 @@ const AdminDashboard = () => {
   const [disputes, setDisputes] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [listings, setListings] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [loadingCustomers, setLoadingCustomers] = useState(false);
   
   // Resolution inputs
   const [resolutionNotes, setResolutionNotes] = useState('');
@@ -43,6 +46,11 @@ const AdminDashboard = () => {
 
     const prods = await dbService.getProducts();
     setListings(prods);
+
+    setLoadingCustomers(true);
+    const usersList = await getAllUsers();
+    setCustomers(usersList);
+    setLoadingCustomers(false);
   };
 
   useEffect(() => {
@@ -131,6 +139,7 @@ const AdminDashboard = () => {
     { id: 'disputes', label: 'Dispute Claims', badge: disputes.filter(d => d.status === 'Open').length, icon: ShieldAlert },
     { id: 'listings', label: 'All Listings', badge: inactiveListings > 0 ? inactiveListings : undefined, icon: Package },
     { id: 'bookings', label: 'All Bookings', badge: undefined, icon: ClipboardList },
+    { id: 'customers', label: 'Customers', badge: undefined, icon: Users },
     { id: 'analytics', label: 'Analytics', badge: undefined, icon: BarChart },
   ];
 
@@ -589,6 +598,72 @@ const AdminDashboard = () => {
                     )}
                   </div>
                 </>
+              )}
+            </div>
+          )}
+
+          {/* CUSTOMERS TAB */}
+          {activeTab === 'customers' && (
+            <div className="space-y-6 animate-fade-in">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold dark:text-white flex items-center">
+                  <Users className="text-luxury-gold mr-3" size={24} />
+                  Platform Users
+                </h2>
+                <div className="text-xs font-semibold px-3 py-1 bg-luxury-gold/10 text-luxury-gold rounded-full">
+                  {customers.length} Total
+                </div>
+              </div>
+
+              {loadingCustomers ? (
+                <div className="text-sm font-light text-luxury-charcoal/60 dark:text-luxury-alabaster/60 text-center py-8">
+                  Loading users...
+                </div>
+              ) : customers.length === 0 ? (
+                <div className="text-center py-12 bg-white dark:bg-luxury-charcoal rounded-xl border border-luxury-gold/15">
+                  <Users size={40} className="mx-auto text-luxury-gold/40 mb-3" />
+                  <p className="text-sm font-medium dark:text-white">No users found</p>
+                </div>
+              ) : (
+                <div className="bg-white dark:bg-luxury-charcoal border border-luxury-gold/15 rounded-xl overflow-hidden shadow-sm">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm whitespace-nowrap">
+                      <thead className="bg-luxury-cream dark:bg-luxury-lightcharcoal border-b border-luxury-gold/15">
+                        <tr>
+                          <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider text-luxury-gold">User</th>
+                          <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider text-luxury-gold">Email</th>
+                          <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider text-luxury-gold">Role</th>
+                          <th className="px-6 py-4 font-bold text-xs uppercase tracking-wider text-luxury-gold">Joined Date</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-luxury-gold/10">
+                        {customers.map((user) => (
+                          <tr key={user.uid} className="hover:bg-luxury-gold/5 transition-colors">
+                            <td className="px-6 py-4">
+                              <div className="font-semibold dark:text-white">{user.displayName || 'Unknown'}</div>
+                              <div className="text-[10px] text-luxury-charcoal/50 dark:text-luxury-alabaster/50 mt-0.5">UID: {user.uid}</div>
+                            </td>
+                            <td className="px-6 py-4 font-light dark:text-white">
+                              {user.email}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={`px-2 py-1 text-[10px] font-bold uppercase tracking-wider rounded ${
+                                user.role === 'admin' ? 'bg-red-500/10 text-red-500' :
+                                user.role === 'store' ? 'bg-luxury-gold/10 text-luxury-gold' :
+                                'bg-green-500/10 text-green-500'
+                              }`}>
+                                {user.role || 'customer'}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70">
+                              {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               )}
             </div>
           )}

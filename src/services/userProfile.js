@@ -4,7 +4,9 @@ import {
   setDoc,
   getDoc,
   updateDoc,
-  serverTimestamp
+  serverTimestamp,
+  collection,
+  getDocs
 } from 'firebase/firestore';
 
 /**
@@ -86,5 +88,22 @@ export const updateUserProfile = async (uid, updates) => {
   } catch (err) {
     console.error('updateUserProfile error:', err);
     return null;
+  }
+};
+
+/**
+ * Fetches all registered users (customers and stores).
+ */
+export const getAllUsers = async () => {
+  if (!isFirebaseConfigured || !db) {
+    // Fallback to localStorage in simulated mode
+    return JSON.parse(localStorage.getItem('paridhan_users') || '[]');
+  }
+  try {
+    const snap = await getDocs(collection(db, 'users'));
+    return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+  } catch (err) {
+    console.error('getAllUsers error:', err);
+    return [];
   }
 };

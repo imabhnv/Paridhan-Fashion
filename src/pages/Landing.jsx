@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Sparkles, ShieldAlert, Award, Calendar, Heart, ShieldCheck, CheckCircle2, ChevronRight, HelpCircle
 } from 'lucide-react';
@@ -71,26 +71,34 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10 w-full">
           
           {/* Hero Left Content */}
-          <div className="lg:col-span-7 space-y-8 text-left">
+          <motion.div 
+            initial="hidden" 
+            animate="visible" 
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+            }}
+            className="lg:col-span-7 space-y-8 text-left"
+          >
             
-            <div className="inline-flex items-center space-x-2 bg-luxury-gold/15 border border-luxury-gold/30 px-3.5 py-1.5 rounded-full">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }} className="inline-flex items-center space-x-2 bg-luxury-gold/15 border border-luxury-gold/30 px-3.5 py-1.5 rounded-full">
               <Sparkles size={14} className="text-luxury-gold" />
               <span className="text-[10px] uppercase font-bold tracking-widest text-luxury-gold">
                 The Circular Luxury Revolution
               </span>
-            </div>
+            </motion.div>
 
-            <h1 className="text-5xl md:text-7xl font-semibold tracking-tight leading-none text-luxury-charcoal dark:text-white">
+            <motion.h1 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }} className="text-5xl md:text-7xl font-semibold tracking-tight leading-none text-luxury-charcoal dark:text-white">
               Wear Luxury.<br />
               <span className="text-gold-gradient font-bold italic font-playfair">Pay Less.</span>
-            </h1>
+            </motion.h1>
 
-            <p className="text-lg md:text-xl font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70 max-w-xl leading-relaxed">
+            <motion.p variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }} className="text-lg md:text-xl font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70 max-w-xl leading-relaxed">
               Rent premium designer couture for weddings, sangeets, cocktail parties, and festivals at just 3% to 5% of the retail price.
-            </p>
+            </motion.p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-2">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }} className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-2">
               <Link
                 to="/catalog"
                 className="px-8 py-4 bg-luxury-charcoal text-white dark:bg-luxury-gold dark:text-luxury-charcoal font-bold tracking-widest text-center uppercase text-xs rounded-md shadow-2xl hover:bg-luxury-gold dark:hover:bg-luxury-cream transition-all duration-300 transform hover:-translate-y-0.5"
@@ -103,10 +111,10 @@ const Landing = () => {
               >
                 List Your Boutique
               </Link>
-            </div>
+            </motion.div>
 
             {/* Micro Trust Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-6 border-t border-luxury-gold/20 max-w-lg">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }} className="grid grid-cols-3 gap-6 pt-6 border-t border-luxury-gold/20 max-w-lg">
               <div>
                 <p className="text-2xl font-semibold text-luxury-gold">100%</p>
                 <p className="text-[10px] uppercase tracking-wider text-luxury-charcoal/50 dark:text-luxury-alabaster/50">Sanitized & Safe</p>
@@ -119,12 +127,17 @@ const Landing = () => {
                 <p className="text-2xl font-semibold text-luxury-gold">48hr</p>
                 <p className="text-[10px] uppercase tracking-wider text-luxury-charcoal/50 dark:text-luxury-alabaster/50">Deposit Refund</p>
               </div>
-            </div>
+            </motion.div>
 
-          </div>
+          </motion.div>
 
           {/* Hero Right Visuals (Floating Cards Mock) */}
-          <div className="lg:col-span-5 relative flex justify-center lg:justify-end">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, x: 20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+            className="lg:col-span-5 relative flex justify-center lg:justify-end"
+          >
             <div className="relative w-80 h-[480px]">
               
               {/* Card 1: Sabyasachi Lehenga */}
@@ -154,7 +167,7 @@ const Landing = () => {
               </div>
 
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </section>
@@ -169,26 +182,36 @@ const Landing = () => {
           <div className="h-0.5 w-16 bg-luxury-gold mx-auto"></div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+          }}
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6"
+        >
           {categories.map((cat, idx) => (
-            <Link 
-              key={idx} 
-              to={`/catalog?category=${encodeURIComponent(cat.name)}`}
-              className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-luxury-gold/10 hover:border-luxury-gold/40 flex items-end p-4 transition-all duration-300"
-            >
-              <div className="absolute inset-0 bg-black/10 group-hover:bg-black/35 z-10 transition-all"></div>
-              <img 
-                src={cat.img} 
-                alt={cat.name} 
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-              />
-              <div className="relative z-20 text-left text-white w-full space-y-0.5">
-                <h3 className="text-sm font-semibold tracking-wide truncate group-hover:text-luxury-gold transition-colors">{cat.name}</h3>
-                <p className="text-[9px] text-white/70 uppercase tracking-widest font-light">{cat.count}</p>
-              </div>
-            </Link>
+            <motion.div key={idx} variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="h-full">
+              <Link 
+                to={`/catalog?category=${encodeURIComponent(cat.name)}`}
+                className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-luxury-gold/10 hover:border-luxury-gold/40 flex items-end p-4 transition-all duration-300 block w-full"
+              >
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/35 z-10 transition-all"></div>
+                <img 
+                  src={cat.img} 
+                  alt={cat.name} 
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                />
+                <div className="relative z-20 text-left text-white w-full space-y-0.5">
+                  <h3 className="text-sm font-semibold tracking-wide truncate group-hover:text-luxury-gold transition-colors">{cat.name}</h3>
+                  <p className="text-[9px] text-white/70 uppercase tracking-widest font-light">{cat.count}</p>
+                </div>
+              </Link>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* 3. HOW IT WORKS */}
@@ -203,10 +226,19 @@ const Landing = () => {
             <div className="h-0.5 w-16 bg-luxury-gold mx-auto"></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+            }}
+            className="grid grid-cols-1 md:grid-cols-4 gap-8 relative"
+          >
             
             {/* Step 1 */}
-            <div className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
+            <motion.div variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
               <div className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
                 1
               </div>
@@ -214,10 +246,10 @@ const Landing = () => {
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 leading-relaxed font-light">
                 Browse our premium designer catalog and filter by size, color, design, and dates.
               </p>
-            </div>
+            </motion.div>
 
             {/* Step 2 */}
-            <div className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
+            <motion.div variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
               <div className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
                 2
               </div>
@@ -225,10 +257,10 @@ const Landing = () => {
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 leading-relaxed font-light">
                 Choose a 3, 5, or 7 day booking window. Make a secure, deposit-inclusive payment.
               </p>
-            </div>
+            </motion.div>
 
             {/* Step 3 */}
-            <div className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
+            <motion.div variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
               <div className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
                 3
               </div>
@@ -236,10 +268,10 @@ const Landing = () => {
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 leading-relaxed font-light">
                 Receive the custom-fitted, UV-sanitized outfit in a luxury bag. Rock your special event!
               </p>
-            </div>
+            </motion.div>
 
             {/* Step 4 */}
-            <div className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
+            <motion.div variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
               <div className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
                 4
               </div>
@@ -247,9 +279,9 @@ const Landing = () => {
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 leading-relaxed font-light">
                 Pack it back. Our courier partner picks it up from your doorstep. Deposit is returned instantly!
               </p>
-            </div>
+            </motion.div>
 
-          </div>
+          </motion.div>
 
         </div>
       </section>
@@ -268,55 +300,65 @@ const Landing = () => {
             <div className="h-0.5 w-16 bg-luxury-gold mx-auto"></div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+            }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
             {featuredBoutiques.map((boutique) => (
-              <div 
-                key={boutique.id} 
-                className="bg-white dark:bg-luxury-charcoal rounded-xl overflow-hidden shadow-lg border border-luxury-gold/15 group flex flex-col justify-between"
-              >
-                <div className="h-40 overflow-hidden relative">
-                  <img src={boutique.coverImage} alt={boutique.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                  <div className="absolute top-3 right-3 bg-luxury-gold text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    Verified
-                  </div>
-                </div>
-
-                <div className="p-6 text-left relative flex-1">
-                  
-                  {/* Logo overlay */}
-                  <img 
-                    src={boutique.logo} 
-                    alt={boutique.name} 
-                    className="w-16 h-16 rounded-full border-2 border-white dark:border-luxury-charcoal object-cover shadow-md absolute -top-8 left-6 bg-white" 
-                  />
-
-                  <div className="pt-8 space-y-3">
-                    <h3 className="font-bold text-lg dark:text-white flex items-center">
-                      {boutique.name}
-                    </h3>
-                    <p className="text-xs text-luxury-charcoal/50 dark:text-luxury-alabaster/50 font-light">{boutique.location}</p>
-                    <p className="text-xs text-luxury-charcoal/70 dark:text-luxury-alabaster/70 leading-relaxed font-light line-clamp-2">
-                      {boutique.description}
-                    </p>
-
-                    <div className="pt-4 border-t border-luxury-gold/10 flex items-center justify-between text-xs">
-                      <div>
-                        <span className="font-semibold text-luxury-gold">{boutique.rating} ★</span>
-                        <span className="text-luxury-charcoal/40 dark:text-luxury-alabaster/40 font-light ml-1">({boutique.reviewsCount} bookings)</span>
-                      </div>
-                      <Link 
-                        to={`/catalog?storeName=${encodeURIComponent(boutique.name)}`}
-                        className="text-[10px] uppercase font-bold tracking-widest text-luxury-gold hover:text-luxury-bronze"
-                      >
-                        View Store
-                      </Link>
+              <motion.div key={boutique.id} variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}>
+                <div 
+                  className="bg-white dark:bg-luxury-charcoal rounded-xl overflow-hidden shadow-lg border border-luxury-gold/15 group flex flex-col justify-between h-full"
+                >
+                  <div className="h-40 overflow-hidden relative">
+                    <img src={boutique.coverImage} alt={boutique.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <div className="absolute top-3 right-3 bg-luxury-gold text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                      Verified
                     </div>
                   </div>
 
+                  <div className="p-6 text-left relative flex-1">
+                    
+                    {/* Logo overlay */}
+                    <img 
+                      src={boutique.logo} 
+                      alt={boutique.name} 
+                      className="w-16 h-16 rounded-full border-2 border-white dark:border-luxury-charcoal object-cover shadow-md absolute -top-8 left-6 bg-white" 
+                    />
+
+                    <div className="pt-8 space-y-3">
+                      <h3 className="font-bold text-lg dark:text-white flex items-center">
+                        {boutique.name}
+                      </h3>
+                      <p className="text-xs text-luxury-charcoal/50 dark:text-luxury-alabaster/50 font-light">{boutique.location}</p>
+                      <p className="text-xs text-luxury-charcoal/70 dark:text-luxury-alabaster/70 leading-relaxed font-light line-clamp-2">
+                        {boutique.description}
+                      </p>
+
+                      <div className="pt-4 border-t border-luxury-gold/10 flex items-center justify-between text-xs">
+                        <div>
+                          <span className="font-semibold text-luxury-gold">{boutique.rating} ★</span>
+                          <span className="text-luxury-charcoal/40 dark:text-luxury-alabaster/40 font-light ml-1">({boutique.reviewsCount} bookings)</span>
+                        </div>
+                        <Link 
+                          to={`/catalog?storeName=${encodeURIComponent(boutique.name)}`}
+                          className="text-[10px] uppercase font-bold tracking-widest text-luxury-gold hover:text-luxury-bronze"
+                        >
+                          View Store
+                        </Link>
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
         </div>
       </section>
@@ -331,9 +373,18 @@ const Landing = () => {
           <div className="h-0.5 w-16 bg-luxury-gold mx-auto"></div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+          }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
           
-          <div className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-sm text-left">
+          <motion.div variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } } }} className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-sm text-left hover:shadow-md transition-shadow">
             <div className="p-3 bg-luxury-gold/10 text-luxury-gold rounded-lg flex-shrink-0">
               <ShieldCheck size={24} />
             </div>
@@ -343,9 +394,9 @@ const Landing = () => {
                 Outfits undergo dry cleaning, steam pressing, and high-intensity UV sanitization. Sealed vacuum bags protect them until delivery.
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-sm text-left">
+          <motion.div variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } } }} className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-sm text-left hover:shadow-md transition-shadow">
             <div className="p-3 bg-luxury-gold/10 text-luxury-gold rounded-lg flex-shrink-0">
               <Award size={24} />
             </div>
@@ -355,9 +406,9 @@ const Landing = () => {
                 Verified boutique tailors temporarily adjust seam sizes based on your exact body measurements for a custom, bespoke fit.
               </p>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-sm text-left">
+          <motion.div variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } } }} className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-sm text-left hover:shadow-md transition-shadow">
             <div className="p-3 bg-luxury-gold/10 text-luxury-gold rounded-lg flex-shrink-0">
               <Calendar size={24} />
             </div>
@@ -367,9 +418,9 @@ const Landing = () => {
                 Cancel up to 10 days before your booking for a full refund. Returns include hassle-free courier doorstep pickup.
               </p>
             </div>
-          </div>
+          </motion.div>
 
-        </div>
+        </motion.div>
       </section>
 
 
@@ -385,12 +436,22 @@ const Landing = () => {
           <div className="h-0.5 w-16 bg-luxury-gold mx-auto"></div>
         </div>
 
-        <div className="space-y-4">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+          }}
+          className="space-y-4"
+        >
           {MOCK_FAQS.map((faq, idx) => {
             const isOpen = openFaqIdx === idx;
             return (
-              <div 
+              <motion.div 
                 key={idx} 
+                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }}
                 className="border border-luxury-gold/20 rounded-lg overflow-hidden bg-white dark:bg-luxury-lightcharcoal transition-colors"
               >
                 <button
@@ -406,15 +467,23 @@ const Landing = () => {
                   </span>
                 </button>
                 
-                {isOpen && (
-                  <div className="px-6 pb-6 pt-1 text-xs md:text-sm text-luxury-charcoal/75 dark:text-luxury-alabaster/75 font-light leading-relaxed border-t border-luxury-gold/5 pl-12">
-                    {faq.answer}
-                  </div>
-                )}
-              </div>
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="px-6 text-xs md:text-sm text-luxury-charcoal/75 dark:text-luxury-alabaster/75 font-light leading-relaxed border-t border-luxury-gold/5 pl-12"
+                    >
+                      <div className="pb-6 pt-4">{faq.answer}</div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </section>
 
     </div>
