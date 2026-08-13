@@ -100,7 +100,7 @@ const AdminDashboard = () => {
     try {
       // Direct Soft-Delete bypassing Vercel Serverless functions
       await dbService.deleteUserCompletely(user.uid, user.role, user.boutiqueId);
-      setAdminSuccess(`✅ ${user.role === 'store' ? 'Boutique' : 'User'} ${user.email} removed from platform.`);
+      setAdminSuccess(`✅ ${user.role === 'store' ? 'Boutique' : 'User'} ${user.displayName || 'successfully'} removed from platform.`);
       loadAdminData();
     } catch (err) {
       console.error("Deletion error:", err);

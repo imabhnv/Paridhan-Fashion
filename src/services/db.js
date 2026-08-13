@@ -334,7 +334,9 @@ export const dbService = {
   async deleteUserCompletely(uid, role, boutiqueId) {
     if (isFirebaseConfigured) {
       try {
-        await deleteDoc(doc(firebaseDb, 'users', uid));
+        if (uid) {
+          await deleteDoc(doc(firebaseDb, 'users', uid));
+        }
         if (role === 'store' && boutiqueId) {
           await deleteDoc(doc(firebaseDb, 'boutiques', boutiqueId));
         }
