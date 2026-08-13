@@ -1,12 +1,14 @@
-import * as admin from 'firebase-admin';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
 
 // Initialize Firebase Admin if not already initialized
-if (!admin.apps.length) {
+if (getApps().length === 0) {
   try {
     if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
       const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
+      initializeApp({
+        credential: cert(serviceAccount)
       });
     }
   } catch (error) {
@@ -28,15 +30,15 @@ export default async function handler(req, res) {
 
   try {
     // 1. Delete from Firebase Authentication (requires Admin SDK)
-    if (admin.apps.length) {
-      await admin.auth().deleteUser(uid);
+    if (getApps().length > 0) {
+      await getAuth().deleteUser(uid);
     } else {
       console.warn("FIREBASE_SERVICE_ACCOUNT_KEY is missing. Skipping Auth deletion.");
     }
 
     // 2. Delete from Firestore
-    if (admin.apps.length) {
-      const db = admin.firestore();
+    if (getApps().length > 0) {
+      const db = getFirestore();
       
       // Delete user profile
       await db.collection('users').doc(uid).delete();
