@@ -153,7 +153,7 @@ const AdminDashboard = () => {
     { id: 'disputes', label: 'Dispute Claims', badge: disputes.filter(d => d.status === 'Open').length, icon: ShieldAlert },
     { id: 'listings', label: 'All Listings', badge: inactiveListings > 0 ? inactiveListings : undefined, icon: Package },
     { id: 'bookings', label: 'All Bookings', badge: undefined, icon: ClipboardList },
-    { id: 'customers', label: 'Customers', badge: undefined, icon: Users },
+    { id: 'customers', label: 'Users', badge: undefined, icon: Users },
     { id: 'analytics', label: 'Analytics', badge: undefined, icon: BarChart },
   ];
 
