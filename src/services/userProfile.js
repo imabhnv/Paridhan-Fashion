@@ -106,6 +106,8 @@ export const getAllUsers = async () => {
     return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() })).filter(u => !blacklist.includes(u.uid));
   } catch (err) {
     console.error('getAllUsers error:', err);
-    return [];
+    // Fallback to LocalStorage if Firestore blocks the read
+    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
+    return users.filter(u => !blacklist.includes(u.uid));
   }
 };
