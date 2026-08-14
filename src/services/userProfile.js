@@ -103,7 +103,9 @@ export const getAllUsers = async () => {
   }
   try {
     const snap = await getDocs(collection(db, 'users'));
-    return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() })).filter(u => !blacklist.includes(u.uid));
+    // If using real Firestore, the document was actually deleted. Don't use the local blacklist, 
+    // because if they sign up again with the same Firebase Auth account, it will be hidden forever!
+    return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
   } catch (err) {
     console.error('getAllUsers error:', err);
     // Fallback to LocalStorage if Firestore blocks the read

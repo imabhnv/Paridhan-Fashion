@@ -96,7 +96,7 @@ export const dbService = {
     if (isFirebaseConfigured) {
       try {
         const snap = await getDocs(collection(firebaseDb, 'boutiques'));
-        return snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(d => !blacklist.includes(d.id) && !blacklist.includes(d.ownerId));
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
       } catch (err) {
         console.error("Firestore getBoutiques failed, using LocalStorage:", err);
       }
@@ -110,7 +110,7 @@ export const dbService = {
       try {
         const q = query(collection(firebaseDb, 'boutiques'), where("verified", "==", true));
         const snap = await getDocs(q);
-        return snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(d => !blacklist.includes(d.id) && !blacklist.includes(d.ownerId));
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
       } catch (err) {
         console.error("Firestore getVerifiedBoutiques failed, using LocalStorage:", err);
       }

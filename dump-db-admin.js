@@ -1,4 +1,5 @@
-import admin from 'firebase-admin';
+import { initializeApp, cert } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
 import fs from 'fs';
 
 const env = fs.readFileSync('.env', 'utf-8');
@@ -17,7 +18,6 @@ const serviceAccountStr = getEnv('FIREBASE_SERVICE_ACCOUNT_KEY');
 let serviceAccount;
 try {
   serviceAccount = JSON.parse(serviceAccountStr);
-  // Re-escape the private key inside the object
   if (serviceAccount.private_key) {
       serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
   }
@@ -26,11 +26,11 @@ try {
   process.exit(1);
 }
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+initializeApp({
+  credential: cert(serviceAccount)
 });
 
-const db = admin.firestore();
+const db = getFirestore();
 
 async function dump() {
   try {
@@ -44,7 +44,7 @@ async function dump() {
     const boutiquesSnap = await db.collection('boutiques').get();
     console.log('\n--- BOUTIQUES ---');
     boutiquesSnap.forEach(doc => {
-      console.log(doc.id, doc.data());
+      console.log(doc.id, { ownerId: doc.data().ownerId, name: doc.data().name });
     });
   } catch (err) {
     console.error('Error fetching data:', err);
