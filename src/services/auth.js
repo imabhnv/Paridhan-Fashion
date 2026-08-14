@@ -216,7 +216,7 @@ export const authService = {
   },
 
   // ── Google Sign-In ─────────────────────────────────────────────
-  async loginWithGoogle(requestedRole = 'customer', isSignUp = false) {
+  async loginWithGoogle(requestedRole = 'customer') {
     if (isFirebaseConfigured) {
       try {
         const provider = new GoogleAuthProvider();
@@ -255,14 +255,6 @@ export const authService = {
           await createUserProfile(cred.user.uid, updates);
           profile = { ...profile, ...updates };
         } else {
-          // If the user is just trying to sign in, but doesn't exist in the database, block it!
-          // We must not create a 'customer' profile accidentally before they have a chance to select 'Boutique'.
-          if (!isSignUp) {
-            // Sign them out of Firebase Auth so they can properly sign up
-            await firebaseAuth.signOut();
-            throw new Error('no-account-found');
-          }
-
           const finalRole = resolveRole(cred.user.email, requestedRole);
           
           // First time Google login — create profile
@@ -293,9 +285,6 @@ export const authService = {
         }
         return profile;
       } catch (err) {
-        if (err.message === 'no-account-found') {
-          throw new Error('No account found with this Google email. Please switch to Create Account first.');
-        }
         throw new Error(friendlyError(err.code));
       }
     }

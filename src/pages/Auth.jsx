@@ -27,11 +27,24 @@ const Auth = () => {
     setError('');
     setGoogleLoading(true);
     try {
-      // Pass the selected role and whether this is a signup attempt.
-      // If they are just signing in, auth.js will block accidental profile creation.
-      const isSignUp = activeTab === 'signup';
-      const userObj = await loginWithGoogle(isSignUp ? registerRole : 'customer', isSignUp);
+      // Pass the selected role. If they are signing in, it will be ignored by auth.js for existing profiles.
+      const userObj = await loginWithGoogle(activeTab === 'signup' ? registerRole : 'customer');
       
+      // Enforce tab logic: remember if user is new or not
+      if (activeTab === 'signin' && userObj.isNewUser) {
+        // User tried to sign in but didn't have an account
+        await logout(); // Undo the login
+        setError('No account found with this Google email. Please create an account first.');
+        setGoogleLoading(false);
+        return;
+      }
+      
+      if (activeTab === 'signup' && !userObj.isNewUser) {
+        // User tried to sign up but already had an account
+        // We'll let them in, but show a welcome back toast/message if we had a toast system
+        // For now, we just redirect them as normal, since they are verified.
+      }
+
       // If user is new, we can flag it in local storage to show them an onboarding message later
       if (userObj.isNewUser) {
         localStorage.setItem('paridhan_is_new_user', 'true');
