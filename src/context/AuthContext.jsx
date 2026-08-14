@@ -20,7 +20,13 @@ export const AuthProvider = ({ children }) => {
             if (profile) {
               // Always enforce admin whitelist — overrides any role stored in Firestore
               const safeRole = resolveRole(profile.email, profile.role);
-              setUser({ ...profile, role: safeRole });
+              setUser(prev => {
+                // Prevent race condition: if Auth.jsx just upgraded the user, don't let a stale database read downgrade them back!
+                if (prev && prev.uid === firebaseUser.uid && (prev.role === 'store' || prev.role === 'admin')) {
+                  return { ...profile, ...prev, role: prev.role };
+                }
+                return { ...profile, role: safeRole };
+              });
             } else {
               // Profile doesn't exist yet in Firestore (e.g. due to race condition during signup)
               setUser(prev => {
