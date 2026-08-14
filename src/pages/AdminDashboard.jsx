@@ -678,7 +678,15 @@ const AdminDashboard = () => {
                               </span>
                             </td>
                             <td className="px-6 py-4 font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70">
-                              {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                              {user.createdAt 
+                                ? (typeof user.createdAt === 'string' 
+                                    ? new Date(user.createdAt).toLocaleDateString() 
+                                    : (user.createdAt.toDate 
+                                        ? user.createdAt.toDate().toLocaleDateString() 
+                                        : (user.createdAt.seconds 
+                                            ? new Date(user.createdAt.seconds * 1000).toLocaleDateString() 
+                                            : 'Invalid Date'))) 
+                                : 'N/A'}
                             </td>
                             <td className="px-6 py-4 text-right">
                               {user.role !== 'admin' && (

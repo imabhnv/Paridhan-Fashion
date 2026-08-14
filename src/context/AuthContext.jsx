@@ -22,14 +22,20 @@ export const AuthProvider = ({ children }) => {
               const safeRole = resolveRole(profile.email, profile.role);
               setUser({ ...profile, role: safeRole });
             } else {
-              // Profile doesn't exist yet (e.g. during first signup flow)
-              setUser({
-                uid: firebaseUser.uid,
-                email: firebaseUser.email,
-                displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-                photoURL: firebaseUser.photoURL || '',
-                role: resolveRole(firebaseUser.email),
-                provider: firebaseUser.providerData?.[0]?.providerId || 'email',
+              // Profile doesn't exist yet in Firestore (e.g. due to race condition during signup)
+              setUser(prev => {
+                // If Auth.jsx already injected the correct user state, preserve it!
+                if (prev && prev.uid === firebaseUser.uid) {
+                  return prev;
+                }
+                return {
+                  uid: firebaseUser.uid,
+                  email: firebaseUser.email,
+                  displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+                  photoURL: firebaseUser.photoURL || '',
+                  role: resolveRole(firebaseUser.email),
+                  provider: firebaseUser.providerData?.[0]?.providerId || 'email',
+                };
               });
             }
           } catch (err) {
