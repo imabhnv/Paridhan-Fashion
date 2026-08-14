@@ -7,7 +7,7 @@ import SeoHelper from '../components/SeoHelper';
 const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { loginWithGoogle, isAuthenticated, loading: authLoading, logout } = useAuth();
+  const { loginWithGoogle, isAuthenticated, loading: authLoading, logout, setUser } = useAuth();
 
   const redirectDest = searchParams.get('redirect') || '';
 
@@ -50,6 +50,8 @@ const Auth = () => {
         localStorage.setItem('paridhan_is_new_user', 'true');
       }
 
+      // Manually update the context immediately to prevent race conditions with onAuthStateChanged
+      if (setUser) setUser(userObj);
       redirectUser(userObj);
     } catch (err) {
       setError(err.message || 'Unable to authenticate with Google. Please try again.');

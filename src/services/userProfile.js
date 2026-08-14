@@ -21,10 +21,11 @@ export const createUserProfile = async (uid, data) => {
     
     // First try to check if it exists so we don't trigger update rules on a non-existent doc
     const snap = await getDoc(userRef);
+    const now = new Date().toISOString();
     if (snap.exists()) {
-      await setDoc(userRef, { ...data, updatedAt: serverTimestamp() }, { merge: true });
+      await setDoc(userRef, { ...data, updatedAt: now }, { merge: true });
     } else {
-      await setDoc(userRef, { ...data, uid, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+      await setDoc(userRef, { createdAt: now, updatedAt: now, ...data, uid });
     }
     return { uid, ...data };
   } catch (err) {
