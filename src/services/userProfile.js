@@ -18,15 +18,14 @@ export const createUserProfile = async (uid, data) => {
   if (!isFirebaseConfigured || !db) return null;
   try {
     const userRef = doc(db, 'users', uid);
-    await setDoc(
-      userRef,
-      {
-        ...data,
-        uid,
-        updatedAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
+    
+    // First try to check if it exists so we don't trigger update rules on a non-existent doc
+    const snap = await getDoc(userRef);
+    if (snap.exists()) {
+      await setDoc(userRef, { ...data, updatedAt: serverTimestamp() }, { merge: true });
+    } else {
+      await setDoc(userRef, { ...data, uid, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+    }
     return { uid, ...data };
   } catch (err) {
     console.error('createUserProfile error:', err);
