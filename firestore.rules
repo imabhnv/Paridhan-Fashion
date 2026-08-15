@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Admin whitelist ─────────────────────────────────────────────
+    // Uses request.auth.token.email (from Firebase Auth — tamper-proof).
+    // Must match exactly what's in auth.js ADMIN_EMAILS.
+    function isAdmin() {
+      return request.auth != null &&
+        request.auth.token.email in [
+          'varshneyabhinav66@gmail.com',
+          'guptatanya245@gmail.com'
+        ];
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // ── Users ────────────────────────────────────────────────────────
+    match /users/{userId} {
+      // FIX: Allow Admins to read the list and delete users!
+      allow read, delete: if isAdmin() || (isSignedIn() && request.auth.uid == userId);
+      
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() && request.auth.uid == userId &&
+        (
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])
+          || isAdmin()
+        );
+    }
+
+    // ── Products ─────────────────────────────────────────────────────
+    // Publicly readable. Store owners write their own. Admins write all.
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && (
+        resource.data.storeId == request.auth.uid || isAdmin()
+      );
+    }
+
+    // ── Boutiques ────────────────────────────────────────────────────
+    // Publicly readable. Store owner or admin can write.
+    match /boutiques/{boutiqueId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && (
+        resource.data.ownerId == request.auth.uid || isAdmin()
+      );
+    }
+
+    // ── Orders ───────────────────────────────────────────────────────
+    // Customer sees their own. Store sees orders for their boutique.
+    // Admin sees all. Only stores and admins can update status.
+    match /orders/{orderId} {
+      allow read: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.storeId == request.auth.uid ||
+        isAdmin()
+      );
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (
+        resource.data.storeId == request.auth.uid || isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // ── Disputes ─────────────────────────────────────────────────────
+    // Involved parties can read. Any signed-in user can file.
+    // Only admins can resolve (update/close).
+    match /disputes/{disputeId} {
+      allow read: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.storeId == request.auth.uid ||
+        isAdmin()
+      );
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+  }
+}

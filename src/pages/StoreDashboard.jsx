@@ -10,6 +10,7 @@ import { storage, isFirebaseConfigured } from '../services/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import dbService from '../services/db';
 import SeoHelper from '../components/SeoHelper';
+import { resizeImage } from '../utils/imageUtils';
 
 const StoreDashboard = () => {
   const { user } = useAuth();
@@ -69,17 +70,22 @@ const StoreDashboard = () => {
   }, [user, activeTab]);
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    if (!isFirebaseConfigured) {
-      // In simulated mode, create a fake local blob URL
-      setImageUrl(URL.createObjectURL(file));
-      return;
-    }
+    const rawFile = e.target.files[0];
+    if (!rawFile) return;
 
     try {
       setImageUploading(true);
+      
+      // 1. Resize and compress the image before upload (Max 1200x1200px, 80% Quality)
+      const file = await resizeImage(rawFile, 1200, 1200, 0.8);
+
+      if (!isFirebaseConfigured) {
+        // In simulated mode, create a fake local blob URL from the compressed file
+        setImageUrl(URL.createObjectURL(file));
+        setImageUploading(false);
+        return;
+      }
+
       const filename = `products/${user.uid}/${Date.now()}_${file.name}`;
       const storageRef = ref(storage, filename);
       await uploadBytes(storageRef, file);
@@ -87,7 +93,11 @@ const StoreDashboard = () => {
       setImageUrl(downloadURL);
     } catch (err) {
       console.error('Image upload failed', err);
-      alert('Failed to upload image. Please try again.');
+      if (err.message.includes('unauthorized') || err.message.includes('permission')) {
+        alert('Upload failed: Your Firebase Storage security rules are blocking the upload. Please update them to allow authenticated users to write to the storage bucket.');
+      } else {
+        alert('Failed to upload image. Please try again. Error: ' + err.message);
+      }
     } finally {
       setImageUploading(false);
     }

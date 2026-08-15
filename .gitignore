@@ -31,3 +31,11 @@ dist-ssr
 
 # Firebase Service Account Credentials
 *firebase-adminsdk*.json
+
+# Diagnostic & Scratch Scripts
+dump-db.js
+dump-db-admin.js
+test-client.js
+test-api.js
+check-db.js
+scratch-*.js
