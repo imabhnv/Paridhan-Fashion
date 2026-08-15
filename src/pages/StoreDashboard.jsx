@@ -4,7 +4,7 @@ import {
   BarChart as ReBarChart, Bar, LineChart as ReLineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell 
 } from 'recharts';
 import { 
-  Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image as ImageIcon, CheckCircle, Tag, BarChart2, Loader2
+  Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image as ImageIcon, CheckCircle, Tag, BarChart2
 } from 'lucide-react';
 import { storage, isFirebaseConfigured } from '../services/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -73,6 +73,8 @@ const StoreDashboard = () => {
     const rawFile = e.target.files[0];
     if (!rawFile) return;
 
+    console.log("Starting image upload. Selected file:", rawFile.name, "Type:", rawFile.type, "Size:", rawFile.size);
+
     try {
       setImageUploading(true);
       
@@ -91,12 +93,14 @@ const StoreDashboard = () => {
       await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(storageRef);
       setImageUrl(downloadURL);
+      console.log("Upload complete. Image URL:", downloadURL);
     } catch (err) {
       console.error('Image upload failed', err);
-      if (err.message.includes('unauthorized') || err.message.includes('permission')) {
+      const errorMsg = err?.message || String(err);
+      if (errorMsg.includes('unauthorized') || errorMsg.includes('permission')) {
         alert('Upload failed: Your Firebase Storage security rules are blocking the upload. Please update them to allow authenticated users to write to the storage bucket.');
       } else {
-        alert('Failed to upload image. Please try again. Error: ' + err.message);
+        alert('Failed to upload image. Please try again. Error: ' + errorMsg);
       }
     } finally {
       setImageUploading(false);
@@ -586,7 +590,10 @@ const StoreDashboard = () => {
                       />
                       {imageUploading && (
                         <div className="absolute inset-y-0 right-3 flex items-center">
-                          <Loader2 size={16} className="animate-spin text-luxury-gold" />
+                          <svg className="animate-spin h-4 w-4 text-luxury-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
                         </div>
                       )}
                     </div>
