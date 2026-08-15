@@ -6,8 +6,7 @@ import {
 import { 
   Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image as ImageIcon, CheckCircle, Tag, BarChart2
 } from 'lucide-react';
-import { storage, isFirebaseConfigured } from '../services/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { isFirebaseConfigured } from '../services/firebase';
 import dbService from '../services/db';
 import SeoHelper from '../components/SeoHelper';
 import { resizeImage } from '../utils/imageUtils';
@@ -78,33 +77,26 @@ const StoreDashboard = () => {
     try {
       setImageUploading(true);
       
-      // 1. Resize and compress the image before upload (Max 1200x1200px, 80% Quality)
-      const file = await resizeImage(rawFile, 1200, 1200, 0.8);
+      // 1. Resize and compress the image aggressively (Max 800x800px, 70% Quality) to easily fit the 1MB Firestore limit
+      const file = await resizeImage(rawFile, 800, 800, 0.7);
 
-      if (!isFirebaseConfigured) {
-        // In simulated mode, create a fake local blob URL from the compressed file
-        setImageUrl(URL.createObjectURL(file));
+      // 2. Convert to Base64 data URL to store directly in Firestore
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64data = reader.result;
+        setImageUrl(base64data);
         setImageUploading(false);
-        return;
-      }
+        console.log("Image successfully converted to Base64 for Firestore storage.");
+      };
+      reader.readAsDataURL(file);
 
-      const filename = `products/${user.uid}/${Date.now()}_${file.name}`;
-      const storageRef = ref(storage, filename);
-      await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(storageRef);
-      setImageUrl(downloadURL);
-      console.log("Upload complete. Image URL:", downloadURL);
     } catch (err) {
-      console.error('Image upload failed', err);
+      console.error('Image processing failed', err);
       const errorMsg = err?.message || String(err);
-      if (errorMsg.includes('unauthorized') || errorMsg.includes('permission')) {
-        alert('Upload failed: Your Firebase Storage security rules are blocking the upload. Please update them to allow authenticated users to write to the storage bucket.');
-      } else {
-        alert('Failed to upload image. Please try again. Error: ' + errorMsg);
-      }
-    } finally {
+      alert('Failed to process image. Please try again. Error: ' + errorMsg);
       setImageUploading(false);
     }
+    // Note: finally block removed because FileReader is callback-based, handled inside onloadend
   };
 
   const handleCreateListing = async (e) => {
