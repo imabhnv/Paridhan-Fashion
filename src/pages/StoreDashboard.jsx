@@ -4,7 +4,7 @@ import {
   BarChart as ReBarChart, Bar, LineChart as ReLineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell 
 } from 'recharts';
 import { 
-  Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image, CheckCircle, Tag, BarChart2 
+  Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image as ImageIcon, CheckCircle, Tag, BarChart2, Loader2
 } from 'lucide-react';
 import { storage, isFirebaseConfigured } from '../services/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';

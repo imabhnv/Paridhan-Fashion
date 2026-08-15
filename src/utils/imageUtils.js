@@ -4,13 +4,14 @@
  * @param {number} maxWidth - Maximum width allowed
  * @param {number} maxHeight - Maximum height allowed
  * @param {number} quality - JPEG compression quality (0.0 to 1.0)
- * @returns {Promise<File>} A promise that resolves to the resized File object
+ * @returns {Promise<File>} A promise that resolves to the resized File object, or the original if unsupported.
  */
 export const resizeImage = (file, maxWidth = 1200, maxHeight = 1200, quality = 0.8) => {
-  return new Promise((resolve, reject) => {
-    if (!file.type.match(/image.*/)) {
-      reject(new Error('Not an image file.'));
-      return;
+  return new Promise((resolve) => {
+    // If it's not a standard web image (like HEIC), canvas might fail, so just return the original file
+    if (!file.type.match(/image\/(jpeg|png|webp|gif)/)) {
+      console.warn("Unsupported image format for compression, uploading original file.");
+      return resolve(file);
     }
 
     const reader = new FileReader();
@@ -20,7 +21,6 @@ export const resizeImage = (file, maxWidth = 1200, maxHeight = 1200, quality = 0
         let width = img.width;
         let height = img.height;
 
-        // Calculate new dimensions
         if (width > height) {
           if (width > maxWidth) {
             height = Math.round((height * maxWidth) / width);
@@ -43,10 +43,9 @@ export const resizeImage = (file, maxWidth = 1200, maxHeight = 1200, quality = 0
         canvas.toBlob(
           (blob) => {
             if (!blob) {
-              reject(new Error('Canvas is empty'));
-              return;
+              console.error("Canvas is empty, returning original file");
+              return resolve(file);
             }
-            // Generate a new file name with .jpeg extension
             const fileName = file.name.replace(/\.[^/.]+$/, "") + ".jpeg";
             const resizedFile = new File([blob], fileName, {
               type: 'image/jpeg',
@@ -58,10 +57,16 @@ export const resizeImage = (file, maxWidth = 1200, maxHeight = 1200, quality = 0
           quality
         );
       };
-      img.onerror = (err) => reject(err);
+      img.onerror = () => {
+        console.error("Image loading failed in canvas, returning original file");
+        resolve(file);
+      };
       img.src = readerEvent.target.result;
     };
-    reader.onerror = (err) => reject(err);
+    reader.onerror = () => {
+       console.error("FileReader failed, returning original file");
+       resolve(file);
+    };
     reader.readAsDataURL(file);
   });
 };
