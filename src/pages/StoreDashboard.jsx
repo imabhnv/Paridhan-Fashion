@@ -47,6 +47,11 @@ const StoreDashboard = () => {
   const [damageFee, setDamageFee] = useState('');
   const [damageSuccess, setDamageSuccess] = useState('');
 
+  // Settings state
+  const [boutiqueData, setBoutiqueData] = useState(null);
+  const [storeCoverImage, setStoreCoverImage] = useState('');
+  const [settingsSuccess, setSettingsSuccess] = useState('');
+
   const loadBoutiqueData = async () => {
     if (!user) return;
     
@@ -63,6 +68,13 @@ const StoreDashboard = () => {
     const allDisps = await dbService.getDisputes();
     const storeDisps = allDisps.filter(d => d.storeId === user.boutiqueId);
     setDisputes(storeDisps);
+
+    // Load Boutique Profile
+    const bData = await dbService.getBoutique(user.boutiqueId);
+    if (bData) {
+      setBoutiqueData(bData);
+      setStoreCoverImage(bData.coverImage || '');
+    }
   };
 
   useEffect(() => {
@@ -194,6 +206,40 @@ const StoreDashboard = () => {
       } catch (err) {
         alert('Failed to delete listing: ' + (err.message || String(err)));
       }
+    }
+  };
+
+  const handleStoreImageUpload = async (e) => {
+    const rawFile = e.target.files[0];
+    if (!rawFile) return;
+
+    try {
+      setImageUploading(true);
+      const file = await resizeImage(rawFile, 1200, 800, 0.7);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setStoreCoverImage(reader.result);
+        setImageUploading(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      alert('Failed to process image. ' + String(err));
+      setImageUploading(false);
+    }
+  };
+
+  const handleUpdateSettings = async (e) => {
+    e.preventDefault();
+    if (!user?.boutiqueId) return;
+    try {
+      await dbService.updateBoutique(user.boutiqueId, {
+        coverImage: storeCoverImage
+      });
+      setSettingsSuccess('🎉 Store profile picture updated successfully!');
+      setTimeout(() => setSettingsSuccess(''), 3000);
+      loadBoutiqueData();
+    } catch (err) {
+      alert('Failed to update settings: ' + String(err));
     }
   };
 
@@ -344,7 +390,8 @@ const StoreDashboard = () => {
             { id: 'listings', label: 'My Listings', badge: products.length },
             { id: 'new-listing', label: 'Add Luxury Outfit' },
             { id: 'bookings', label: 'Rental Bookings', badge: bookings.length },
-            { id: 'damages', label: 'File Damage Claim', badge: disputes.length }
+            { id: 'damages', label: 'File Damage Claim', badge: disputes.length },
+            { id: 'settings', label: 'Store Settings' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -899,6 +946,86 @@ const StoreDashboard = () => {
                 </form>
               )}
 
+            </div>
+          )}
+
+          {/* TAB 6: STORE SETTINGS */}
+          {activeTab === 'settings' && (
+            <div className="space-y-6">
+              <h2 className="text-lg font-bold tracking-wider uppercase border-b border-luxury-gold/10 pb-3 dark:text-white">
+                Store Profile Settings
+              </h2>
+              
+              {settingsSuccess && (
+                <div className="p-3 bg-green-50 border border-green-200 text-green-700 rounded text-xs font-semibold">
+                  {settingsSuccess}
+                </div>
+              )}
+
+              <form onSubmit={handleUpdateSettings} className="bg-white dark:bg-luxury-lightcharcoal border border-luxury-gold/15 p-6 rounded-xl space-y-6 text-xs font-light">
+                <div className="space-y-1.5 text-left">
+                  <span className="text-[9px] uppercase font-bold text-luxury-gold">Boutique Name</span>
+                  <input
+                    type="text"
+                    disabled
+                    value={boutiqueData?.name || user?.displayName || ''}
+                    className="w-full p-2 bg-transparent border border-luxury-gold/20 dark:text-white rounded opacity-50 cursor-not-allowed"
+                  />
+                  <p className="text-[9px] text-luxury-charcoal/40 dark:text-luxury-alabaster/40 mt-1">To change boutique name, please contact Paridhan support.</p>
+                </div>
+
+                <div className="space-y-1.5 text-left">
+                  <span className="text-[9px] uppercase font-bold text-luxury-gold">Store Cover Picture</span>
+                  <p className="text-[9px] text-luxury-charcoal/50 dark:text-luxury-alabaster/50 pb-2">This image appears as the main background image on your boutique's card in the Verified Partners section.</p>
+                  
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    {storeCoverImage ? (
+                      <div className="relative w-40 h-24 group">
+                        <img src={storeCoverImage} alt="Cover Preview" className="w-full h-full object-cover rounded border border-luxury-gold/30 shadow-sm" />
+                        <button
+                          type="button"
+                          onClick={() => setStoreCoverImage('')}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-40 h-24 rounded border border-dashed border-luxury-gold/30 flex items-center justify-center text-luxury-gold/50 bg-luxury-gold/5">
+                        <ImageIcon size={24} />
+                      </div>
+                    )}
+                    
+                    <div className="flex-1 relative w-full sm:w-auto">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleStoreImageUpload}
+                        disabled={imageUploading}
+                        className="w-full p-2 bg-transparent border border-luxury-gold/20 dark:text-white rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-luxury-gold/10 file:text-luxury-gold hover:file:bg-luxury-gold/20 file:cursor-pointer disabled:opacity-50"
+                      />
+                      {imageUploading && (
+                        <div className="absolute inset-y-0 right-3 flex items-center">
+                          <svg className="animate-spin h-4 w-4 text-luxury-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-luxury-gold/10 text-right">
+                  <button
+                    type="submit"
+                    disabled={imageUploading}
+                    className="px-6 py-2.5 bg-luxury-gold text-white font-bold uppercase tracking-widest text-[10px] rounded hover:bg-luxury-bronze transition-colors disabled:opacity-50"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </form>
             </div>
           )}
 

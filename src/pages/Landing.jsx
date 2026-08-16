@@ -323,15 +323,7 @@ const Landing = () => {
                   </div>
 
                   <div className="p-6 text-left relative flex-1">
-                    
-                    {/* Logo overlay */}
-                    <img 
-                      src={boutique.logo} 
-                      alt={boutique.name} 
-                      className="w-16 h-16 rounded-full border-2 border-white dark:border-luxury-charcoal object-cover shadow-md absolute -top-8 left-6 bg-white" 
-                    />
-
-                    <div className="pt-8 space-y-3">
+                    <div className="pt-2 space-y-3">
                       <h3 className="font-bold text-lg dark:text-white flex items-center">
                         {boutique.name}
                       </h3>
@@ -342,8 +334,14 @@ const Landing = () => {
 
                       <div className="pt-4 border-t border-luxury-gold/10 flex items-center justify-between text-xs">
                         <div>
-                          <span className="font-semibold text-luxury-gold">{boutique.rating} ★</span>
-                          <span className="text-luxury-charcoal/40 dark:text-luxury-alabaster/40 font-light ml-1">({boutique.reviewsCount} bookings)</span>
+                          {boutique.reviewsCount > 0 ? (
+                            <>
+                              <span className="font-semibold text-luxury-gold">{boutique.rating} ★</span>
+                              <span className="text-luxury-charcoal/40 dark:text-luxury-alabaster/40 font-light ml-1">({boutique.reviewsCount} bookings)</span>
+                            </>
+                          ) : (
+                            <span className="text-xs text-luxury-charcoal/50 dark:text-luxury-alabaster/50 font-medium italic">New Boutique</span>
+                          )}
                         </div>
                         <Link 
                           to={`/catalog?storeName=${encodeURIComponent(boutique.name)}`}
