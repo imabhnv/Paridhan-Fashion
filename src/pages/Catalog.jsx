@@ -388,8 +388,14 @@ const Catalog = () => {
                       </p>
                       <h3 className="font-semibold text-sm truncate dark:text-white mt-1">{product.title}</h3>
                       <div className="flex items-center space-x-2 mt-1">
-                        <span className="text-[10px] text-amber-500 font-semibold">★ {product.rating}</span>
-                        <span className="text-[9px] text-luxury-charcoal/40 dark:text-luxury-alabaster/40 font-light">({product.reviewsCount} rentals)</span>
+                        {product.reviewsCount > 0 ? (
+                          <>
+                            <span className="text-[10px] text-amber-500 font-semibold">★ {product.rating}</span>
+                            <span className="text-[9px] text-luxury-charcoal/40 dark:text-luxury-alabaster/40 font-light">({product.reviewsCount} rentals)</span>
+                          </>
+                        ) : (
+                          <span className="text-[10px] text-luxury-charcoal/50 dark:text-luxury-alabaster/50 font-medium italic">New Arrival</span>
+                        )}
                       </div>
                       
                       {/* Available Sizes row */}
