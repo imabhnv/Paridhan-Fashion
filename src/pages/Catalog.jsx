@@ -36,12 +36,27 @@ const Catalog = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
-      // Simulate network request delay
-      setTimeout(async () => {
-        const data = await dbService.getProducts();
-        setAllProducts(data);
+      try {
+        const [data, boutiques] = await Promise.all([
+          dbService.getProducts(),
+          dbService.getVerifiedBoutiques()
+        ]);
+        
+        // Map boutique IDs to their actual names to fix legacy data
+        const boutiqueMap = {};
+        boutiques.forEach(b => { boutiqueMap[b.id] = b.name; });
+
+        const normalizedData = data.map(p => ({
+          ...p,
+          storeName: boutiqueMap[p.storeId] || p.storeName
+        }));
+
+        setAllProducts(normalizedData);
+      } catch (err) {
+        console.error("Failed to load products:", err);
+      } finally {
         setLoading(false);
-      }, 500);
+      }
     };
     fetchProducts();
   }, []);

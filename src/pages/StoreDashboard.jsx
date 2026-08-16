@@ -163,7 +163,7 @@ const StoreDashboard = () => {
         const newProduct = {
           ...productData,
           storeId: user.boutiqueId,
-          storeName: user.displayName,
+          storeName: boutiqueData?.name || user.displayName,
           rating: 5.0,
           reviewsCount: 0,
           availability: true,
