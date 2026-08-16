@@ -121,7 +121,7 @@ const StoreDashboard = () => {
       return;
     }
 
-    const newProduct = {
+    const productData = {
       title,
       category: finalCategory,
       gender,
@@ -129,29 +129,35 @@ const StoreDashboard = () => {
       rentalPricePerDay: Number(rentalPrice),
       originalRetailPrice: Number(retailPrice),
       securityDeposit: Number(deposit),
-      storeId: user.boutiqueId,
-      storeName: user.displayName,
-      rating: 5.0,
-      reviewsCount: 0,
       sizes: selectedSizes,
       colors: [color],
       fabric,
       occasion: finalOccasion,
       description: desc,
-      availability: true,
-      bookedDates: [],
-      cleanlinessRating: 5.0,
-      stylistNotes,
-      verified: true
+      stylistNotes
     };
 
     if (editingId) {
-      await dbService.updateProduct(editingId, newProduct);
+      await dbService.updateProduct(editingId, productData);
       setListingSuccess('🎉 Luxury Listing updated successfully!');
     } else {
+      const newProduct = {
+        ...productData,
+        storeId: user.boutiqueId,
+        storeName: user.displayName,
+        rating: 5.0,
+        reviewsCount: 0,
+        availability: true,
+        bookedDates: [],
+        cleanlinessRating: 5.0,
+        verified: true
+      };
       await dbService.addProduct(newProduct);
       setListingSuccess('🎉 Luxury Listing added to live catalog successfully!');
     }
+    
+    // Refresh the local inventory list immediately so changes are visible
+    loadBoutiqueData();
     
     // Reset Form
     setTitle('');
