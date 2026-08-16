@@ -126,14 +126,43 @@ const Navbar = () => {
                         </p>
                       </div>
                       
-                      <Link
-                        to={getDashboardLink()}
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center px-4 py-3 text-sm text-luxury-charcoal hover:bg-luxury-cream dark:text-luxury-alabaster dark:hover:bg-luxury-lightcharcoal transition-colors"
-                      >
-                        <LayoutDashboard size={16} className="mr-3 text-luxury-gold" />
-                        Dashboard
-                      </Link>
+                      {user.role === 'admin' ? (
+                        <>
+                          <Link
+                            to="/admin"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center px-4 py-3 text-sm text-luxury-charcoal hover:bg-luxury-cream dark:text-luxury-alabaster dark:hover:bg-luxury-lightcharcoal transition-colors"
+                          >
+                            <LayoutDashboard size={16} className="mr-3 text-luxury-gold" />
+                            Admin Control Panel
+                          </Link>
+                          <Link
+                            to="/store"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center px-4 py-3 text-sm text-luxury-charcoal hover:bg-luxury-cream dark:text-luxury-alabaster dark:hover:bg-luxury-lightcharcoal transition-colors border-t border-luxury-gold/5"
+                          >
+                            <LayoutDashboard size={16} className="mr-3 text-luxury-gold" />
+                            Store Console
+                          </Link>
+                          <Link
+                            to="/dashboard/customer"
+                            onClick={() => setDropdownOpen(false)}
+                            className="flex items-center px-4 py-3 text-sm text-luxury-charcoal hover:bg-luxury-cream dark:text-luxury-alabaster dark:hover:bg-luxury-lightcharcoal transition-colors border-t border-luxury-gold/5"
+                          >
+                            <LayoutDashboard size={16} className="mr-3 text-luxury-gold" />
+                            Customer Dashboard
+                          </Link>
+                        </>
+                      ) : (
+                        <Link
+                          to={getDashboardLink()}
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center px-4 py-3 text-sm text-luxury-charcoal hover:bg-luxury-cream dark:text-luxury-alabaster dark:hover:bg-luxury-lightcharcoal transition-colors"
+                        >
+                          <LayoutDashboard size={16} className="mr-3 text-luxury-gold" />
+                          Dashboard
+                        </Link>
+                      )}
                       
                       <button
                         onClick={handleLogout}
@@ -223,13 +252,39 @@ const Navbar = () => {
                   <p className="text-xs text-luxury-gold tracking-wider uppercase font-semibold">{user.role}</p>
                 </div>
               </div>
-              <Link
-                to={getDashboardLink()}
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full text-center py-2.5 bg-luxury-gold text-white text-sm font-semibold rounded-full uppercase tracking-wider shadow-md hover:bg-luxury-bronze"
-              >
-                Dashboard
-              </Link>
+              {user.role === 'admin' ? (
+                <>
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full text-center py-2.5 bg-luxury-gold text-white text-sm font-semibold rounded-full uppercase tracking-wider shadow-md hover:bg-luxury-bronze"
+                  >
+                    Admin Control Panel
+                  </Link>
+                  <Link
+                    to="/store"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full text-center py-2.5 border border-luxury-gold text-luxury-gold text-sm font-semibold rounded-full uppercase tracking-wider shadow-sm hover:bg-luxury-gold hover:text-white transition-colors"
+                  >
+                    Store Console
+                  </Link>
+                  <Link
+                    to="/dashboard/customer"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full text-center py-2.5 border border-luxury-gold text-luxury-gold text-sm font-semibold rounded-full uppercase tracking-wider shadow-sm hover:bg-luxury-gold hover:text-white transition-colors"
+                  >
+                    Customer Dashboard
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  to={getDashboardLink()}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 bg-luxury-gold text-white text-sm font-semibold rounded-full uppercase tracking-wider shadow-md hover:bg-luxury-bronze"
+                >
+                  Dashboard
+                </Link>
+              )}
               <button
                 onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
                 className="w-full text-center py-2.5 border border-red-500 text-red-500 text-sm font-semibold rounded-full uppercase tracking-wider"

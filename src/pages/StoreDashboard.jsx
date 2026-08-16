@@ -55,18 +55,18 @@ const StoreDashboard = () => {
   const loadBoutiqueData = async () => {
     if (!user) return;
     
-    // Load products matching this boutique
+    // Load products matching this boutique (or all for Admin)
     const allProds = await dbService.getProducts();
-    const boutiqueProds = allProds.filter(p => p.storeId === user.boutiqueId);
+    const boutiqueProds = user.role === 'admin' ? allProds : allProds.filter(p => p.storeId === user.boutiqueId);
     setProducts(boutiqueProds);
 
-    // Load bookings matching storeId
-    const allOrders = await dbService.getOrders({ storeId: user.boutiqueId });
+    // Load bookings matching storeId (or all for Admin)
+    const allOrders = await dbService.getOrders(user.role === 'admin' ? {} : { storeId: user.boutiqueId });
     setBookings(allOrders);
 
-    // Load disputes
+    // Load disputes (or all for Admin)
     const allDisps = await dbService.getDisputes();
-    const storeDisps = allDisps.filter(d => d.storeId === user.boutiqueId);
+    const storeDisps = user.role === 'admin' ? allDisps : allDisps.filter(d => d.storeId === user.boutiqueId);
     setDisputes(storeDisps);
 
     // Load Boutique Profile

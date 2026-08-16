@@ -42,8 +42,8 @@ const CustomerDashboard = () => {
   const loadDashboardData = async () => {
     if (!user) return;
     
-    // Load customer orders
-    const ordersData = await dbService.getOrders({ userId: user.uid });
+    // Load customer orders (or all for Admin)
+    const ordersData = await dbService.getOrders(user.role === 'admin' ? {} : { userId: user.uid });
     setBookings(ordersData);
 
     // Load wishlist objects
@@ -52,9 +52,9 @@ const CustomerDashboard = () => {
     const wishData = allProds.filter(p => wishIds.includes(p.id));
     setWishlistItems(wishData);
 
-    // Load disputes
+    // Load disputes (or all for Admin)
     const dispData = await dbService.getDisputes();
-    const clientDisps = dispData.filter(d => d.userId === user.uid);
+    const clientDisps = user.role === 'admin' ? dispData : dispData.filter(d => d.userId === user.uid);
     setDisputes(clientDisps);
   };
 
