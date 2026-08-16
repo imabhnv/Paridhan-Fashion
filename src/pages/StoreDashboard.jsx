@@ -4,7 +4,7 @@ import {
   BarChart as ReBarChart, Bar, LineChart as ReLineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell 
 } from 'recharts';
 import { 
-  Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image as ImageIcon, CheckCircle, Tag, BarChart2
+  Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image as ImageIcon, CheckCircle, Tag, BarChart2, Trash2, Edit2
 } from 'lucide-react';
 import { isFirebaseConfigured } from '../services/firebase';
 import dbService from '../services/db';
@@ -34,6 +34,7 @@ const StoreDashboard = () => {
   const [fabric, setFabric] = useState('');
   const [occasion, setOccasion] = useState('Wedding');
   const [customOccasion, setCustomOccasion] = useState('');
+  const [editingId, setEditingId] = useState(null);
   const [sizes, setSizes] = useState({ XS: false, S: true, M: true, L: false, XL: false, XXL: false });
   const [stylistNotes, setStylistNotes] = useState('');
   const [desc, setDesc] = useState('');
@@ -144,8 +145,13 @@ const StoreDashboard = () => {
       verified: true
     };
 
-    await dbService.addProduct(newProduct);
-    setListingSuccess('🎉 Luxury Listing added to live catalog successfully!');
+    if (editingId) {
+      await dbService.updateProduct(editingId, newProduct);
+      setListingSuccess('🎉 Luxury Listing updated successfully!');
+    } else {
+      await dbService.addProduct(newProduct);
+      setListingSuccess('🎉 Luxury Listing added to live catalog successfully!');
+    }
     
     // Reset Form
     setTitle('');
@@ -161,6 +167,35 @@ const StoreDashboard = () => {
     setCustomOccasion('');
     setStylistNotes('');
     setDesc('');
+    setEditingId(null);
+  };
+
+  const handleDeleteListing = async (id) => {
+    if (window.confirm('Are you sure you want to completely remove this outfit from your catalog?')) {
+      await dbService.deleteProduct(id);
+      setProducts(products.filter(p => p.id !== id));
+    }
+  };
+
+  const handleEditListing = (product) => {
+    setEditingId(product.id);
+    setTitle(product.title || '');
+    setDesc(product.description || '');
+    setRentalPrice(product.rentalPricePerDay?.toString() || '');
+    setRetailPrice(product.originalRetailPrice?.toString() || '');
+    setDeposit(product.securityDeposit?.toString() || '');
+    setCategory(product.category || 'Designer Lehengas');
+    setCustomCategory('');
+    setGender(product.gender || 'Women');
+    setOccasion(product.occasion || 'Wedding');
+    setCustomOccasion('');
+    setColor(product.colors?.[0] || '');
+    setFabric(product.fabric || '');
+    setStylistNotes(product.stylistNotes || '');
+    setImageUrl(product.images?.[0] || '');
+    if (product.sizes) setSelectedSizes(product.sizes);
+    setActiveTab('new-listing');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleUpdateStatus = async (orderId, newStatus) => {
@@ -376,9 +411,9 @@ const StoreDashboard = () => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {products.map(p => (
-                    <div key={p.id} className="p-4 border border-luxury-gold/15 bg-white dark:bg-luxury-lightcharcoal rounded-xl flex items-center space-x-4">
+                    <div key={p.id} className="p-4 border border-luxury-gold/15 bg-white dark:bg-luxury-lightcharcoal rounded-xl flex items-center space-x-4 relative">
                       <img src={p.images[0]} alt="" className="w-14 h-20 object-cover rounded bg-luxury-cream flex-shrink-0" />
-                      <div className="text-left min-w-0 flex-1">
+                      <div className="text-left min-w-0 flex-1 pr-16">
                         <h4 className="font-bold text-sm truncate dark:text-white">{p.title}</h4>
                         <p className="text-[10px] text-luxury-gold font-bold uppercase tracking-widest mt-0.5">{p.category}</p>
                         <div className="flex items-center justify-between pt-2 mt-2 border-t border-luxury-gold/10 text-xs">
@@ -387,6 +422,15 @@ const StoreDashboard = () => {
                             {p.availability ? 'Active' : 'Booked'}
                           </span>
                         </div>
+                      </div>
+                      
+                      <div className="absolute right-4 top-4 flex flex-col space-y-2">
+                        <button onClick={() => handleEditListing(p)} className="p-1.5 bg-luxury-gold/10 hover:bg-luxury-gold/30 text-luxury-gold rounded transition-colors" title="Edit Listing">
+                          <Edit2 size={14} />
+                        </button>
+                        <button onClick={() => handleDeleteListing(p.id)} className="p-1.5 bg-red-500/10 hover:bg-red-500/30 text-red-500 rounded transition-colors" title="Delete Listing">
+                          <Trash2 size={14} />
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -399,7 +443,7 @@ const StoreDashboard = () => {
           {activeTab === 'new-listing' && (
             <div className="space-y-6">
               <h2 className="text-lg font-bold tracking-wider uppercase border-b border-luxury-gold/10 pb-3 dark:text-white">
-                Register New Luxury Design
+                {editingId ? 'Edit Luxury Design' : 'Register New Luxury Design'}
               </h2>
 
               {listingSuccess && (
@@ -620,12 +664,23 @@ const StoreDashboard = () => {
                   ></textarea>
                 </div>
 
-                <button
-                  type="submit"
-                  className="px-8 py-3.5 bg-luxury-gold text-white font-bold uppercase tracking-widest text-[10px] rounded hover:bg-luxury-bronze"
-                >
-                  Publish Luxury Design
-                </button>
+                <div className="flex flex-col space-y-3 pt-4">
+                  <button type="submit" className="w-full py-4 bg-luxury-gold text-white font-bold tracking-widest uppercase text-xs hover:bg-luxury-bronze transition-colors duration-300">
+                    {editingId ? 'Update Luxury Design' : 'Publish Luxury Design'}
+                  </button>
+                  {editingId && (
+                    <button type="button" onClick={() => {
+                      setEditingId(null);
+                      setTitle(''); setCategory('Designer Lehengas'); setCustomCategory('');
+                      setImageUrl(''); setRentalPrice(''); setRetailPrice(''); setDeposit('');
+                      setColor(''); setFabric(''); setOccasion('Wedding'); setCustomOccasion('');
+                      setStylistNotes(''); setDesc(''); setListingSuccess('');
+                      setActiveTab('listings');
+                    }} className="w-full py-3 bg-transparent border border-luxury-gold/20 text-luxury-gold font-bold tracking-widest uppercase text-xs hover:bg-luxury-gold/10 transition-colors duration-300">
+                      Cancel Edit
+                    </button>
+                  )}
+                </div>
 
               </form>
             </div>

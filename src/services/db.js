@@ -90,6 +90,25 @@ export const dbService = {
     return false;
   },
 
+  async deleteProduct(id) {
+    if (isFirebaseConfigured) {
+      try {
+        await deleteDoc(doc(firebaseDb, 'products', id));
+        return true;
+      } catch (err) {
+        console.error("Firestore deleteProduct failed, using LocalStorage:", err);
+      }
+    }
+    let products = JSON.parse(localStorage.getItem('paridhan_products') || '[]');
+    const originalLength = products.length;
+    products = products.filter(p => p.id !== id);
+    if (products.length < originalLength) {
+      localStorage.setItem('paridhan_products', JSON.stringify(products));
+      return true;
+    }
+    return false;
+  },
+
   // --- BOUTIQUES ---
   async getBoutiques() {
     const blacklist = JSON.parse(localStorage.getItem('paridhan_deleted_ids') || '[]');
