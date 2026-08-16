@@ -36,7 +36,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if isSignedIn();
       allow update, delete: if isSignedIn() && (
-        resource.data.storeId == request.auth.uid || isAdmin()
+        get(/databases/$(database)/documents/boutiques/$(resource.data.storeId)).data.ownerId == request.auth.uid || isAdmin()
       );
     }
 

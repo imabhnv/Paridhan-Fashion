@@ -77,7 +77,8 @@ export const dbService = {
         await updateDoc(doc(firebaseDb, 'products', id), updates);
         return true;
       } catch (err) {
-        console.error("Firestore updateProduct failed, using LocalStorage:", err);
+        console.error("Firestore updateProduct failed:", err);
+        throw err;
       }
     }
     const products = JSON.parse(localStorage.getItem('paridhan_products') || '[]');
@@ -96,7 +97,8 @@ export const dbService = {
         await deleteDoc(doc(firebaseDb, 'products', id));
         return true;
       } catch (err) {
-        console.error("Firestore deleteProduct failed, using LocalStorage:", err);
+        console.error("Firestore deleteProduct failed:", err);
+        throw err;
       }
     }
     let products = JSON.parse(localStorage.getItem('paridhan_products') || '[]');

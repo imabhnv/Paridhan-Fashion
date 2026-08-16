@@ -93,7 +93,7 @@ const Footer = () => {
             <h4 className="text-xs font-bold tracking-widest text-white uppercase">The Founders</h4>
             <div className="space-y-3 text-sm font-light text-luxury-cream/70 leading-relaxed">
               <p>
-                Founded by <span className="text-luxury-gold font-medium">Tanya Gupta</span> and <span className="text-luxury-gold font-medium">Abhinav Varshney</span> to democratize luxury fashion and make premium designer wear accessible and sustainable.
+                Founded and led by <span className="text-luxury-gold font-medium">Tanya Gupta</span> with <span className="text-luxury-gold font-medium">Abhinav Varshney</span> driving Paridhan’s vision, strategy, and long-term growth, we are building a future where luxury fashion is accessible, sustainable, and within reach.
               </p>
               <ul className="space-y-3 pt-2 border-t border-luxury-gold/10">
                 <li className="flex items-center space-x-2.5">

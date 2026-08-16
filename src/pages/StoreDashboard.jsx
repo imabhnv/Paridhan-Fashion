@@ -137,49 +137,57 @@ const StoreDashboard = () => {
       stylistNotes
     };
 
-    if (editingId) {
-      await dbService.updateProduct(editingId, productData);
-      setListingSuccess('🎉 Luxury Listing updated successfully!');
-    } else {
-      const newProduct = {
-        ...productData,
-        storeId: user.boutiqueId,
-        storeName: user.displayName,
-        rating: 5.0,
-        reviewsCount: 0,
-        availability: true,
-        bookedDates: [],
-        cleanlinessRating: 5.0,
-        verified: true
-      };
-      await dbService.addProduct(newProduct);
-      setListingSuccess('🎉 Luxury Listing added to live catalog successfully!');
+    try {
+      if (editingId) {
+        await dbService.updateProduct(editingId, productData);
+        setListingSuccess('🎉 Luxury Listing updated successfully!');
+      } else {
+        const newProduct = {
+          ...productData,
+          storeId: user.boutiqueId,
+          storeName: user.displayName,
+          rating: 5.0,
+          reviewsCount: 0,
+          availability: true,
+          bookedDates: [],
+          cleanlinessRating: 5.0,
+          verified: true
+        };
+        await dbService.addProduct(newProduct);
+        setListingSuccess('🎉 Luxury Listing added to live catalog successfully!');
+      }
+      
+      // Refresh the local inventory list immediately so changes are visible
+      loadBoutiqueData();
+      
+      // Reset Form
+      setTitle('');
+      setCategory('Designer Lehengas');
+      setCustomCategory('');
+      setImageUrl('');
+      setRentalPrice('');
+      setRetailPrice('');
+      setDeposit('');
+      setColor('');
+      setFabric('');
+      setOccasion('Wedding');
+      setCustomOccasion('');
+      setStylistNotes('');
+      setDesc('');
+      setEditingId(null);
+    } catch (err) {
+      alert('Failed to save listing: ' + (err.message || String(err)));
     }
-    
-    // Refresh the local inventory list immediately so changes are visible
-    loadBoutiqueData();
-    
-    // Reset Form
-    setTitle('');
-    setCategory('Designer Lehengas');
-    setCustomCategory('');
-    setImageUrl('');
-    setRentalPrice('');
-    setRetailPrice('');
-    setDeposit('');
-    setColor('');
-    setFabric('');
-    setOccasion('Wedding');
-    setCustomOccasion('');
-    setStylistNotes('');
-    setDesc('');
-    setEditingId(null);
   };
 
   const handleDeleteListing = async (id) => {
     if (window.confirm('Are you sure you want to completely remove this outfit from your catalog?')) {
-      await dbService.deleteProduct(id);
-      setProducts(products.filter(p => p.id !== id));
+      try {
+        await dbService.deleteProduct(id);
+        setProducts(products.filter(p => p.id !== id));
+      } catch (err) {
+        alert('Failed to delete listing: ' + (err.message || String(err)));
+      }
     }
   };
 
