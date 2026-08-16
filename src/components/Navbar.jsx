@@ -129,7 +129,7 @@ const Navbar = () => {
                       {user.role === 'admin' ? (
                         <>
                           <Link
-                            to="/admin"
+                            to="/dashboard/admin"
                             onClick={() => setDropdownOpen(false)}
                             className="flex items-center px-4 py-3 text-sm text-luxury-charcoal hover:bg-luxury-cream dark:text-luxury-alabaster dark:hover:bg-luxury-lightcharcoal transition-colors"
                           >
@@ -137,7 +137,7 @@ const Navbar = () => {
                             Admin Control Panel
                           </Link>
                           <Link
-                            to="/store"
+                            to="/dashboard/store"
                             onClick={() => setDropdownOpen(false)}
                             className="flex items-center px-4 py-3 text-sm text-luxury-charcoal hover:bg-luxury-cream dark:text-luxury-alabaster dark:hover:bg-luxury-lightcharcoal transition-colors border-t border-luxury-gold/5"
                           >
@@ -255,14 +255,14 @@ const Navbar = () => {
               {user.role === 'admin' ? (
                 <>
                   <Link
-                    to="/admin"
+                    to="/dashboard/admin"
                     onClick={() => setMobileMenuOpen(false)}
                     className="w-full text-center py-2.5 bg-luxury-gold text-white text-sm font-semibold rounded-full uppercase tracking-wider shadow-md hover:bg-luxury-bronze"
                   >
                     Admin Control Panel
                   </Link>
                   <Link
-                    to="/store"
+                    to="/dashboard/store"
                     onClick={() => setMobileMenuOpen(false)}
                     className="w-full text-center py-2.5 border border-luxury-gold text-luxury-gold text-sm font-semibold rounded-full uppercase tracking-wider shadow-sm hover:bg-luxury-gold hover:text-white transition-colors"
                   >
