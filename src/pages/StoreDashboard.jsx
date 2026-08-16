@@ -4,7 +4,7 @@ import {
   BarChart as ReBarChart, Bar, LineChart as ReLineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell 
 } from 'recharts';
 import { 
-  Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image as ImageIcon, CheckCircle, Tag, BarChart2, Trash2, Edit2
+  Sparkles, DollarSign, ShoppingBag, RefreshCw, AlertCircle, Plus, Calendar, Settings, Image as ImageIcon, CheckCircle, Tag, BarChart2, Trash2, Edit2, X
 } from 'lucide-react';
 import { isFirebaseConfigured } from '../services/firebase';
 import dbService from '../services/db';
@@ -25,7 +25,7 @@ const StoreDashboard = () => {
   const [gender, setGender] = useState('Women');
   const [category, setCategory] = useState('Designer Lehengas');
   const [customCategory, setCustomCategory] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrls, setImageUrls] = useState([]);
   const [rentalPrice, setRentalPrice] = useState('');
   const [retailPrice, setRetailPrice] = useState('');
   const [deposit, setDeposit] = useState('');
@@ -70,42 +70,48 @@ const StoreDashboard = () => {
   }, [user, activeTab]);
 
   const handleImageUpload = async (e) => {
-    const rawFile = e.target.files[0];
-    if (!rawFile) return;
+    const rawFiles = Array.from(e.target.files);
+    if (!rawFiles || rawFiles.length === 0) return;
 
-    console.log("Starting image upload. Selected file:", rawFile.name, "Type:", rawFile.type, "Size:", rawFile.size);
+    if (imageUrls.length + rawFiles.length > 4) {
+      alert('You can upload a maximum of 4 images per outfit.');
+      return;
+    }
 
     try {
       setImageUploading(true);
       
-      // 1. Resize and compress the image aggressively (Max 800x800px, 70% Quality) to easily fit the 1MB Firestore limit
-      const file = await resizeImage(rawFile, 800, 800, 0.7);
+      const newBase64Images = await Promise.all(rawFiles.map(async (rawFile) => {
+        // Resize and compress aggressively (Max 800x800px, 70% Quality) to fit 1MB limit
+        const file = await resizeImage(rawFile, 800, 800, 0.7);
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }));
 
-      // 2. Convert to Base64 data URL to store directly in Firestore
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64data = reader.result;
-        setImageUrl(base64data);
-        setImageUploading(false);
-        console.log("Image successfully converted to Base64 for Firestore storage.");
-      };
-      reader.readAsDataURL(file);
-
+      setImageUrls(prev => [...prev, ...newBase64Images]);
+      setImageUploading(false);
+      console.log("Images successfully converted to Base64 for Firestore storage.");
     } catch (err) {
       console.error('Image processing failed', err);
-      const errorMsg = err?.message || String(err);
-      alert('Failed to process image. Please try again. Error: ' + errorMsg);
+      alert('Failed to process images. Please try again. Error: ' + (err?.message || String(err)));
       setImageUploading(false);
     }
-    // Note: finally block removed because FileReader is callback-based, handled inside onloadend
+  };
+
+  const removeImage = (index) => {
+    setImageUrls(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleCreateListing = async (e) => {
     e.preventDefault();
     setListingSuccess('');
 
-    if (!title || !rentalPrice || !retailPrice || !imageUrl) {
-      alert('Please fill all required fields and upload an image.');
+    if (!title || !rentalPrice || !retailPrice || imageUrls.length === 0) {
+      alert('Please fill all required fields and upload at least one image.');
       return;
     }
 
@@ -125,7 +131,7 @@ const StoreDashboard = () => {
       title,
       category: finalCategory,
       gender,
-      images: [imageUrl],
+      images: imageUrls,
       rentalPricePerDay: Number(rentalPrice),
       originalRetailPrice: Number(retailPrice),
       securityDeposit: Number(deposit),
@@ -164,7 +170,7 @@ const StoreDashboard = () => {
       setTitle('');
       setCategory('Designer Lehengas');
       setCustomCategory('');
-      setImageUrl('');
+      setImageUrls([]);
       setRentalPrice('');
       setRetailPrice('');
       setDeposit('');
@@ -206,7 +212,7 @@ const StoreDashboard = () => {
     setColor(product.colors?.[0] || '');
     setFabric(product.fabric || '');
     setStylistNotes(product.stylistNotes || '');
-    setImageUrl(product.images?.[0] || '');
+    setImageUrls(product.images || []);
     if (product.sizes) setSelectedSizes(product.sizes);
     setActiveTab('new-listing');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -625,28 +631,45 @@ const StoreDashboard = () => {
                 </div>
 
                 <div className="space-y-1.5 text-left">
-                  <span className="text-[9px] uppercase font-bold text-luxury-gold">Main Image Upload</span>
-                  <div className="flex items-center space-x-4">
-                    {imageUrl && (
-                      <img src={imageUrl} alt="Preview" className="w-16 h-20 object-cover rounded bg-luxury-gold/10 border border-luxury-gold/30" />
+                  <span className="text-[9px] uppercase font-bold text-luxury-gold">Images (Max 4)</span>
+                  <div className="flex items-start space-x-4">
+                    {imageUrls.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {imageUrls.map((url, i) => (
+                          <div key={i} className="relative w-16 h-20 group">
+                            <img src={url} alt={`Preview ${i+1}`} className="w-full h-full object-cover rounded bg-luxury-gold/10 border border-luxury-gold/30" />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(i)}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="Remove Image"
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     )}
-                    <div className="flex-1 relative">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        disabled={imageUploading}
-                        className="w-full p-2 bg-transparent border border-luxury-gold/20 dark:text-white rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-luxury-gold/10 file:text-luxury-gold hover:file:bg-luxury-gold/20 file:cursor-pointer disabled:opacity-50"
-                      />
-                      {imageUploading && (
-                        <div className="absolute inset-y-0 right-3 flex items-center">
-                          <svg className="animate-spin h-4 w-4 text-luxury-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                        </div>
-                      )}
-                    </div>
+                    {imageUrls.length < 4 && (
+                      <div className="flex-1 relative mt-1">
+                        <input
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={imageUploading}
+                          className="w-full p-2 bg-transparent border border-luxury-gold/20 dark:text-white rounded file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-luxury-gold/10 file:text-luxury-gold hover:file:bg-luxury-gold/20 file:cursor-pointer disabled:opacity-50"
+                        />
+                        {imageUploading && (
+                          <div className="absolute inset-y-0 right-3 flex items-center">
+                            <svg className="animate-spin h-4 w-4 text-luxury-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -686,7 +709,7 @@ const StoreDashboard = () => {
                     <button type="button" onClick={() => {
                       setEditingId(null);
                       setTitle(''); setCategory('Designer Lehengas'); setCustomCategory('');
-                      setImageUrl(''); setRentalPrice(''); setRetailPrice(''); setDeposit('');
+                      setImageUrls([]); setRentalPrice(''); setRetailPrice(''); setDeposit('');
                       setColor(''); setFabric(''); setOccasion('Wedding'); setCustomOccasion('');
                       setStylistNotes(''); setDesc(''); setListingSuccess('');
                       setActiveTab('listings');
