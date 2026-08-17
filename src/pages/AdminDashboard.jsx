@@ -151,7 +151,6 @@ const AdminDashboard = () => {
   const TABS = [
     { id: 'boutiques', label: 'Boutique Onboarding', badge: boutiques.filter(b => !b.verified).length, icon: Award },
     { id: 'disputes', label: 'Dispute Claims', badge: disputes.filter(d => d.status === 'Open').length, icon: ShieldAlert },
-    { id: 'listings', label: 'All Listings', badge: inactiveListings > 0 ? inactiveListings : undefined, icon: Package },
     { id: 'bookings', label: 'All Bookings', badge: undefined, icon: ClipboardList },
     { id: 'customers', label: 'Users', badge: undefined, icon: Users },
     { id: 'analytics', label: 'Analytics', badge: undefined, icon: BarChart },
@@ -400,80 +399,7 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* ── TAB 3: MASTER LISTINGS MANAGER ── */}
-          {activeTab === 'listings' && (
-            <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-luxury-gold/10 pb-3">
-                <h2 className="text-lg font-bold tracking-wider uppercase dark:text-white">Master Listings Manager</h2>
-                <div className="flex items-center gap-2 text-[10px] text-luxury-charcoal/50 dark:text-luxury-alabaster/50">
-                  <Package size={12} />
-                  <span>{listings.length} total listings · {inactiveListings} deactivated</span>
-                </div>
-              </div>
 
-              {/* Search */}
-              <input
-                type="text"
-                placeholder="Search listings by name..."
-                value={listingSearch}
-                onChange={(e) => setListingSearch(e.target.value)}
-                className="w-full px-4 py-2.5 border border-luxury-gold/25 bg-transparent dark:text-white rounded text-xs focus:outline-none focus:border-luxury-gold"
-              />
-
-              <div className="space-y-3">
-                {filteredListings.length === 0 && (
-                  <div className="bg-white dark:bg-luxury-lightcharcoal border border-luxury-gold/15 rounded-xl p-10 text-center text-xs text-luxury-charcoal/50">
-                    No listings found.
-                  </div>
-                )}
-                {filteredListings.map(listing => {
-                  const isActive = listing.active !== false;
-                  return (
-                    <div
-                      key={listing.id}
-                      className={`p-4 border rounded-xl text-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-sm transition-all ${
-                        isActive
-                          ? 'bg-white dark:bg-luxury-lightcharcoal border-luxury-gold/15'
-                          : 'bg-red-50/50 dark:bg-red-900/10 border-red-300/30 opacity-70'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={listing.images?.[0] || listing.image || 'https://images.unsplash.com/photo-1563178406-4cdc2923acbc?auto=format&fit=crop&w=80&h=80&q=80'}
-                          alt=""
-                          className="w-12 h-12 rounded-lg object-cover border border-luxury-gold/20 flex-shrink-0"
-                        />
-                        <div>
-                          <p className="font-bold dark:text-white">{listing.name || listing.title || `Listing ${listing.id}`}</p>
-                          <p className="text-luxury-gold text-[9px] font-semibold uppercase tracking-wider mt-0.5">
-                            {listing.category} · ₹{(listing.rentalPrice || listing.price || 0).toLocaleString()}/day · {listing.boutiqueName || 'Unknown Boutique'}
-                          </p>
-                          <p className="text-[9px] text-luxury-charcoal/40 dark:text-luxury-alabaster/40 mt-0.5">ID: {listing.id}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className={`text-[9px] px-2 py-1 rounded-full font-bold uppercase ${
-                          isActive ? 'bg-green-500/15 text-green-600' : 'bg-red-500/15 text-red-600'
-                        }`}>
-                          {isActive ? '● Active' : '● Inactive'}
-                        </span>
-                        <button
-                          onClick={() => handleToggleListing(listing)}
-                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded font-bold uppercase tracking-wider text-[9px] transition-colors ${
-                            isActive
-                              ? 'bg-red-600 text-white hover:bg-red-700'
-                              : 'bg-green-600 text-white hover:bg-green-700'
-                          }`}
-                        >
-                          {isActive ? <><EyeOff size={11} /> Deactivate</> : <><Eye size={11} /> Re-activate</>}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
           {/* ── TAB 4: MASTER BOOKINGS MANAGER ── */}
           {activeTab === 'bookings' && (
