@@ -32,30 +32,36 @@ initializeApp({
 
 const db = getFirestore();
 
-async function dump() {
+async function cleanOrphanedProducts() {
   try {
-    const usersSnap = await db.collection('users').get();
-    console.log('--- USERS ---');
-    usersSnap.forEach(doc => {
-      const data = doc.data();
-      console.log(doc.id, { email: data.email, role: data.role, displayName: data.displayName });
-    });
-
+    console.log("Fetching active boutiques...");
     const boutiquesSnap = await db.collection('boutiques').get();
-    console.log('\n--- BOUTIQUES ---');
+    const activeBoutiqueIds = new Set();
     boutiquesSnap.forEach(doc => {
-      console.log(doc.id, { ownerId: doc.data().ownerId, name: doc.data().name, verified: doc.data().verified });
+      activeBoutiqueIds.add(doc.id);
     });
 
+    console.log(`Found ${activeBoutiqueIds.size} active boutiques.`);
+
+    console.log("Fetching products...");
     const productsSnap = await db.collection('products').get();
-    console.log('\n--- PRODUCTS ---');
-    productsSnap.forEach(doc => {
-      console.log(doc.id, { storeId: doc.data().storeId, title: doc.data().title });
-    });
+    
+    let deletedCount = 0;
+    
+    for (const doc of productsSnap.docs) {
+      const data = doc.data();
+      if (!activeBoutiqueIds.has(data.storeId)) {
+        console.log(`Deleting orphaned product: ${data.title} (ID: ${doc.id})`);
+        await db.collection('products').doc(doc.id).delete();
+        deletedCount++;
+      }
+    }
+
+    console.log(`\nCleanup complete! Deleted ${deletedCount} orphaned products.`);
   } catch (err) {
-    console.error('Error fetching data:', err);
+    console.error('Error during cleanup:', err);
   }
   process.exit(0);
 }
 
-dump();
+cleanOrphanedProducts();
