@@ -46,10 +46,12 @@ const Catalog = () => {
         const boutiqueMap = {};
         boutiques.forEach(b => { boutiqueMap[b.id] = b.name; });
 
-        const normalizedData = data.map(p => ({
-          ...p,
-          storeName: boutiqueMap[p.storeId] || p.storeName
-        }));
+        const normalizedData = data
+          .filter(p => boutiqueMap[p.storeId]) // Only show products for verified/existing boutiques
+          .map(p => ({
+            ...p,
+            storeName: boutiqueMap[p.storeId]
+          }));
 
         setAllProducts(normalizedData);
       } catch (err) {
