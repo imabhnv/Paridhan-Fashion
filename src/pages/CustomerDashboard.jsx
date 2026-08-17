@@ -50,9 +50,8 @@ const CustomerDashboard = () => {
     // Admin Impersonation Mode
     if (user.role === 'admin' && !selectedAdminCustomerId) {
       const allUsers = await getAllUsers();
-      // Filter out admins from the customer list if we only want customers, 
-      // but let's show everyone who has orders/wishlists
-      setAdminCustomers(allUsers);
+      // Filter out admins and stores, only show customers
+      setAdminCustomers(allUsers.filter(u => u.role === 'customer' || !u.role));
       return;
     }
 
