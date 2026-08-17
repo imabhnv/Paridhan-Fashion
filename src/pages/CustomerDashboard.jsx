@@ -6,6 +6,7 @@ import {
   User, MapPin, Calendar, Heart, ShieldAlert, Edit2, CheckCircle2, ShieldCheck, Ticket, Plus, Trash2 
 } from 'lucide-react';
 import dbService from '../services/db';
+import { getAllUsers } from '../services/userProfile';
 import SeoHelper from '../components/SeoHelper';
 
 const CustomerDashboard = () => {
@@ -25,6 +26,10 @@ const CustomerDashboard = () => {
   const [phone, setPhone] = useState(user?.phone || '');
   const [profileSuccess, setProfileSuccess] = useState('');
 
+  // Admin Impersonation State
+  const [adminCustomers, setAdminCustomers] = useState([]);
+  const [selectedAdminCustomerId, setSelectedAdminCustomerId] = useState(null);
+
   // Dispute Filing states
   const [selectedBookingId, setSelectedBookingId] = useState('');
   const [disputeReason, setDisputeReason] = useState('');
@@ -42,25 +47,39 @@ const CustomerDashboard = () => {
   const loadDashboardData = async () => {
     if (!user) return;
     
-    // Load customer orders (or all for Admin)
-    const ordersData = await dbService.getOrders(user.role === 'admin' ? {} : { userId: user.uid });
+    // Admin Impersonation Mode
+    if (user.role === 'admin' && !selectedAdminCustomerId) {
+      const allUsers = await getAllUsers();
+      // Filter out admins from the customer list if we only want customers, 
+      // but let's show everyone who has orders/wishlists
+      setAdminCustomers(allUsers);
+      return;
+    }
+
+    const targetUserId = user.role === 'admin' ? selectedAdminCustomerId : user.uid;
+    if (!targetUserId) return;
+
+    // Load customer orders
+    const ordersData = await dbService.getOrders({ userId: targetUserId });
     setBookings(ordersData);
 
-    // Load wishlist objects
+    // Load wishlist objects (assuming wishlist is in localStorage for local users, 
+    // but for an admin viewing a customer, this is tricky. We'll just show empty for now, 
+    // or keep the local logic since wishlist isn't stored in Firebase currently).
     const allProds = await dbService.getProducts();
     const wishIds = JSON.parse(localStorage.getItem('paridhan-wishlist') || '[]');
     const wishData = allProds.filter(p => wishIds.includes(p.id));
     setWishlistItems(wishData);
 
-    // Load disputes (or all for Admin)
+    // Load disputes
     const dispData = await dbService.getDisputes();
-    const clientDisps = user.role === 'admin' ? dispData : dispData.filter(d => d.userId === user.uid);
+    const clientDisps = dispData.filter(d => d.userId === targetUserId);
     setDisputes(clientDisps);
   };
 
   useEffect(() => {
     loadDashboardData();
-  }, [user, activeTab]);
+  }, [user, activeTab, selectedAdminCustomerId]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -130,15 +149,51 @@ const CustomerDashboard = () => {
       
       <SeoHelper title="My Atelier Dashboard" description="Manage your luxury rental bookings, profile measurements, addresses, and wishlist." />
 
-      <div className="border-b border-luxury-gold/20 pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-luxury-charcoal dark:text-white">Atelier Dashboard</h1>
-          <p className="text-sm font-light text-luxury-charcoal/50 dark:text-luxury-alabaster/50 mt-1">Hello, {user?.displayName}. Welcome back to your dashboard.</p>
+      {user?.role === 'admin' && !selectedAdminCustomerId ? (
+        <div className="space-y-6">
+          <h1 className="text-3xl font-bold tracking-tight text-luxury-charcoal dark:text-white">Admin: Select Customer to Manage</h1>
+          <p className="text-sm font-light text-luxury-charcoal/50 dark:text-luxury-alabaster/50">
+            Choose a customer account to view their dashboard.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {adminCustomers.map(customer => (
+              <div key={customer.uid} className="bg-white dark:bg-luxury-lightcharcoal p-6 rounded-xl border border-luxury-gold/15 shadow-sm space-y-4 flex flex-col justify-between">
+                <div>
+                  <h3 className="font-playfair text-lg font-bold dark:text-white">{customer.displayName || customer.email}</h3>
+                  <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 uppercase tracking-widest mt-1">
+                    Role: {customer.role || 'customer'}
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-luxury-gold/10">
+                  <button 
+                    onClick={() => setSelectedAdminCustomerId(customer.uid)}
+                    className="w-full py-2 bg-luxury-gold text-white text-[10px] font-bold tracking-widest uppercase rounded hover:bg-luxury-bronze transition-colors"
+                  >
+                    Manage Customer
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="bg-luxury-cream border border-luxury-gold/30 px-4 py-2 rounded-lg text-xs font-semibold text-luxury-charcoal flex items-center">
-          <Ticket size={14} className="text-luxury-gold mr-1.5" /> Customer Account
-        </div>
-      </div>
+      ) : (
+        <>
+          <div className="border-b border-luxury-gold/20 pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight text-luxury-charcoal dark:text-white">Atelier Dashboard</h1>
+              <p className="text-sm font-light text-luxury-charcoal/50 dark:text-luxury-alabaster/50 mt-1 flex items-center">
+                <span>Account: <strong className="font-semibold text-luxury-gold">{user?.role === 'admin' ? selectedAdminCustomerId.slice(0,8) + '...' : user?.displayName}</strong></span>
+                {user?.role === 'admin' && (
+                  <button onClick={() => setSelectedAdminCustomerId(null)} className="ml-4 px-2 py-1 bg-luxury-gold/10 text-luxury-gold rounded text-[10px] uppercase font-bold tracking-widest hover:bg-luxury-gold/20 transition-colors">
+                    &larr; Switch Customer
+                  </button>
+                )}
+              </p>
+            </div>
+            <div className="bg-luxury-cream border border-luxury-gold/30 px-4 py-2 rounded-lg text-xs font-semibold text-luxury-charcoal flex items-center">
+              <Ticket size={14} className="text-luxury-gold mr-1.5" /> Customer Account
+            </div>
+          </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
@@ -577,6 +632,8 @@ const CustomerDashboard = () => {
         </div>
 
       </div>
+      </>
+      )}
 
     </div>
   );

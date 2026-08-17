@@ -52,25 +52,39 @@ const StoreDashboard = () => {
   const [storeCoverImage, setStoreCoverImage] = useState('');
   const [settingsSuccess, setSettingsSuccess] = useState('');
 
+  // Admin Impersonation State
+  const [adminBoutiques, setAdminBoutiques] = useState([]);
+  const [selectedAdminBoutiqueId, setSelectedAdminBoutiqueId] = useState(null);
+
   const loadBoutiqueData = async () => {
     if (!user) return;
     
-    // Load products matching this boutique (or all for Admin)
+    // Admin Impersonation Mode: Fetch boutiques list if admin and no boutique selected
+    if (user.role === 'admin' && !selectedAdminBoutiqueId) {
+      const allBouts = await dbService.getBoutiques();
+      setAdminBoutiques(allBouts);
+      return;
+    }
+
+    const targetBoutiqueId = user.role === 'admin' ? selectedAdminBoutiqueId : user.boutiqueId;
+    if (!targetBoutiqueId) return;
+    
+    // Load products matching this boutique
     const allProds = await dbService.getProducts();
-    const boutiqueProds = user.role === 'admin' ? allProds : allProds.filter(p => p.storeId === user.boutiqueId);
+    const boutiqueProds = allProds.filter(p => p.storeId === targetBoutiqueId);
     setProducts(boutiqueProds);
 
-    // Load bookings matching storeId (or all for Admin)
-    const allOrders = await dbService.getOrders(user.role === 'admin' ? {} : { storeId: user.boutiqueId });
+    // Load bookings matching storeId
+    const allOrders = await dbService.getOrders({ storeId: targetBoutiqueId });
     setBookings(allOrders);
 
-    // Load disputes (or all for Admin)
+    // Load disputes
     const allDisps = await dbService.getDisputes();
-    const storeDisps = user.role === 'admin' ? allDisps : allDisps.filter(d => d.storeId === user.boutiqueId);
+    const storeDisps = allDisps.filter(d => d.storeId === targetBoutiqueId);
     setDisputes(storeDisps);
 
     // Load Boutique Profile
-    const bData = await dbService.getBoutique(user.boutiqueId);
+    const bData = await dbService.getBoutique(targetBoutiqueId);
     if (bData) {
       setBoutiqueData(bData);
       setStoreCoverImage(bData.coverImage || '');
@@ -79,7 +93,7 @@ const StoreDashboard = () => {
 
   useEffect(() => {
     loadBoutiqueData();
-  }, [user, activeTab]);
+  }, [user, activeTab, selectedAdminBoutiqueId]);
 
   const handleImageUpload = async (e) => {
     const rawFiles = Array.from(e.target.files);
@@ -162,7 +176,7 @@ const StoreDashboard = () => {
       } else {
         const newProduct = {
           ...productData,
-          storeId: user.boutiqueId,
+          storeId: user.role === 'admin' ? selectedAdminBoutiqueId : user.boutiqueId,
           storeName: boutiqueData?.name || user.displayName,
           rating: 5.0,
           reviewsCount: 0,
@@ -324,17 +338,49 @@ const StoreDashboard = () => {
       
       <SeoHelper title="Showroom Portal" description="Manage listings, analyze monthly earnings, and verify return inspections." />
 
-      <div className="border-b border-luxury-gold/20 pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-luxury-charcoal dark:text-white">Boutique Console</h1>
-          <p className="text-sm font-light text-luxury-charcoal/50 dark:text-luxury-alabaster/50 mt-1">
-            Store Owner: <strong className="font-semibold text-luxury-gold">{user?.displayName}</strong>
+      {user?.role === 'admin' && !selectedAdminBoutiqueId ? (
+        <div className="space-y-6">
+          <h1 className="text-3xl font-bold tracking-tight text-luxury-charcoal dark:text-white">Admin: Select Boutique to Manage</h1>
+          <p className="text-sm font-light text-luxury-charcoal/50 dark:text-luxury-alabaster/50">
+            Choose a boutique to impersonate their Store Console. Any changes you make will be saved directly to their account.
           </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {adminBoutiques.map(boutique => (
+              <div key={boutique.id} className="bg-white dark:bg-luxury-lightcharcoal p-6 rounded-xl border border-luxury-gold/15 shadow-sm space-y-4">
+                <h3 className="font-playfair text-xl font-bold dark:text-white">{boutique.name}</h3>
+                <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 uppercase tracking-widest">
+                  Owner ID: {boutique.ownerId.slice(0, 8)}...
+                </p>
+                <div className="pt-4 border-t border-luxury-gold/10">
+                  <button 
+                    onClick={() => setSelectedAdminBoutiqueId(boutique.id)}
+                    className="w-full py-2 bg-luxury-gold text-white text-[10px] font-bold tracking-widest uppercase rounded hover:bg-luxury-bronze transition-colors"
+                  >
+                    Manage Store
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="bg-luxury-charcoal dark:bg-white text-white dark:text-luxury-charcoal border border-luxury-gold/20 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-widest flex items-center">
-          <Settings size={14} className="mr-1.5" /> Boutique Mode
-        </div>
-      </div>
+      ) : (
+        <>
+          <div className="border-b border-luxury-gold/20 pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight text-luxury-charcoal dark:text-white">Boutique Console</h1>
+              <p className="text-sm font-light text-luxury-charcoal/50 dark:text-luxury-alabaster/50 mt-1 flex items-center">
+                <span>Store: <strong className="font-semibold text-luxury-gold">{boutiqueData?.name || user?.displayName}</strong></span>
+                {user?.role === 'admin' && (
+                  <button onClick={() => setSelectedAdminBoutiqueId(null)} className="ml-4 px-2 py-1 bg-luxury-gold/10 text-luxury-gold rounded text-[10px] uppercase font-bold tracking-widest hover:bg-luxury-gold/20 transition-colors">
+                    &larr; Switch Boutique
+                  </button>
+                )}
+              </p>
+            </div>
+            <div className="bg-luxury-charcoal dark:bg-white text-white dark:text-luxury-charcoal border border-luxury-gold/20 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-widest flex items-center">
+              <Settings size={14} className="mr-1.5" /> Boutique Mode
+            </div>
+          </div>
 
       {/* KPI METRICS BAR */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
@@ -1032,6 +1078,8 @@ const StoreDashboard = () => {
         </div>
 
       </div>
+      </>
+      )}
 
     </div>
   );
