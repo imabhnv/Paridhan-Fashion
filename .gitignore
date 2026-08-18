@@ -39,3 +39,11 @@ test-client.js
 test-api.js
 check-db.js
 scratch-*.js
+
+# Custom Downloader & Scratch Scripts
+download-*.cjs
+download-*.js
+fetchImages.cjs
+copy-clean-categories.cjs
+rename-assets.cjs
+restore-locked-names.cjs
