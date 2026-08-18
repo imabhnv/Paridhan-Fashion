@@ -30,11 +30,11 @@ const Navbar = () => {
 
   return (
     <nav className="sticky top-0 z-50 transition-all duration-300 backdrop-blur-md border-b border-luxury-gold/20 bg-luxury-alabaster/80 dark:bg-luxury-charcoal/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
+          <div className="flex-shrink-0 flex items-center pl-8 sm:pl-12 lg:pl-16">
             <Link to="/" className="flex items-center space-x-2">
               <span className="text-3xl font-bold tracking-widest font-playfair text-luxury-charcoal dark:text-luxury-alabaster">
                 PARIDHAN

@@ -28,19 +28,51 @@ const Landing = () => {
     setOpenFaqIdx(openFaqIdx === idx ? null : idx);
   };
 
+  // Hero Accordion state & data
+  const [activeHeroCard, setActiveHeroCard] = React.useState(0);
+  const heroCards = [
+    {
+      img: "/assets/bridal_wear_1787054110911.jpg",
+      title: "Sabyasachi Heritage",
+      desc: "Bridal Lehenga"
+    },
+    {
+      img: "/assets/cat_designer_sarees_1787056158750.jpg",
+      title: "Emerald Banarasi",
+      desc: "Designer Saree"
+    },
+    {
+      img: "/assets/blue-tuxedo.jpg",
+      title: "Raymond Custom",
+      desc: "Peak Lapel Tuxedo"
+    },
+    {
+      img: "/assets/modern_fashion.jpg",
+      title: "Traditional Classic",
+      desc: "Wedding Sherwani"
+    }
+  ];
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveHeroCard((prev) => (prev + 1) % heroCards.length);
+    }, 2000);
+    return () => clearInterval(timer);
+  }, [heroCards.length]);
+
   const categories = [
-    { name: "Bridal Wear", img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&h=500&q=80" },
-    { name: "Designer Lehengas", img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=400&h=500&q=80" },
-    { name: "Party Wear", img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&h=500&q=80" },
-    { name: "Ethnic Wear", img: "https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?auto=format&fit=crop&w=400&h=500&q=80" },
-    { name: "Tuxedos", img: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=400&h=500&q=80" },
-    { name: "Luxury Gowns", img: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=400&h=500&q=80" },
-    { name: "Sherwanis", img: "https://images.unsplash.com/photo-1607345366928-199ea26cfe3e?auto=format&fit=crop&w=400&h=500&q=80" },
-    { name: "Designer Sarees", img: "https://images.unsplash.com/photo-1615887023516-9b6bcd559e87?auto=format&fit=crop&w=400&h=500&q=80" },
-    { name: "Anarkalis", img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=400&h=500&q=80" },
-    { name: "Kurta Sets", img: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=400&h=500&q=80" },
-    { name: "Indo-Western", img: "https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?auto=format&fit=crop&w=400&h=500&q=80" },
-    { name: "Accessories", img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&h=500&q=80" }
+    { name: "Bridal Wear", img: "/assets/saree.jpg" },
+    { name: "Designer Lehengas", img: "/assets/designer_lehenga_1787054130424.jpg" },
+    { name: "Party Wear", img: "/assets/party_wear_1787054158964.jpg" },
+    { name: "Ethnic Wear", img: "/assets/ethnic_wear_1787054355104.jpg" },
+    { name: "Tuxedos", img: "/assets/Black-tuxedo.jpg" },
+    { name: "Luxury Gowns", img: "/assets/cat_luxury_gowns_1787055572429.jpg" },
+    { name: "Sherwanis", img: "/assets/sherwanis_clean.jpg" },
+    { name: "Designer Sarees", img: "/assets/sabesh-saree.jpg" },
+    { name: "Anarkalis", img: "/assets/anarkalis.jpg" },
+    { name: "Kurta Sets", img: "/assets/kurta_sets.jpg" },
+    { name: "Indo-Western", img: "/assets/indo_western.jpg" },
+    { name: "Accessories", img: "/assets/accessories.jpg" }
   ];
 
   return (
@@ -66,15 +98,15 @@ const Landing = () => {
       />
 
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-[85vh] flex items-center justify-center bg-luxury-cream/35 dark:bg-luxury-charcoal/10 py-16 px-4">
+      <section className="relative min-h-0 flex items-center justify-center bg-luxury-cream/35 dark:bg-luxury-charcoal/10 pt-4 pb-12 px-4">
         
-        {/* Soft floating background gradients */}
+        {/* Dynamic Animated background blobs */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-luxury-gold/10 dark:bg-luxury-gold/5 filter blur-3xl"></div>
-          <div className="absolute top-1/2 right-10 w-80 h-80 rounded-full bg-luxury-gold/15 dark:bg-luxury-gold/5 filter blur-3xl"></div>
+          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-luxury-gold/10 dark:bg-luxury-gold/5 filter blur-3xl"></motion.div>
+          <motion.div animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }} className="absolute top-1/2 right-10 w-80 h-80 rounded-full bg-luxury-gold/15 dark:bg-luxury-gold/5 filter blur-3xl"></motion.div>
         </div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10 w-full">
+        <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10 w-full">
           
           {/* Hero Left Content */}
           <motion.div 
@@ -144,34 +176,47 @@ const Landing = () => {
             transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
             className="lg:col-span-5 relative flex justify-center lg:justify-end"
           >
-            <div className="relative w-80 h-[480px]">
-              
-              {/* Card 1: Sabyasachi Lehenga */}
-              <div className="absolute top-0 left-0 w-64 h-80 rounded-2xl overflow-hidden border border-luxury-gold/30 shadow-2xl z-20 transform -rotate-6 transition-all duration-300 hover:rotate-0 hover:scale-105 cursor-pointer bg-white">
-                <img 
-                  src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&h=500&q=80" 
-                  alt="Sabyasachi Lehenga" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white">
-                  <p className="text-[10px] uppercase tracking-widest text-luxury-gold font-bold">Sabyasachi Heritage</p>
-                  <p className="text-xs font-semibold">Crimson Royal Lehenga</p>
-                </div>
-              </div>
+            <div 
+              className="relative w-full h-[450px] md:h-[500px] flex items-center justify-center mx-auto lg:mr-16 lg:-translate-x-16 select-none"
+            >
+              {heroCards.map((card, idx) => {
+                const isActive = activeHeroCard === idx;
+                const offset = idx - activeHeroCard;
+                
+                // 3D coverflow values
+                const xPos = offset * 110; 
+                const rotateDeg = offset * 8; 
+                const scaleValue = isActive ? 1.05 : 0.85;
+                const zIndexValue = 40 - Math.abs(offset);
+                const opacityValue = Math.abs(offset) > 1 ? 0.5 : 1;
 
-              {/* Card 2: Tuxedo */}
-              <div className="absolute bottom-0 right-0 w-56 h-72 rounded-2xl overflow-hidden border border-luxury-gold/25 shadow-2xl z-10 transform rotate-12 transition-all duration-300 hover:rotate-0 hover:scale-105 cursor-pointer bg-white">
-                <img 
-                  src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=400&h=500&q=80" 
-                  alt="Raymond Tux" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white">
-                  <p className="text-[10px] uppercase tracking-widest text-luxury-gold font-bold">Raymond Custom</p>
-                  <p className="text-xs font-semibold">Peak Lapel Tuxedo</p>
-                </div>
-              </div>
-
+                return (
+                  <motion.div
+                    key={idx}
+                    animate={{
+                      x: xPos,
+                      scale: scaleValue,
+                      rotate: rotateDeg,
+                      zIndex: zIndexValue,
+                      opacity: opacityValue
+                    }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 280,
+                      damping: 24
+                    }}
+                    className={`absolute w-56 h-80 md:w-64 md:h-96 rounded-3xl overflow-hidden border bg-white shadow-2xl cursor-pointer ${
+                      isActive ? 'border-luxury-gold/50' : 'border-luxury-gold/15'
+                    }`}
+                  >
+                    <img 
+                      src={card.img} 
+                      alt={card.title} 
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    />
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
 
@@ -179,7 +224,7 @@ const Landing = () => {
       </section>
 
       {/* 2. FEATURED CATEGORIES */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="text-center max-w-xl mx-auto space-y-3">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Browse Luxury Silhouettes</h2>
           <p className="text-sm font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70">
@@ -199,19 +244,19 @@ const Landing = () => {
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6"
         >
           {categories.map((cat, idx) => (
-            <motion.div key={idx} variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="h-full">
+            <motion.div whileHover={{ y: -8, scale: 1.02, rotate: idx % 2 === 0 ? 1 : -1 }} key={idx} variants={{ hidden: { opacity: 0, y: 30, scale: 0.9 }, visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, type: "spring", bounce: 0.4 } } }} className="h-full cursor-default">
               <div 
-                className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-luxury-gold/10 hover:border-luxury-gold/40 flex items-end p-4 transition-all duration-300 block w-full cursor-default"
+                className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-luxury-gold/10 hover:border-luxury-gold/40 flex items-end p-4 transition-all duration-300 block w-full"
               >
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-black/35 z-10 transition-all"></div>
                 <img 
                   src={cat.img} 
                   alt={cat.name} 
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-125 group-hover:-rotate-3" 
                 />
-                <div className="relative z-20 text-left text-white w-full space-y-0.5">
+                <motion.div initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="relative z-20 text-left text-white w-full space-y-0.5 overflow-hidden">
                   <h3 className="text-sm font-semibold tracking-wide truncate group-hover:text-luxury-gold transition-colors">{cat.name}</h3>
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           ))}
@@ -220,7 +265,7 @@ const Landing = () => {
 
       {/* 3. HOW IT WORKS */}
       <section className="bg-luxury-cream/45 dark:bg-luxury-lightcharcoal/40 py-20 border-y border-luxury-gold/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center max-w-xl mx-auto space-y-3">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">The 4-Step Rental Experience</h2>
@@ -242,10 +287,10 @@ const Landing = () => {
           >
             
             {/* Step 1 */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
-              <div className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
+            <motion.div whileHover={{ y: -10, scale: 1.02 }} variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-2xl transition-all relative z-10">
+              <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
                 1
-              </div>
+              </motion.div>
               <h3 className="font-semibold text-base">Select Outfit</h3>
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 leading-relaxed font-light">
                 Browse our premium designer catalog and filter by size, color, design, and dates.
@@ -253,10 +298,10 @@ const Landing = () => {
             </motion.div>
 
             {/* Step 2 */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
-              <div className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
+            <motion.div whileHover={{ y: -10, scale: 1.02 }} variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-2xl transition-all relative z-10">
+              <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }} className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
                 2
-              </div>
+              </motion.div>
               <h3 className="font-semibold text-base">Reserve & Pay</h3>
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 leading-relaxed font-light">
                 Choose a 3, 5, or 7 day booking window. Make a secure, deposit-inclusive payment.
@@ -264,10 +309,10 @@ const Landing = () => {
             </motion.div>
 
             {/* Step 3 */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
-              <div className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
+            <motion.div whileHover={{ y: -10, scale: 1.02 }} variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-2xl transition-all relative z-10">
+              <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 1 }} className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
                 3
-              </div>
+              </motion.div>
               <h3 className="font-semibold text-base">Flaunt It</h3>
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 leading-relaxed font-light">
                 Receive the custom-fitted, UV-sanitized outfit in a luxury bag. Rock your special event!
@@ -275,14 +320,52 @@ const Landing = () => {
             </motion.div>
 
             {/* Step 4 */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-xl transition-all">
-              <div className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
+            <motion.div whileHover={{ y: -10, scale: 1.02 }} variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="bg-white dark:bg-luxury-charcoal p-6 rounded-xl border border-luxury-gold/15 shadow-md space-y-4 text-center group hover:shadow-2xl transition-all relative z-10">
+              <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }} className="w-12 h-12 rounded-full bg-luxury-gold/10 text-luxury-gold font-bold flex items-center justify-center mx-auto text-lg group-hover:bg-luxury-gold group-hover:text-white transition-all">
                 4
-              </div>
+              </motion.div>
               <h3 className="font-semibold text-base">Easy Return</h3>
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 leading-relaxed font-light">
                 Pack it back. Our courier partner picks it up from your doorstep. Deposit is returned instantly!
               </p>
+            </motion.div>
+            
+            {/* Decorative Floating Cards - Harmoniously Aligned & Styled */}
+            
+            {/* Top-Left Floating Card (Lehenga Close-up) */}
+            <motion.div 
+              animate={{ y: [0, -12, 0], rotate: [-6, -2, -6] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-20 -left-16 w-28 h-36 rounded-2xl overflow-hidden border-2 border-luxury-gold/25 shadow-xl opacity-30 md:opacity-85 z-0 hidden lg:block pointer-events-none"
+            >
+              <img src="/assets/bridal_wear_1787054110911.jpg" alt="Deco Top Left" className="w-full h-full object-cover" />
+            </motion.div>
+
+            {/* Bottom-Left Floating Card (Saree fabric detail) */}
+            <motion.div 
+              animate={{ y: [0, 10, 0], rotate: [8, 12, 8] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute -bottom-16 left-1/4 w-24 h-32 rounded-2xl overflow-hidden border-2 border-luxury-gold/20 shadow-xl opacity-20 md:opacity-75 z-0 hidden lg:block pointer-events-none"
+            >
+              <img src="/assets/cat_designer_sarees_1787056158750.jpg" alt="Deco Bottom Left" className="w-full h-full object-cover" />
+            </motion.div>
+
+            {/* Top-Right Floating Card (Tuxedo texture) */}
+            <motion.div 
+              animate={{ y: [0, -8, 0], rotate: [-8, -4, -8] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              className="absolute -top-12 right-1/4 w-24 h-32 rounded-2xl overflow-hidden border-2 border-luxury-gold/20 shadow-xl opacity-20 md:opacity-75 z-0 hidden lg:block pointer-events-none"
+            >
+              <img src="/assets/cat_tuxedos_1787057033970.jpg" alt="Deco Top Right" className="w-full h-full object-cover" />
+            </motion.div>
+
+            {/* Bottom-Right Floating Card (Anarkali close-up) */}
+            <motion.div 
+              animate={{ y: [0, 15, 0], rotate: [5, 10, 5] }}
+              transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+              className="absolute -bottom-20 -right-16 w-28 h-36 rounded-2xl overflow-hidden border-2 border-luxury-gold/25 shadow-xl opacity-30 md:opacity-85 z-0 hidden lg:block pointer-events-none"
+            >
+              <img src="/assets/cat_anarkalis_1787056519153.jpg" alt="Deco Bottom Right" className="w-full h-full object-cover" />
             </motion.div>
 
           </motion.div>
@@ -290,11 +373,84 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* 4. DIGITAL RUNWAY & INTERACTIVE GALLERY */}
+      <section className="py-20 overflow-hidden relative bg-luxury-charcoal text-white dark:bg-black">
+        {/* Soft atmospheric background glow */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-luxury-gold/5 to-transparent pointer-events-none"></div>
 
+        <div className="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">
+          
+          <div className="text-center max-w-xl mx-auto space-y-3">
+            <motion.span 
+              initial={{ letterSpacing: "0.1em", opacity: 0 }}
+              whileInView={{ letterSpacing: "0.2em", opacity: 1 }}
+              transition={{ duration: 1 }}
+              className="text-[10px] uppercase font-bold tracking-widest text-luxury-gold block"
+            >
+              Interactive Showcase
+            </motion.span>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight font-playfair text-white">The Digital Runway</h2>
+            <p className="text-sm font-light text-luxury-alabaster/70">
+              Immerse yourself in our premier collections with fluid, interactive editorial animations.
+            </p>
+            <div className="h-0.5 w-16 bg-luxury-gold mx-auto"></div>
+          </div>
+
+          {/* Animation 1: The Infinite Scrolling Runway Marquee */}
+          <div className="relative w-full overflow-hidden py-4 border-y border-luxury-gold/15 bg-black/35 backdrop-blur-sm">
+            <div className="flex w-[200%] gap-8 animate-[marquee_25s_linear_infinite] hover:[animation-play-state:paused] whitespace-nowrap">
+              {/* First loop */}
+              {[
+                { name: "Bridal Portrait", img: "/assets/bridal_wear_1787054110911.jpg" },
+                { name: "Golden Detail", img: "/assets/designer_lehenga.jpg" },
+                { name: "Purple Gown", img: "/assets/runway_gown_purple.jpg" },
+                { name: "Royal Sherwani", img: "/assets/sherwanis.jpg" },
+                { name: "Suit Blue", img: "/assets/blue-tuxedo.jpg" },
+                { name: "Bespoke Couture", img: "/assets/sabesh-saree.jpg" },
+                { name: "Groom Sherwani", img: "/assets/cat_sherwanis_1787056047869.jpg" },
+                { name: "Showroom Select", img: "/assets/modern_fashion.jpg" },
+              ].map((item, idx) => (
+                <motion.div 
+                  whileHover={{ scale: 1.1, rotate: 2 }}
+                  key={`runway-1-${idx}`} 
+                  className="inline-flex flex-col items-center gap-2 cursor-pointer w-40 flex-shrink-0"
+                >
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-luxury-gold/30 shadow-2xl">
+                    <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                  </div>
+                  <span className="text-[10px] tracking-widest uppercase font-semibold text-luxury-gold/80">{item.name}</span>
+                </motion.div>
+              ))}
+              {/* Second loop (duplicate for seamless loop) */}
+              {[
+                { name: "Bridal Portrait", img: "/assets/bridal_wear_1787054110911.jpg" },
+                { name: "Golden Detail", img: "/assets/designer_lehenga.jpg" },
+                { name: "Purple Gown", img: "/assets/runway_gown_purple.jpg" },
+                { name: "Royal Sherwani", img: "/assets/sherwanis.jpg" },
+                { name: "Suit Blue", img: "/assets/blue-tuxedo.jpg" },
+                { name: "Bespoke Couture", img: "/assets/sabesh-saree.jpg" },
+                { name: "Groom Sherwani", img: "/assets/cat_sherwanis_1787056047869.jpg" },
+                { name: "Showroom Select", img: "/assets/modern_fashion.jpg" },
+              ].map((item, idx) => (
+                <motion.div 
+                  whileHover={{ scale: 1.1, rotate: 2 }}
+                  key={`runway-2-${idx}`} 
+                  className="inline-flex flex-col items-center gap-2 cursor-pointer w-40 flex-shrink-0"
+                >
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-luxury-gold/30 shadow-2xl">
+                    <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                  </div>
+                  <span className="text-[10px] tracking-widest uppercase font-semibold text-luxury-gold/80">{item.name}</span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* 5. TOP VERIFIED BOUTIQUES */}
       <section className="bg-luxury-cream/25 dark:bg-luxury-lightcharcoal/20 py-20 border-y border-luxury-gold/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="text-center max-w-xl mx-auto space-y-3">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Verified Boutique Partners</h2>
@@ -315,20 +471,20 @@ const Landing = () => {
             className="grid grid-cols-1 md:grid-cols-3 gap-8"
           >
             {featuredBoutiques.map((boutique) => (
-              <motion.div key={boutique.id} variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}>
+              <motion.div whileHover={{ y: -12 }} key={boutique.id} variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}>
                 <div 
-                  className="bg-white dark:bg-luxury-charcoal rounded-xl overflow-hidden shadow-lg border border-luxury-gold/15 group flex flex-col justify-between h-full"
+                  className="bg-white dark:bg-luxury-charcoal rounded-xl overflow-hidden shadow-2xl border border-luxury-gold/15 group flex flex-col justify-between h-full"
                 >
                   <div className="h-40 overflow-hidden relative">
-                    <img src={boutique.coverImage} alt={boutique.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                    <div className="absolute top-3 right-3 bg-luxury-gold text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    <img src={boutique.coverImage} alt={boutique.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <div className="absolute top-3 right-3 bg-luxury-gold text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-lg">
                       Verified
                     </div>
                   </div>
 
                   <div className="p-6 text-left relative flex-1">
                     <div className="pt-2 space-y-3">
-                      <h3 className="font-bold text-lg dark:text-white flex items-center">
+                      <h3 className="font-bold text-lg dark:text-white flex items-center group-hover:text-luxury-gold transition-colors">
                         {boutique.name}
                       </h3>
                       <p className="text-xs text-luxury-charcoal/50 dark:text-luxury-alabaster/50 font-light">{boutique.location}</p>
@@ -336,7 +492,7 @@ const Landing = () => {
                         {boutique.description}
                       </p>
 
-                      <div className="pt-4 border-t border-luxury-gold/10 flex items-center justify-between text-xs">
+                      <div className="pt-4 border-t border-luxury-gold/10 flex items-center justify-between text-xs mt-auto">
                         <div>
                           {boutique.reviewsCount > 0 ? (
                             <>
@@ -349,9 +505,9 @@ const Landing = () => {
                         </div>
                         <Link 
                           to={`/catalog?storeName=${encodeURIComponent(boutique.name)}`}
-                          className="text-[10px] uppercase font-bold tracking-widest text-luxury-gold hover:text-luxury-bronze"
+                          className="text-[10px] uppercase font-bold tracking-widest text-luxury-gold hover:text-luxury-bronze flex items-center gap-1 group/btn"
                         >
-                          View Store
+                          View Store <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform" />
                         </Link>
                       </div>
                     </div>
@@ -366,7 +522,7 @@ const Landing = () => {
       </section>
 
       {/* 6. TRUST INDICATORS (Safety, clean, protection) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center max-w-xl mx-auto space-y-3">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Uncompromised Trust & Safety</h2>
           <p className="text-sm font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70">
@@ -386,10 +542,10 @@ const Landing = () => {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           
-          <motion.div variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } } }} className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-sm text-left hover:shadow-md transition-shadow">
-            <div className="p-3 bg-luxury-gold/10 text-luxury-gold rounded-lg flex-shrink-0">
+          <motion.div whileHover={{ scale: 1.05, y: -5 }} variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } } }} className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-lg text-left transition-all">
+            <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="p-3 bg-luxury-gold/10 text-luxury-gold rounded-lg flex-shrink-0">
               <ShieldCheck size={24} />
-            </div>
+            </motion.div>
             <div className="space-y-1.5">
               <h3 className="font-semibold text-base dark:text-white">5-Stage Cleanliness Protocol</h3>
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 font-light leading-relaxed">
@@ -398,10 +554,10 @@ const Landing = () => {
             </div>
           </motion.div>
 
-          <motion.div variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } } }} className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-sm text-left hover:shadow-md transition-shadow">
-            <div className="p-3 bg-luxury-gold/10 text-luxury-gold rounded-lg flex-shrink-0">
+          <motion.div whileHover={{ scale: 1.05, y: -5 }} variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5, delay: 0.1 } } }} className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-lg text-left transition-all">
+            <motion.div animate={{ rotate: [0, -10, 10, 0] }} transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }} className="p-3 bg-luxury-gold/10 text-luxury-gold rounded-lg flex-shrink-0">
               <Award size={24} />
-            </div>
+            </motion.div>
             <div className="space-y-1.5">
               <h3 className="font-semibold text-base dark:text-white">Temporary Custom Fitting</h3>
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 font-light leading-relaxed">
@@ -410,16 +566,29 @@ const Landing = () => {
             </div>
           </motion.div>
 
-          <motion.div variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } } }} className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-sm text-left hover:shadow-md transition-shadow">
-            <div className="p-3 bg-luxury-gold/10 text-luxury-gold rounded-lg flex-shrink-0">
+          <motion.div whileHover={{ scale: 1.05, y: -5 }} variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5, delay: 0.2 } } }} className="p-6 bg-white dark:bg-luxury-lightcharcoal rounded-xl border border-luxury-gold/15 flex items-start space-x-4 shadow-lg text-left transition-all relative">
+            <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="p-3 bg-luxury-gold/10 text-luxury-gold rounded-lg flex-shrink-0">
               <Calendar size={24} />
-            </div>
+            </motion.div>
             <div className="space-y-1.5">
               <h3 className="font-semibold text-base dark:text-white">Seamless Cancellation & Returns</h3>
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 font-light leading-relaxed">
                 Cancel up to 10 days before your booking for a full refund. Returns include hassle-free courier doorstep pickup.
               </p>
             </div>
+            {/* Tiny deco element */}
+            <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-4 -right-4 bg-luxury-gold text-white p-2 rounded-full shadow-lg">
+              <Sparkles size={14} />
+            </motion.div>
+          </motion.div>
+
+          {/* Background decorative floating card for Trust section */}
+          <motion.div 
+            animate={{ y: [0, 15, 0], rotate: [-5, 5, -5] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-0 right-10 w-20 h-24 rounded-lg overflow-hidden border border-luxury-gold/20 shadow-xl opacity-20 pointer-events-none hidden lg:block"
+          >
+            <img src="/assets/cat_accessories_1787056661975.jpg" alt="Deco" className="w-full h-full object-cover" />
           </motion.div>
 
         </motion.div>
