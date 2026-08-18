@@ -336,7 +336,7 @@ const Landing = () => {
             <motion.div 
               animate={{ y: [0, -12, 0], rotate: [-6, -2, -6] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-20 -left-16 w-28 h-36 rounded-2xl overflow-hidden border-2 border-luxury-gold/25 shadow-xl opacity-30 md:opacity-85 z-0 hidden lg:block pointer-events-none"
+              className="absolute -top-12 -left-4 w-20 h-26 md:-top-20 md:-left-16 md:w-28 md:h-36 rounded-2xl overflow-hidden border-2 border-luxury-gold/25 shadow-xl opacity-30 md:opacity-85 z-0 block pointer-events-none"
             >
               <img src="/assets/bridal_wear_1787054110911.jpg" alt="Deco Top Left" className="w-full h-full object-cover" />
             </motion.div>
@@ -345,7 +345,7 @@ const Landing = () => {
             <motion.div 
               animate={{ y: [0, 10, 0], rotate: [8, 12, 8] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute -bottom-16 left-1/4 w-24 h-32 rounded-2xl overflow-hidden border-2 border-luxury-gold/20 shadow-xl opacity-20 md:opacity-75 z-0 hidden lg:block pointer-events-none"
+              className="absolute -bottom-10 left-6 w-16 h-22 md:-bottom-16 md:left-1/4 md:w-24 md:h-32 rounded-2xl overflow-hidden border-2 border-luxury-gold/20 shadow-xl opacity-20 md:opacity-75 z-0 block pointer-events-none"
             >
               <img src="/assets/cat_designer_sarees_1787056158750.jpg" alt="Deco Bottom Left" className="w-full h-full object-cover" />
             </motion.div>
@@ -354,7 +354,7 @@ const Landing = () => {
             <motion.div 
               animate={{ y: [0, -8, 0], rotate: [-8, -4, -8] }}
               transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-              className="absolute -top-12 right-1/4 w-24 h-32 rounded-2xl overflow-hidden border-2 border-luxury-gold/20 shadow-xl opacity-20 md:opacity-75 z-0 hidden lg:block pointer-events-none"
+              className="absolute -top-6 right-6 w-16 h-22 md:-top-12 md:right-1/4 md:w-24 md:h-32 rounded-2xl overflow-hidden border-2 border-luxury-gold/20 shadow-xl opacity-20 md:opacity-75 z-0 block pointer-events-none"
             >
               <img src="/assets/cat_tuxedos_1787057033970.jpg" alt="Deco Top Right" className="w-full h-full object-cover" />
             </motion.div>
@@ -363,7 +363,7 @@ const Landing = () => {
             <motion.div 
               animate={{ y: [0, 15, 0], rotate: [5, 10, 5] }}
               transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-              className="absolute -bottom-20 -right-16 w-28 h-36 rounded-2xl overflow-hidden border-2 border-luxury-gold/25 shadow-xl opacity-30 md:opacity-85 z-0 hidden lg:block pointer-events-none"
+              className="absolute -bottom-12 -right-4 w-20 h-26 md:-bottom-20 md:-right-16 md:w-28 md:h-36 rounded-2xl overflow-hidden border-2 border-luxury-gold/25 shadow-xl opacity-30 md:opacity-85 z-0 block pointer-events-none"
             >
               <img src="/assets/cat_anarkalis_1787056519153.jpg" alt="Deco Bottom Right" className="w-full h-full object-cover" />
             </motion.div>
