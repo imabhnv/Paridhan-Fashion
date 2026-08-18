@@ -32,19 +32,19 @@ const Landing = () => {
   const [activeHeroCard, setActiveHeroCard] = React.useState(0);
   const heroCards = [
     {
-      img: "/assets/bridal_wear_1787054110911.jpg",
+      img: "/assets/Lehanga.jpeg",
       title: "Sabyasachi Heritage",
       desc: "Bridal Lehenga"
-    },
-    {
-      img: "/assets/cat_designer_sarees_1787056158750.jpg",
-      title: "Emerald Banarasi",
-      desc: "Designer Saree"
     },
     {
       img: "/assets/blue-tuxedo.jpg",
       title: "Raymond Custom",
       desc: "Peak Lapel Tuxedo"
+    },
+    {
+      img: "/assets/cat_designer_sarees_1787056158750.jpg",
+      title: "Emerald Banarasi",
+      desc: "Designer Saree"
     },
     {
       img: "/assets/modern_fashion.jpg",
@@ -61,10 +61,10 @@ const Landing = () => {
   }, [heroCards.length]);
 
   const categories = [
-    { name: "Bridal Wear", img: "/assets/saree.jpg" },
+    { name: "Bridal Wear", img: "/assets/bridal_wear_1787054110911.jpg" },
     { name: "Designer Lehengas", img: "/assets/designer_lehenga_1787054130424.jpg" },
     { name: "Party Wear", img: "/assets/party_wear_1787054158964.jpg" },
-    { name: "Ethnic Wear", img: "/assets/ethnic_wear_1787054355104.jpg" },
+    { name: "Ethnic Wear", img: "/assets/ethnic.jpeg" },
     { name: "Tuxedos", img: "/assets/Black-tuxedo.jpg" },
     { name: "Luxury Gowns", img: "/assets/cat_luxury_gowns_1787055572429.jpg" },
     { name: "Sherwanis", img: "/assets/sherwanis_clean.jpg" },
