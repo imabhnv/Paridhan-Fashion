@@ -29,12 +29,18 @@ const Landing = () => {
   };
 
   const categories = [
-    { name: "Bridal Wear", img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&h=500&q=80", count: "120+ Outfits" },
-    { name: "Designer Lehengas", img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=400&h=500&q=80", count: "240+ Outfits" },
-    { name: "Party Wear", img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&h=500&q=80", count: "310+ Outfits" },
-    { name: "Ethnic Wear", img: "https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?auto=format&fit=crop&w=400&h=500&q=80", count: "190+ Outfits" },
-    { name: "Tuxedos", img: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=400&h=500&q=80", count: "80+ Suits" },
-    { name: "Luxury Gowns", img: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=400&h=500&q=80", count: "140+ Gowns" }
+    { name: "Bridal Wear", img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&h=500&q=80" },
+    { name: "Designer Lehengas", img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=400&h=500&q=80" },
+    { name: "Party Wear", img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&h=500&q=80" },
+    { name: "Ethnic Wear", img: "https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?auto=format&fit=crop&w=400&h=500&q=80" },
+    { name: "Tuxedos", img: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=400&h=500&q=80" },
+    { name: "Luxury Gowns", img: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=400&h=500&q=80" },
+    { name: "Sherwanis", img: "https://images.unsplash.com/photo-1607345366928-199ea26cfe3e?auto=format&fit=crop&w=400&h=500&q=80" },
+    { name: "Designer Sarees", img: "https://images.unsplash.com/photo-1615887023516-9b6bcd559e87?auto=format&fit=crop&w=400&h=500&q=80" },
+    { name: "Anarkalis", img: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=400&h=500&q=80" },
+    { name: "Kurta Sets", img: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=400&h=500&q=80" },
+    { name: "Indo-Western", img: "https://images.unsplash.com/photo-1605518216938-7c31b7b14ad0?auto=format&fit=crop&w=400&h=500&q=80" },
+    { name: "Accessories", img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&h=500&q=80" }
   ];
 
   return (
@@ -194,9 +200,8 @@ const Landing = () => {
         >
           {categories.map((cat, idx) => (
             <motion.div key={idx} variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="h-full">
-              <Link 
-                to={`/catalog?category=${encodeURIComponent(cat.name)}`}
-                className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-luxury-gold/10 hover:border-luxury-gold/40 flex items-end p-4 transition-all duration-300 block w-full"
+              <div 
+                className="group relative h-72 rounded-xl overflow-hidden shadow-lg border border-luxury-gold/10 hover:border-luxury-gold/40 flex items-end p-4 transition-all duration-300 block w-full cursor-default"
               >
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-black/35 z-10 transition-all"></div>
                 <img 
@@ -206,9 +211,8 @@ const Landing = () => {
                 />
                 <div className="relative z-20 text-left text-white w-full space-y-0.5">
                   <h3 className="text-sm font-semibold tracking-wide truncate group-hover:text-luxury-gold transition-colors">{cat.name}</h3>
-                  <p className="text-[9px] text-white/70 uppercase tracking-widest font-light">{cat.count}</p>
                 </div>
-              </Link>
+              </div>
             </motion.div>
           ))}
         </motion.div>
