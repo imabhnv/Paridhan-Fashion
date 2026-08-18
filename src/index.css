@@ -2,19 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  zoom: 1.05;
-}
-@media (min-width: 768px) {
-  body {
-    zoom: 1.12;
-  }
-}
-@media (min-width: 1024px) {
-  body {
-    zoom: 1.2;
-  }
-}
+/* Sizing rules reset to default */
 
 
 @layer base {
