@@ -23,7 +23,7 @@ const Footer = () => {
           <div className="lg:col-span-1 space-y-4">
             <Link to="/" className="flex items-center space-x-2">
               <span className="text-3xl font-bold tracking-widest font-playfair text-white">
-                PARIDHAN
+                TUSSUTO
               </span>
               <span className="h-2 w-2 rounded-full bg-luxury-gold inline-block"></span>
             </Link>
@@ -66,7 +66,7 @@ const Footer = () => {
           
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="text-xs font-bold tracking-widest text-white uppercase">Paridhan</h4>
+            <h4 className="text-xs font-bold tracking-widest text-white uppercase">Tussuto</h4>
             <ul className="space-y-2.5 text-sm font-light text-luxury-cream/70">
               <li><Link to="/about" className="hover:text-luxury-gold transition-colors">Our Story & Sustainability</Link></li>
               <li><Link to="/contact" className="hover:text-luxury-gold transition-colors">Contact Support</Link></li>
@@ -93,7 +93,7 @@ const Footer = () => {
             <h4 className="text-xs font-bold tracking-widest text-white uppercase">The Founders</h4>
             <div className="space-y-3 text-sm font-light text-luxury-cream/70 leading-relaxed">
               <p>
-                Founded and led by <span className="text-luxury-gold font-medium">Tanya Gupta</span> with <span className="text-luxury-gold font-medium">Abhinav Varshney</span> driving Paridhan’s vision, strategy, and long-term growth, we are building a future where luxury fashion is accessible, sustainable, and within reach.
+                Founded and led by <span className="text-luxury-gold font-medium">Tanya Gupta</span> with <span className="text-luxury-gold font-medium">Abhinav Varshney</span> driving Tussuto’s vision, strategy, and long-term growth, we are building a future where luxury fashion is accessible, sustainable, and within reach.
               </p>
               <ul className="space-y-3 pt-2 border-t border-luxury-gold/10">
                 <li className="flex items-center space-x-2.5">
@@ -119,7 +119,7 @@ const Footer = () => {
           </div>
 
           <div>
-            &copy; {new Date().getFullYear()} Paridhan Marketplace. Crafted with Luxury. All Rights Reserved.
+            &copy; {new Date().getFullYear()} Tussuto Marketplace. Crafted with Luxury. All Rights Reserved.
           </div>
 
           {/* Payments and Socials */}

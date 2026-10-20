@@ -58,12 +58,12 @@ export const AuthProvider = ({ children }) => {
 
     // ── Simulated Mode fallback ────────────────────────────────
     // No real Firebase → read from localStorage session
-    const session = localStorage.getItem('paridhan_session');
+    const session = localStorage.getItem('tussuto_session');
     if (session) {
       try {
         setUser(JSON.parse(session));
       } catch {
-        localStorage.removeItem('paridhan_session');
+        localStorage.removeItem('tussuto_session');
       }
     }
     setLoading(false);
@@ -126,7 +126,7 @@ export const AuthProvider = ({ children }) => {
           : { ...user, ...details };
         setUser(mergedUser);
         if (!isFirebaseConfigured) {
-          localStorage.setItem('paridhan_session', JSON.stringify(mergedUser));
+          localStorage.setItem('tussuto_session', JSON.stringify(mergedUser));
         }
       }
       return updated;

@@ -9,7 +9,7 @@ const About = () => {
       
       <SeoHelper 
         title="Our Story & Sustainability Mission" 
-        description="Learn how Paridhan is building a circular luxury fashion economy in India, saving resources and empowering local boutiques." 
+        description="Learn how Tussuto is building a circular luxury fashion economy in India, saving resources and empowering local boutiques." 
         keywords="sustainable fashion rent, circular fashion marketplace, rent Sabyasachi, dress rental eco friendly"
       />
 
@@ -23,7 +23,7 @@ const About = () => {
             Sustainability • Accessibility • Handcrafted Heritage
           </p>
           <p className="text-base md:text-lg font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70 max-w-2xl mx-auto leading-relaxed pt-2">
-            Paridhan is a next-generation fashion-tech startup platform empowering users to wear world-class designer couture for a fraction of the cost, keeping garments in circulation.
+            Tussuto is a next-generation fashion-tech startup platform empowering users to wear world-class designer couture for a fraction of the cost, keeping garments in circulation.
           </p>
         </div>
       </section>
@@ -73,7 +73,7 @@ const About = () => {
               We do not compete with boutiques; we empower them. Our platform connects showrooms, designers, and boutiques directly with a national network of fashion lovers. 
             </p>
             <p className="text-sm font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70 leading-relaxed">
-              Boutiques register on Paridhan to upload their archival, unused premium inventory, turning depreciating capital into a consistent recurring revenue stream. We manage the delivery, sizing coordination, and security deposit audits.
+              Boutiques register on Tussuto to upload their archival, unused premium inventory, turning depreciating capital into a consistent recurring revenue stream. We manage the delivery, sizing coordination, and security deposit audits.
             </p>
           </div>
 

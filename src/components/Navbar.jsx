@@ -37,7 +37,7 @@ const Navbar = () => {
           <div className="flex-shrink-0 flex items-center pl-8 sm:pl-12 lg:pl-16">
             <Link to="/" className="flex items-center space-x-2">
               <span className="text-3xl font-bold tracking-widest font-playfair text-luxury-charcoal dark:text-luxury-alabaster">
-                PARIDHAN
+                TUSSUTO
               </span>
               <span className="h-2 w-2 rounded-full bg-luxury-gold inline-block"></span>
             </Link>

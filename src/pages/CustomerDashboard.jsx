@@ -66,7 +66,7 @@ const CustomerDashboard = () => {
     // but for an admin viewing a customer, this is tricky. We'll just show empty for now, 
     // or keep the local logic since wishlist isn't stored in Firebase currently).
     const allProds = await dbService.getProducts();
-    const wishIds = JSON.parse(localStorage.getItem('paridhan-wishlist') || '[]');
+    const wishIds = JSON.parse(localStorage.getItem('tussuto-wishlist') || '[]');
     const wishData = allProds.filter(p => wishIds.includes(p.id));
     setWishlistItems(wishData);
 
@@ -136,7 +136,7 @@ const CustomerDashboard = () => {
     };
 
     await dbService.fileDispute(disputeData);
-    setDisputeSuccess('✅ Dispute filed successfully. Paridhan claims desk will audit this within 24 hours.');
+    setDisputeSuccess('✅ Dispute filed successfully. Tussuto claims desk will audit this within 24 hours.');
     setSelectedBookingId('');
     setDisputeReason('');
     setDisputeDescription('');

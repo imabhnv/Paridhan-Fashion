@@ -12,7 +12,7 @@ const FloatingCta = () => {
     {
       id: 1,
       sender: 'bot',
-      text: "Namaste! I'm your Paridhan Outfit Advisor, powered by AI. Tell me what occasion you're planning for, and I'll suggest the perfect designer outfit from our live catalog.",
+      text: "Namaste! I'm your Tussuto Outfit Advisor, powered by AI. Tell me what occasion you're planning for, and I'll suggest the perfect designer outfit from our live catalog.",
     },
   ]);
   const [inputText, setInputText] = useState('');
@@ -42,7 +42,7 @@ const FloatingCta = () => {
     try {
       const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
       
-      const systemContext = `You are the elite Paridhan Outfit Advisor. Your goal is to help users find the perfect luxury designer outfit to rent. 
+      const systemContext = `You are the elite Tussuto Outfit Advisor. Your goal is to help users find the perfect luxury designer outfit to rent. 
 Be polite, extremely helpful, and concise. 
 Here is the list of currently available products in the catalog: 
 ${JSON.stringify(availableProducts.map(p => ({ id: p.id, title: p.title, category: p.category, price: p.rentalPricePerDay, store: p.storeName })))}

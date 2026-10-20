@@ -22,7 +22,7 @@ const TrustPages = () => {
       
       <SeoHelper 
         title={`${activeTab.replace('-', ' ').toUpperCase()} Agreement`}
-        description="Review Paridhan's legal guidelines, deposit claims policy, and dry-cleaning safety standards."
+        description="Review Tussuto's legal guidelines, deposit claims policy, and dry-cleaning safety standards."
       />
 
       <div className="border-b border-luxury-gold/20 pb-6 mb-8">
@@ -72,7 +72,7 @@ const TrustPages = () => {
               <div className="h-0.5 w-12 bg-luxury-gold mb-6"></div>
               
               <p>
-                By reserving an outfit on Paridhan, you agree to enter a rental agreement with the verified store boutique partner listing the design.
+                By reserving an outfit on Tussuto, you agree to enter a rental agreement with the verified store boutique partner listing the design.
               </p>
               
               <h3 className="font-bold text-sm dark:text-white pt-2">1. Booking Schedule & Delivery</h3>
@@ -150,7 +150,7 @@ const TrustPages = () => {
               <div className="h-0.5 w-12 bg-luxury-gold mb-6"></div>
 
               <p>
-                Welcome to Paridhan. By using our website and services, you agree to comply with the terms and conditions outlined below.
+                Welcome to Tussuto. By using our website and services, you agree to comply with the terms and conditions outlined below.
               </p>
               <p>
                 All outfit listings, images, and brand details are verified, but availability conflicts can occasionally occur during busy wedding seasons. In case of scheduling overlaps, our concierge will coordinate alternatives or issue full refunds.
@@ -167,7 +167,7 @@ const TrustPages = () => {
               <div className="h-0.5 w-12 bg-luxury-gold mb-6"></div>
 
               <p>
-                At Paridhan, your privacy is paramount. We secure all personal data, address directories, sizing measurements, and transaction logs.
+                At Tussuto, your privacy is paramount. We secure all personal data, address directories, sizing measurements, and transaction logs.
               </p>
               <p>
                 We do not sell user data. Payment info is processed securely via PCI-compliant Razorpay API networks, with 0 card details saved on our database.

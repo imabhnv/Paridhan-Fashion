@@ -6,23 +6,23 @@ import { MOCK_PRODUCTS, MOCK_BOUTIQUES } from '../data/mockData';
 // Initialize LocalStorage DB if needed
 const initLocalDb = () => {
   // Clear out old mock products if they exist
-  const existingProducts = JSON.parse(localStorage.getItem('paridhan_products') || '[]');
+  const existingProducts = JSON.parse(localStorage.getItem('tussuto_products') || '[]');
   if (existingProducts.length > 0 && existingProducts[0].id === 'prod-1') {
-    localStorage.setItem('paridhan_products', JSON.stringify([]));
-  } else if (!localStorage.getItem('paridhan_products')) {
-    localStorage.setItem('paridhan_products', JSON.stringify([]));
+    localStorage.setItem('tussuto_products', JSON.stringify([]));
+  } else if (!localStorage.getItem('tussuto_products')) {
+    localStorage.setItem('tussuto_products', JSON.stringify([]));
   }
-  if (!localStorage.getItem('paridhan_boutiques')) {
-    localStorage.setItem('paridhan_boutiques', JSON.stringify(MOCK_BOUTIQUES));
+  if (!localStorage.getItem('tussuto_boutiques')) {
+    localStorage.setItem('tussuto_boutiques', JSON.stringify(MOCK_BOUTIQUES));
   }
-  if (!localStorage.getItem('paridhan_orders')) {
-    localStorage.setItem('paridhan_orders', JSON.stringify([]));
+  if (!localStorage.getItem('tussuto_orders')) {
+    localStorage.setItem('tussuto_orders', JSON.stringify([]));
   }
-  if (!localStorage.getItem('paridhan_disputes')) {
-    localStorage.setItem('paridhan_disputes', JSON.stringify([]));
+  if (!localStorage.getItem('tussuto_disputes')) {
+    localStorage.setItem('tussuto_disputes', JSON.stringify([]));
   }
-  if (!localStorage.getItem('paridhan_contacts')) {
-    localStorage.setItem('paridhan_contacts', JSON.stringify([]));
+  if (!localStorage.getItem('tussuto_contacts')) {
+    localStorage.setItem('tussuto_contacts', JSON.stringify([]));
   }
 };
 
@@ -39,7 +39,7 @@ export const dbService = {
         console.error("Firestore getProducts failed, falling back to LocalStorage:", err);
       }
     }
-    return JSON.parse(localStorage.getItem('paridhan_products') || '[]');
+    return JSON.parse(localStorage.getItem('tussuto_products') || '[]');
   },
 
   async getProduct(id) {
@@ -51,7 +51,7 @@ export const dbService = {
         console.error("Firestore getProduct failed, falling back to LocalStorage:", err);
       }
     }
-    const products = JSON.parse(localStorage.getItem('paridhan_products') || '[]');
+    const products = JSON.parse(localStorage.getItem('tussuto_products') || '[]');
     return products.find(p => p.id === id) || null;
   },
 
@@ -64,10 +64,10 @@ export const dbService = {
         console.error("Firestore addProduct failed, using LocalStorage:", err);
       }
     }
-    const products = JSON.parse(localStorage.getItem('paridhan_products') || '[]');
+    const products = JSON.parse(localStorage.getItem('tussuto_products') || '[]');
     const newProduct = { ...product, id: `prod-${Date.now()}` };
     products.push(newProduct);
-    localStorage.setItem('paridhan_products', JSON.stringify(products));
+    localStorage.setItem('tussuto_products', JSON.stringify(products));
     return newProduct;
   },
 
@@ -81,11 +81,11 @@ export const dbService = {
         throw err;
       }
     }
-    const products = JSON.parse(localStorage.getItem('paridhan_products') || '[]');
+    const products = JSON.parse(localStorage.getItem('tussuto_products') || '[]');
     const idx = products.findIndex(p => p.id === id);
     if (idx !== -1) {
       products[idx] = { ...products[idx], ...updates };
-      localStorage.setItem('paridhan_products', JSON.stringify(products));
+      localStorage.setItem('tussuto_products', JSON.stringify(products));
       return true;
     }
     return false;
@@ -101,11 +101,11 @@ export const dbService = {
         throw err;
       }
     }
-    let products = JSON.parse(localStorage.getItem('paridhan_products') || '[]');
+    let products = JSON.parse(localStorage.getItem('tussuto_products') || '[]');
     const originalLength = products.length;
     products = products.filter(p => p.id !== id);
     if (products.length < originalLength) {
-      localStorage.setItem('paridhan_products', JSON.stringify(products));
+      localStorage.setItem('tussuto_products', JSON.stringify(products));
       return true;
     }
     return false;
@@ -113,7 +113,7 @@ export const dbService = {
 
   // --- BOUTIQUES ---
   async getBoutiques() {
-    const blacklist = JSON.parse(localStorage.getItem('paridhan_deleted_ids') || '[]');
+    const blacklist = JSON.parse(localStorage.getItem('tussuto_deleted_ids') || '[]');
     if (isFirebaseConfigured) {
       try {
         const snap = await getDocs(collection(firebaseDb, 'boutiques'));
@@ -123,11 +123,11 @@ export const dbService = {
         console.error("Firestore getBoutiques failed, using LocalStorage:", err);
       }
     }
-    return JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]').filter(d => !blacklist.includes(d.id) && !blacklist.includes(d.ownerId));
+    return JSON.parse(localStorage.getItem('tussuto_boutiques') || '[]').filter(d => !blacklist.includes(d.id) && !blacklist.includes(d.ownerId));
   },
 
   async getVerifiedBoutiques() {
-    const blacklist = JSON.parse(localStorage.getItem('paridhan_deleted_ids') || '[]');
+    const blacklist = JSON.parse(localStorage.getItem('tussuto_deleted_ids') || '[]');
     if (isFirebaseConfigured) {
       try {
         const q = query(collection(firebaseDb, 'boutiques'), where("verified", "==", true));
@@ -138,7 +138,7 @@ export const dbService = {
         console.error("Firestore getVerifiedBoutiques failed, using LocalStorage:", err);
       }
     }
-    const boutiques = JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
+    const boutiques = JSON.parse(localStorage.getItem('tussuto_boutiques') || '[]');
     return boutiques.filter(b => b.verified === true && !blacklist.includes(b.id) && !blacklist.includes(b.ownerId));
   },
 
@@ -151,7 +151,7 @@ export const dbService = {
         console.error("Firestore getBoutique failed, using LocalStorage:", err);
       }
     }
-    const boutiques = JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
+    const boutiques = JSON.parse(localStorage.getItem('tussuto_boutiques') || '[]');
     return boutiques.find(b => b.id === id) || null;
   },
 
@@ -164,11 +164,11 @@ export const dbService = {
         console.error("Firestore updateBoutique failed, using LocalStorage:", err);
       }
     }
-    const boutiques = JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
+    const boutiques = JSON.parse(localStorage.getItem('tussuto_boutiques') || '[]');
     const idx = boutiques.findIndex(b => b.id === id);
     if (idx !== -1) {
       boutiques[idx] = { ...boutiques[idx], ...updates };
-      localStorage.setItem('paridhan_boutiques', JSON.stringify(boutiques));
+      localStorage.setItem('tussuto_boutiques', JSON.stringify(boutiques));
       return true;
     }
     return false;
@@ -190,7 +190,7 @@ export const dbService = {
         console.error("Firestore getOrders failed, using LocalStorage:", err);
       }
     }
-    let orders = JSON.parse(localStorage.getItem('paridhan_orders') || '[]');
+    let orders = JSON.parse(localStorage.getItem('tussuto_orders') || '[]');
     if (filters.userId) {
       orders = orders.filter(o => o.userId === filters.userId);
     }
@@ -221,12 +221,12 @@ export const dbService = {
     }
 
     // Save to LocalStorage
-    const orders = JSON.parse(localStorage.getItem('paridhan_orders') || '[]');
+    const orders = JSON.parse(localStorage.getItem('tussuto_orders') || '[]');
     orders.push(newOrder);
-    localStorage.setItem('paridhan_orders', JSON.stringify(orders));
+    localStorage.setItem('tussuto_orders', JSON.stringify(orders));
 
     // Update Product Booked Dates to avoid scheduling conflicts
-    const products = JSON.parse(localStorage.getItem('paridhan_products') || '[]');
+    const products = JSON.parse(localStorage.getItem('tussuto_products') || '[]');
     const pIdx = products.findIndex(p => p.id === orderData.productId);
     if (pIdx !== -1) {
       const currentBooked = products[pIdx].bookedDates || [];
@@ -239,7 +239,7 @@ export const dbService = {
         current.setDate(current.getDate() + 1);
       }
       products[pIdx].bookedDates = [...new Set([...currentBooked, ...dates])];
-      localStorage.setItem('paridhan_products', JSON.stringify(products));
+      localStorage.setItem('tussuto_products', JSON.stringify(products));
     }
 
     return newOrder;
@@ -255,7 +255,7 @@ export const dbService = {
       }
     }
 
-    const orders = JSON.parse(localStorage.getItem('paridhan_orders') || '[]');
+    const orders = JSON.parse(localStorage.getItem('tussuto_orders') || '[]');
     const idx = orders.findIndex(o => o.id === id);
     if (idx !== -1) {
       // Append timeline step if status is changing
@@ -292,7 +292,7 @@ export const dbService = {
         ...updates, 
         timeline: newTimeline.length > 0 ? newTimeline : orders[idx].timeline 
       };
-      localStorage.setItem('paridhan_orders', JSON.stringify(orders));
+      localStorage.setItem('tussuto_orders', JSON.stringify(orders));
       return true;
     }
     return false;
@@ -300,11 +300,11 @@ export const dbService = {
 
   // --- DISPUTES ---
   async getDisputes() {
-    return JSON.parse(localStorage.getItem('paridhan_disputes') || '[]');
+    return JSON.parse(localStorage.getItem('tussuto_disputes') || '[]');
   },
 
   async fileDispute(disputeData) {
-    const disputes = JSON.parse(localStorage.getItem('paridhan_disputes') || '[]');
+    const disputes = JSON.parse(localStorage.getItem('tussuto_disputes') || '[]');
     const newDispute = {
       ...disputeData,
       id: `disp-${Date.now()}`,
@@ -312,16 +312,16 @@ export const dbService = {
       status: "Open"
     };
     disputes.push(newDispute);
-    localStorage.setItem('paridhan_disputes', JSON.stringify(disputes));
+    localStorage.setItem('tussuto_disputes', JSON.stringify(disputes));
     return newDispute;
   },
 
   async resolveDispute(id, status, resolutionNotes) {
-    const disputes = JSON.parse(localStorage.getItem('paridhan_disputes') || '[]');
+    const disputes = JSON.parse(localStorage.getItem('tussuto_disputes') || '[]');
     const idx = disputes.findIndex(d => d.id === id);
     if (idx !== -1) {
       disputes[idx] = { ...disputes[idx], status, resolutionNotes, resolvedAt: new Date().toISOString() };
-      localStorage.setItem('paridhan_disputes', JSON.stringify(disputes));
+      localStorage.setItem('tussuto_disputes', JSON.stringify(disputes));
       return id;
     }
     
@@ -344,7 +344,7 @@ export const dbService = {
     }
     
     // Fallback to local storage
-    const reqs = JSON.parse(localStorage.getItem('paridhan_contacts') || '[]');
+    const reqs = JSON.parse(localStorage.getItem('tussuto_contacts') || '[]');
     const newReq = { 
       id: `REQ-${Date.now()}`,
       ...data, 
@@ -352,15 +352,15 @@ export const dbService = {
       createdAt: new Date().toISOString() 
     };
     reqs.push(newReq);
-    localStorage.setItem('paridhan_contacts', JSON.stringify(reqs));
+    localStorage.setItem('tussuto_contacts', JSON.stringify(reqs));
     return newReq.id;
   },
 
   async deleteUserCompletely(uid, role, boutiqueId) {
-    const blacklist = JSON.parse(localStorage.getItem('paridhan_deleted_ids') || '[]');
+    const blacklist = JSON.parse(localStorage.getItem('tussuto_deleted_ids') || '[]');
     if (uid && !blacklist.includes(uid)) blacklist.push(uid);
     if (boutiqueId && !blacklist.includes(boutiqueId)) blacklist.push(boutiqueId);
-    localStorage.setItem('paridhan_deleted_ids', JSON.stringify(blacklist));
+    localStorage.setItem('tussuto_deleted_ids', JSON.stringify(blacklist));
 
     if (isFirebaseConfigured) {
       if (uid) {
@@ -372,12 +372,12 @@ export const dbService = {
       return true;
     }
     // LocalStorage fallback for simulated mode
-    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
-    localStorage.setItem('paridhan_users', JSON.stringify(users.filter(u => u.uid !== uid)));
+    const users = JSON.parse(localStorage.getItem('tussuto_users') || '[]');
+    localStorage.setItem('tussuto_users', JSON.stringify(users.filter(u => u.uid !== uid)));
     
     if (role === 'store' && boutiqueId) {
-      const boutiques = JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
-      localStorage.setItem('paridhan_boutiques', JSON.stringify(boutiques.filter(b => b.id !== boutiqueId)));
+      const boutiques = JSON.parse(localStorage.getItem('tussuto_boutiques') || '[]');
+      localStorage.setItem('tussuto_boutiques', JSON.stringify(boutiques.filter(b => b.id !== boutiqueId)));
     }
     return true;
   }
@@ -414,9 +414,9 @@ export const createBoutiqueRecord = async (data) => {
 
   // localStorage fallback
   const boutiqueId = `boutique-${Date.now()}`;
-  const boutiques = JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
+  const boutiques = JSON.parse(localStorage.getItem('tussuto_boutiques') || '[]');
   boutiques.push({ id: boutiqueId, ...boutiqueData });
-  localStorage.setItem('paridhan_boutiques', JSON.stringify(boutiques));
+  localStorage.setItem('tussuto_boutiques', JSON.stringify(boutiques));
   return boutiqueId;
 };
 

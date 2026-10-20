@@ -4,12 +4,12 @@ const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem('paridhan-cart');
+    const saved = localStorage.getItem('tussuto-cart');
     return saved ? JSON.parse(saved) : [];
   });
 
   const [wishlist, setWishlist] = useState(() => {
-    const saved = localStorage.getItem('paridhan-wishlist');
+    const saved = localStorage.getItem('tussuto-wishlist');
     return saved ? JSON.parse(saved) : [];
   });
 
@@ -17,11 +17,11 @@ export const CartProvider = ({ children }) => {
   const [discountPercent, setDiscountPercent] = useState(0);
 
   useEffect(() => {
-    localStorage.setItem('paridhan-cart', JSON.stringify(cart));
+    localStorage.setItem('tussuto-cart', JSON.stringify(cart));
   }, [cart]);
 
   useEffect(() => {
-    localStorage.setItem('paridhan-wishlist', JSON.stringify(wishlist));
+    localStorage.setItem('tussuto-wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
 
   const addToCart = (product, size, color, rentalDays, startDate, endDate) => {

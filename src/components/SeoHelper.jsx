@@ -8,10 +8,10 @@ const SeoHelper = ({
   canonicalUrl = window.location.href,
   ogTitle,
   ogDescription,
-  ogImage = "https://paridhan-rental.web.app/og-image.jpg",
+  ogImage = "https://tussuto-rental.web.app/og-image.jpg",
   schemaMarkup = null
 }) => {
-  const fullTitle = `${title} | Paridhan Luxury Fashion Rental`;
+  const fullTitle = `${title} | Tussuto Luxury Fashion Rental`;
   const finalOgTitle = ogTitle || title;
   const finalOgDesc = ogDescription || description;
 

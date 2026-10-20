@@ -1017,7 +1017,7 @@ const StoreDashboard = () => {
                     value={boutiqueData?.name || user?.displayName || ''}
                     className="w-full p-2 bg-transparent border border-luxury-gold/20 dark:text-white rounded opacity-50 cursor-not-allowed"
                   />
-                  <p className="text-[9px] text-luxury-charcoal/40 dark:text-luxury-alabaster/40 mt-1">To change boutique name, please contact Paridhan support.</p>
+                  <p className="text-[9px] text-luxury-charcoal/40 dark:text-luxury-alabaster/40 mt-1">To change boutique name, please contact Tussuto support.</p>
                 </div>
 
                 <div className="space-y-1.5 text-left">

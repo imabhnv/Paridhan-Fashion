@@ -52,7 +52,7 @@ const Cart = () => {
       <SeoHelper 
         title="Your Rental Cart"
         description="Review your luxury outfits cart, apply coupons, and calculate rental deposits before checkout."
-        keywords="fashion rental bag, paridhan checkout, rent summary"
+        keywords="fashion rental bag, tussuto checkout, rent summary"
       />
 
       <div className="border-b border-luxury-gold/20 pb-6">

@@ -49,10 +49,10 @@ const Blog = () => {
             },
             "publisher": {
               "@type": "Organization",
-              "name": "Paridhan",
+              "name": "Tussuto",
               "logo": {
                 "@type": "ImageObject",
-                "url": "https://paridhan-rental.web.app/og-image.jpg"
+                "url": "https://tussuto-rental.web.app/og-image.jpg"
               }
             },
             "description": post.snippet

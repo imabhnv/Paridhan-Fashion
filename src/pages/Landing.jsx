@@ -86,12 +86,12 @@ const Landing = () => {
         schemaMarkup={{
           "@context": "https://schema.org",
           "@type": "WebSite",
-          "name": "Paridhan",
-          "url": "https://paridhan-rental.web.app",
+          "name": "Tussuto",
+          "url": "https://tussuto-rental.web.app",
           "description": "Premium luxury designer outfit rental marketplace",
           "potentialAction": {
             "@type": "SearchAction",
-            "target": "https://paridhan-rental.web.app/catalog?q={search_term_string}",
+            "target": "https://tussuto-rental.web.app/catalog?q={search_term_string}",
             "query-input": "required name=search_term_string"
           }
         }}

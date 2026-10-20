@@ -81,7 +81,7 @@ const OrderConfirmation = () => {
         {/* Invoice Header */}
         <div className="flex justify-between items-start border-b border-luxury-gold/15 pb-6">
           <div>
-            <h1 className="text-xl font-bold tracking-widest font-playfair dark:text-white">PARIDHAN INVOICE</h1>
+            <h1 className="text-xl font-bold tracking-widest font-playfair dark:text-white">TUSSUTO INVOICE</h1>
             <p className="text-[10px] text-luxury-charcoal/45 dark:text-luxury-alabaster/45 mt-1">Invoice Ref: {order.paymentId}</p>
           </div>
           <div className="text-right">
@@ -193,9 +193,9 @@ const OrderConfirmation = () => {
         <div className="border-t border-luxury-gold/10 pt-6 flex items-center justify-between text-[10px] text-luxury-charcoal/40 dark:text-luxury-alabaster/40 font-light">
           <div className="flex items-center space-x-1.5">
             <ShieldCheck size={14} className="text-luxury-gold" />
-            <span>Fully insured under Paridhan Safe-wear.</span>
+            <span>Fully insured under Tussuto Safe-wear.</span>
           </div>
-          <span>Support: concierge@paridhan.com | +91 22 4900 8800</span>
+          <span>Support: concierge@tussuto.com | +91 22 4900 8800</span>
         </div>
 
       </div>

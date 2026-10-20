@@ -41,7 +41,7 @@ export const createUserProfile = async (uid, data) => {
 export const getUserProfile = async (uid) => {
   if (!isFirebaseConfigured || !db) {
     // Fallback to localStorage in simulated mode
-    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('tussuto_users') || '[]');
     return users.find((u) => u.uid === uid) || null;
   }
   try {
@@ -64,15 +64,15 @@ export const getUserProfile = async (uid) => {
 export const updateUserProfile = async (uid, updates) => {
   if (!isFirebaseConfigured || !db) {
     // Fallback to localStorage in simulated mode
-    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('tussuto_users') || '[]');
     const idx = users.findIndex((u) => u.uid === uid);
     if (idx !== -1) {
       const updated = { ...users[idx], ...updates };
       users[idx] = updated;
-      localStorage.setItem('paridhan_users', JSON.stringify(users));
-      const session = JSON.parse(localStorage.getItem('paridhan_session') || '{}');
+      localStorage.setItem('tussuto_users', JSON.stringify(users));
+      const session = JSON.parse(localStorage.getItem('tussuto_session') || '{}');
       if (session.uid === uid) {
-        localStorage.setItem('paridhan_session', JSON.stringify(updated));
+        localStorage.setItem('tussuto_session', JSON.stringify(updated));
       }
       return updated;
     }
@@ -95,10 +95,10 @@ export const updateUserProfile = async (uid, updates) => {
  * Fetches all registered users (customers and stores).
  */
 export const getAllUsers = async () => {
-  const blacklist = JSON.parse(localStorage.getItem('paridhan_deleted_ids') || '[]');
+  const blacklist = JSON.parse(localStorage.getItem('tussuto_deleted_ids') || '[]');
   if (!isFirebaseConfigured || !db) {
     // Fallback to localStorage in simulated mode
-    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('tussuto_users') || '[]');
     return users.filter(u => !blacklist.includes(u.uid));
   }
   try {
@@ -109,7 +109,7 @@ export const getAllUsers = async () => {
   } catch (err) {
     console.error('getAllUsers error:', err);
     // Fallback to LocalStorage if Firestore blocks the read
-    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('tussuto_users') || '[]');
     return users.filter(u => !blacklist.includes(u.uid));
   }
 };

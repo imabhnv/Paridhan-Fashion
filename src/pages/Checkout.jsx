@@ -425,7 +425,7 @@ const Checkout = () => {
               <div>
                 <span className="text-[8px] bg-blue-500 text-white font-bold uppercase px-2 py-0.5 rounded tracking-widest mb-1.5 inline-block">Razorpay Trusted</span>
                 <h4 className="text-base font-bold flex items-center">
-                  Paridhan Marketplace
+                  Tussuto Marketplace
                 </h4>
               </div>
               <div className="text-right">

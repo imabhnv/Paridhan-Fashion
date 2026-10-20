@@ -59,17 +59,17 @@ export const resolveRole = (email, fallbackRole = 'customer') => {
 // Seeded with mock boutiques/products for catalog browsing
 // ─────────────────────────────────────────────────────────────────
 const initSimulatedDb = () => {
-  if (!localStorage.getItem('paridhan_products')) {
-    localStorage.setItem('paridhan_products', JSON.stringify([]));
+  if (!localStorage.getItem('tussuto_products')) {
+    localStorage.setItem('tussuto_products', JSON.stringify([]));
   }
-  if (!localStorage.getItem('paridhan_boutiques')) {
-    localStorage.setItem('paridhan_boutiques', JSON.stringify(MOCK_BOUTIQUES));
+  if (!localStorage.getItem('tussuto_boutiques')) {
+    localStorage.setItem('tussuto_boutiques', JSON.stringify(MOCK_BOUTIQUES));
   }
-  if (!localStorage.getItem('paridhan_orders')) {
-    localStorage.setItem('paridhan_orders', JSON.stringify([]));
+  if (!localStorage.getItem('tussuto_orders')) {
+    localStorage.setItem('tussuto_orders', JSON.stringify([]));
   }
-  if (!localStorage.getItem('paridhan_disputes')) {
-    localStorage.setItem('paridhan_disputes', JSON.stringify([]));
+  if (!localStorage.getItem('tussuto_disputes')) {
+    localStorage.setItem('tussuto_disputes', JSON.stringify([]));
   }
 };
 
@@ -120,12 +120,12 @@ export const authService = {
     }
 
     // Simulated Mode
-    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('tussuto_users') || '[]');
     const match = users.find(
       (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
     );
     if (!match) throw new Error('No account found with this email address, or incorrect password.');
-    localStorage.setItem('paridhan_session', JSON.stringify(match));
+    localStorage.setItem('tussuto_session', JSON.stringify(match));
     return match;
   },
 
@@ -172,7 +172,7 @@ export const authService = {
     }
 
     // Simulated Mode
-    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
+    const users = JSON.parse(localStorage.getItem('tussuto_users') || '[]');
     const exists = users.some((u) => u.email.toLowerCase() === email.toLowerCase());
     if (exists) throw new Error('This email is already registered. Please sign in instead.');
 
@@ -192,7 +192,7 @@ export const authService = {
 
     if (role === 'store') {
       newUser.boutiqueId = `boutique-${Date.now()}`;
-      const boutiques = JSON.parse(localStorage.getItem('paridhan_boutiques') || '[]');
+      const boutiques = JSON.parse(localStorage.getItem('tussuto_boutiques') || '[]');
       boutiques.push({
         id: newUser.boutiqueId,
         name: extraDetails.boutiqueName || `${displayName}'s Atelier`,
@@ -206,12 +206,12 @@ export const authService = {
         joinedDate: new Date().toLocaleString('default', { month: 'short', year: 'numeric' }),
         totalBookings: 0,
       });
-      localStorage.setItem('paridhan_boutiques', JSON.stringify(boutiques));
+      localStorage.setItem('tussuto_boutiques', JSON.stringify(boutiques));
     }
 
     users.push(newUser);
-    localStorage.setItem('paridhan_users', JSON.stringify(users));
-    localStorage.setItem('paridhan_session', JSON.stringify(newUser));
+    localStorage.setItem('tussuto_users', JSON.stringify(users));
+    localStorage.setItem('tussuto_session', JSON.stringify(newUser));
     return newUser;
   },
 
@@ -290,12 +290,12 @@ export const authService = {
     }
 
     // Simulated Mode — create a demo google session
-    const users = JSON.parse(localStorage.getItem('paridhan_users') || '[]');
-    let googleUser = users.find((u) => u.email === 'google-demo@paridhan.local');
+    const users = JSON.parse(localStorage.getItem('tussuto_users') || '[]');
+    let googleUser = users.find((u) => u.email === 'google-demo@tussuto.local');
     if (!googleUser) {
       googleUser = {
         uid: 'user-google-demo',
-        email: 'google-demo@paridhan.local',
+        email: 'google-demo@tussuto.local',
         displayName: 'Demo Google User',
         role: 'customer',
         photoURL: '',
@@ -306,9 +306,9 @@ export const authService = {
         _isSimulated: true,
       };
       users.push(googleUser);
-      localStorage.setItem('paridhan_users', JSON.stringify(users));
+      localStorage.setItem('tussuto_users', JSON.stringify(users));
     }
-    localStorage.setItem('paridhan_session', JSON.stringify(googleUser));
+    localStorage.setItem('tussuto_session', JSON.stringify(googleUser));
     return googleUser;
   },
 
@@ -317,7 +317,7 @@ export const authService = {
     if (isFirebaseConfigured && firebaseAuth) {
       await signOut(firebaseAuth);
     }
-    localStorage.removeItem('paridhan_session');
+    localStorage.removeItem('tussuto_session');
   },
 
   // ── Reset Password ─────────────────────────────────────────────

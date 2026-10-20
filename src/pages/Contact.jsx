@@ -37,7 +37,7 @@ const Contact = () => {
       
       <SeoHelper 
         title="Contact Concierge Support" 
-        description="Get in touch with Paridhan luxury concierge. Email, call, or file inquiries about wedding bookings and dress listings."
+        description="Get in touch with Tussuto luxury concierge. Email, call, or file inquiries about wedding bookings and dress listings."
       />
 
       <div className="border-b border-luxury-gold/20 pb-6">

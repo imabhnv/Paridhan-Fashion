@@ -7,4 +7,4 @@ Disallow: /order-confirmation/
 Disallow: /tracking/
 Disallow: /dashboard/
 
-Sitemap: https://paridhan-rental.web.app/sitemap.xml
+Sitemap: https://tussuto-rental.web.app/sitemap.xml

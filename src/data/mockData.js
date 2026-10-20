@@ -1,4 +1,4 @@
-// Mock Data for Paridhan Luxury Fashion Rental
+// Mock Data for Tussuto Luxury Fashion Rental
 
 export const MOCK_BOUTIQUES = [
   {
@@ -308,7 +308,7 @@ export const MOCK_BLOGS = [
       <p>Your wedding day is one of the most memorable events of your life, and naturally, you want to look your absolute best. However, wedding fashion has reached unprecedented heights in terms of both beauty and cost. A premium designer lehenga from Anita Dongre or Sabyasachi can easily set you back anywhere between ₹1,50,000 to ₹10,000,000. For grooms, designer bandhgalas or sherwanis cost similar amounts.</p>
       
       <h3>The Reality of Wedding Outfits</h3>
-      <p>The hard truth is that wedding outfits are almost never worn a second time. They sit in luxury garment bags, occupying closet space, and slowly going out of style. This is why smart modern couples are turning to fashion rental marketplaces like <strong>Paridhan</strong>.</p>
+      <p>The hard truth is that wedding outfits are almost never worn a second time. They sit in luxury garment bags, occupying closet space, and slowly going out of style. This is why smart modern couples are turning to fashion rental marketplaces like <strong>Tussuto</strong>.</p>
       
       <h3>Top Wedding Rental Trends for Brides</h3>
       <ul>
@@ -324,10 +324,10 @@ export const MOCK_BLOGS = [
         <li><strong>Emerald Silk Sherwanis:</strong> Pair with contrast stoles to look premium and traditional.</li>
       </ul>
 
-      <h3>Why Renting via Paridhan is Safer</h3>
-      <p>Unlike local neighborhood rental stores, Paridhan guarantees dry-cleaning and multi-stage sanitization (including UV light treatment) for every single dress. Our boutiques are verified, and we include damage protection so you can enjoy your event stress-free!</p>
+      <h3>Why Renting via Tussuto is Safer</h3>
+      <p>Unlike local neighborhood rental stores, Tussuto guarantees dry-cleaning and multi-stage sanitization (including UV light treatment) for every single dress. Our boutiques are verified, and we include damage protection so you can enjoy your event stress-free!</p>
     `,
-    metaTitle: "Best Wedding Outfits on Rent for Brides & Grooms | Paridhan Blog",
+    metaTitle: "Best Wedding Outfits on Rent for Brides & Grooms | Tussuto Blog",
     metaDescription: "Save lakhs on your wedding outfits. Read the ultimate guide to renting designer lehengas, sherwanis, and tuxedos for weddings in India.",
     keywords: "wedding outfits on rent, rent wedding lehenga, designer sherwani rental, wedding dress rental, bridal rental outfits"
   },
@@ -350,10 +350,10 @@ export const MOCK_BLOGS = [
       <h3>Economic Benefits of Renting</h3>
       <p>Why block ₹1,00,000 in an outfit when you can rent it for ₹3,000? That is 3% of the cost. The rest of the money can be invested or spent on creating memorable experiences during the event. Furthermore, renting allows you to wear different designer outfits for every single event instead of repeating the same expensive outfit to justify its purchase.</p>
 
-      <h3>Paridhan's Sustainability Mission</h3>
-      <p>At Paridhan, we partner with verified local boutiques to list their unsold or idle premium inventory. This empowers local businesses, provides them an alternative revenue stream, and keeps premium fashion in circulation, preventing them from ending up in landfills. Join the circular fashion revolution today!</p>
+      <h3>Tussuto's Sustainability Mission</h3>
+      <p>At Tussuto, we partner with verified local boutiques to list their unsold or idle premium inventory. This empowers local businesses, provides them an alternative revenue stream, and keeps premium fashion in circulation, preventing them from ending up in landfills. Join the circular fashion revolution today!</p>
     `,
-    metaTitle: "Why Renting Luxury Fashion is Smarter & Sustainable | Paridhan",
+    metaTitle: "Why Renting Luxury Fashion is Smarter & Sustainable | Tussuto",
     metaDescription: "Discover the economic and environmental benefits of renting designer clothing. Learn how circular fashion is shaping the future of retail.",
     keywords: "sustainable fashion, circular fashion rental, rental clothes eco friendly, rent designer clothing, luxury fashion rent benefit"
   },
@@ -383,9 +383,9 @@ export const MOCK_BLOGS = [
       <p>For mehendi or haldi, modern bridesmaids are picking up fusion silhouettes like lehengas with kaftan blouses or crop tops in bold, graphic prints. House of Masaba is the pioneer of this playful trend.</p>
 
       <h3>Rent Them for Your Next Event</h3>
-      <p>All these runway trends are available on rent at Paridhan. Check out our designer catalog, filter by your size, and lock down your favorites before the wedding dates get booked!</p>
+      <p>All these runway trends are available on rent at Tussuto. Check out our designer catalog, filter by your size, and lock down your favorites before the wedding dates get booked!</p>
     `,
-    metaTitle: "Top 5 Lehenga Trends This Wedding Season | Paridhan",
+    metaTitle: "Top 5 Lehenga Trends This Wedding Season | Tussuto",
     metaDescription: "Find your perfect wedding look. Read about the hottest designer lehenga trends including floral organzas, sequins, and ivory embroideries.",
     keywords: "lehenga trends, designer lehengas on rent, wedding lehenga ideas, pastel lehenga, sequin lehenga rental"
   }
@@ -397,7 +397,7 @@ export const MOCK_TESTIMONIALS = [
     name: "Ridhima Sen",
     role: "Bride / Corporate Lawyer",
     avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&h=100&q=80",
-    quote: "I rented my dream Sabyasachi bridal lehenga from Paridhan. It arrived perfectly sanitized, altered to my size, and sealed. Everyone thought I bought it! Saved almost 1.5 lakhs.",
+    quote: "I rented my dream Sabyasachi bridal lehenga from Tussuto. It arrived perfectly sanitized, altered to my size, and sealed. Everyone thought I bought it! Saved almost 1.5 lakhs.",
     rating: 5
   },
   {
@@ -413,7 +413,7 @@ export const MOCK_TESTIMONIALS = [
     name: "Priya Das",
     role: "Boutique Owner, Juhu",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&h=100&q=80",
-    quote: "Paridhan changed my boutique business. Our premium bridal pieces that sat idle for months are now rented out multiple times a month, generating steady extra revenue.",
+    quote: "Tussuto changed my boutique business. Our premium bridal pieces that sat idle for months are now rented out multiple times a month, generating steady extra revenue.",
     rating: 5
   }
 ];

@@ -4,7 +4,7 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('paridhan-dark-mode');
+    const saved = localStorage.getItem('tussuto-dark-mode');
     return saved === 'true' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
   });
 
@@ -12,10 +12,10 @@ export const ThemeProvider = ({ children }) => {
     const root = window.document.documentElement;
     if (darkMode) {
       root.classList.add('dark');
-      localStorage.setItem('paridhan-dark-mode', 'true');
+      localStorage.setItem('tussuto-dark-mode', 'true');
     } else {
       root.classList.remove('dark');
-      localStorage.setItem('paridhan-dark-mode', 'false');
+      localStorage.setItem('tussuto-dark-mode', 'false');
     }
   }, [darkMode]);
 

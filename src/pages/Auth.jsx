@@ -47,7 +47,7 @@ const Auth = () => {
 
       // If user is new, we can flag it in local storage to show them an onboarding message later
       if (userObj.isNewUser) {
-        localStorage.setItem('paridhan_is_new_user', 'true');
+        localStorage.setItem('tussuto_is_new_user', 'true');
       }
 
       // Manually update the context immediately to prevent race conditions with onAuthStateChanged
@@ -71,7 +71,7 @@ const Auth = () => {
 
       <SeoHelper
         title="Account Access"
-        description="Sign in or create an account to access Paridhan — India's luxury fashion rental platform."
+        description="Sign in or create an account to access Tussuto — India's luxury fashion rental platform."
       />
 
       {/* Background glow accents */}
@@ -87,7 +87,7 @@ const Auth = () => {
           <div className="inline-flex items-center space-x-2 bg-luxury-gold/15 border border-luxury-gold/30 px-3.5 py-1.5 rounded-full">
             <Sparkles size={12} className="text-luxury-gold" />
             <span className="text-[9px] uppercase font-bold tracking-widest text-luxury-gold">
-              Welcome to the Paridhan Club
+              Welcome to the Tussuto Club
             </span>
           </div>
 
@@ -96,7 +96,7 @@ const Auth = () => {
             <span className="text-luxury-gold font-bold italic">Designer Closet</span>
           </h2>
           <p className="text-sm font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70 leading-relaxed">
-            By joining Paridhan, customers gain access to premium luxury bridal wear, lehengas, sherwanis, and tuxedos, while boutiques monetize idle, valuable inventory.
+            By joining Tussuto, customers gain access to premium luxury bridal wear, lehengas, sherwanis, and tuxedos, while boutiques monetize idle, valuable inventory.
           </p>
 
           <div className="space-y-3 pt-4 border-t border-luxury-gold/15 max-w-md">
@@ -122,7 +122,7 @@ const Auth = () => {
             <div className="space-y-3 pb-2">
               <div className="flex justify-center items-center space-x-2">
                 <span className="text-4xl font-bold tracking-widest font-playfair text-luxury-charcoal dark:text-luxury-alabaster">
-                  PARIDHAN
+                  TUSSUTO
                 </span>
                 <span className="h-2 w-2 rounded-full bg-luxury-gold inline-block mt-1"></span>
               </div>
@@ -199,7 +199,7 @@ const Auth = () => {
               <p className="text-xs text-luxury-charcoal/60 dark:text-luxury-alabaster/60 font-light">
                 {activeTab === 'signin' 
                   ? 'Sign in securely using your Google account.' 
-                  : 'Create a new Paridhan account instantly with Google.'}
+                  : 'Create a new Tussuto account instantly with Google.'}
                 <br />
                 No password required.
               </p>
@@ -232,7 +232,7 @@ const Auth = () => {
 
             {/* Footer note */}
             <p className="text-[9px] text-luxury-charcoal/35 dark:text-luxury-alabaster/30 leading-relaxed pt-4">
-              By continuing, you agree to Paridhan's{' '}
+              By continuing, you agree to Tussuto's{' '}
               <a href="/trust/terms" className="underline underline-offset-2 hover:text-luxury-gold transition-colors">
                 Terms of Service
               </a>{' '}
