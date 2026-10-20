@@ -8,9 +8,28 @@ const About = () => {
     <div className="space-y-20 pb-20 text-left animate-fade-in">
       
       <SeoHelper 
-        title="Our Story & Sustainability Mission" 
-        description="Learn how Tussuto is building a circular luxury fashion economy in India, saving resources and empowering local boutiques." 
-        keywords="sustainable fashion rent, circular fashion marketplace, rent Sabyasachi, dress rental eco friendly"
+        title="About Tussuto | Our Story, Mission & Circular Fashion Heritage" 
+        description="Discover Tussuto — India's premier fashion-tech atelier founded by Tanya Gupta & Abhinav Varshney. Learn how we are building a sustainable circular luxury fashion economy." 
+        keywords="About Tussuto, Tussuto story, Tussuto founders, Tussuto mission, sustainable luxury fashion rent, circular fashion marketplace India"
+        breadcrumbs={[
+          { name: "Home", item: "https://tussuto-rental.web.app/" },
+          { name: "About Us", item: "https://tussuto-rental.web.app/about" }
+        ]}
+        schemaMarkup={{
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "name": "About Tussuto",
+          "description": "Tussuto's mission, founding team, and circular luxury fashion model in India.",
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "Tussuto",
+            "url": "https://tussuto-rental.web.app",
+            "founders": [
+              { "@type": "Person", "name": "Tanya Gupta" },
+              { "@type": "Person", "name": "Abhinav Varshney" }
+            ]
+          }
+        }}
       />
 
       {/* Hero Header */}

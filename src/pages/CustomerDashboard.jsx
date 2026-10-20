@@ -146,7 +146,7 @@ const CustomerDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-left animate-fade-in">
       
-      <SeoHelper title="My Atelier Dashboard" description="Manage your luxury rental bookings, profile measurements, addresses, and wishlist." />
+      <SeoHelper title="My Atelier Dashboard | Tussuto" description="Manage your luxury rental bookings, profile measurements, addresses, and wishlist." noindex={true} />
 
       {user?.role === 'admin' && !selectedAdminCustomerId ? (
         <div className="space-y-6">

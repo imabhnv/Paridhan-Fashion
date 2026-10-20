@@ -148,20 +148,35 @@ const ProductDetail = () => {
       
       {/* Dynamic SEO Meta Tags */}
       <SeoHelper 
-        title={product.title}
-        description={`Rent ${product.title} from ${product.storeName} for weddings, parties, or special occasions. Book at just ₹${product.rentalPricePerDay}/day with free sizing fittings.`}
-        keywords={`${product.title}, rent designer wear, ${product.category} rent, Sabyasachi rent`}
+        title={`Rent ${product.title} by ${product.storeName} | Tussuto Luxury Rental`}
+        description={`Rent authentic ${product.title} on Tussuto from verified boutique ${product.storeName}. Available in sizes ${product.sizes.join(', ')} at ₹${product.rentalPricePerDay}/day with 5-stage UV sanitization and custom tailoring.`}
+        keywords={`Rent ${product.title}, ${product.title} Tussuto, Tussuto ${product.category}, ${product.storeName} rental, designer ${product.category} rent India`}
+        ogImage={product.images[0]}
+        ogType="product"
+        breadcrumbs={[
+          { name: "Home", item: "https://tussuto-rental.web.app/" },
+          { name: "Catalog", item: "https://tussuto-rental.web.app/catalog" },
+          { name: product.title, item: `https://tussuto-rental.web.app/product/${product.id}` }
+        ]}
         schemaMarkup={{
           "@context": "https://schema.org",
           "@type": "Product",
-          "name": product.title,
+          "name": `${product.title} (Rental)`,
           "image": product.images,
           "description": product.description,
+          "category": product.category,
+          "brand": {
+            "@type": "Brand",
+            "name": "Tussuto"
+          },
           "offers": {
             "@type": "Offer",
             "priceCurrency": "INR",
             "price": product.rentalPricePerDay,
+            "priceValidUntil": "2027-12-31",
             "availability": "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/UsedCondition",
+            "url": typeof window !== 'undefined' ? window.location.href : `https://tussuto-rental.web.app/product/${product.id}`,
             "seller": {
               "@type": "LocalBusiness",
               "name": product.storeName
@@ -190,7 +205,7 @@ const ProductDetail = () => {
               <span className="text-[9px] uppercase font-bold tracking-widest">UV Sanitized & QC Passed</span>
             </div>
 
-            <img src={activeImage} alt={product.title} className="w-full h-full object-cover transition-all" />
+            <img src={activeImage} alt={`Rent ${product.title} on Tussuto - ${product.storeName}`} className="w-full h-full object-cover transition-all" />
           </div>
 
           {/* Thumbnail list */}

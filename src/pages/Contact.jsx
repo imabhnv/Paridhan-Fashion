@@ -36,8 +36,25 @@ const Contact = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 text-left animate-fade-in">
       
       <SeoHelper 
-        title="Contact Concierge Support" 
-        description="Get in touch with Tussuto luxury concierge. Email, call, or file inquiries about wedding bookings and dress listings."
+        title="Contact Tussuto Concierge | Customer Support & Boutique Partner Help" 
+        description="Contact Tussuto luxury concierge for personal styling assistance, wedding outfit reservations, and boutique partnerships. Reach us via phone, email, or direct support request."
+        keywords="Contact Tussuto, Tussuto support, Tussuto customer service, Tussuto concierge phone, rent dress support"
+        breadcrumbs={[
+          { name: "Home", item: "https://tussuto-rental.web.app/" },
+          { name: "Contact", item: "https://tussuto-rental.web.app/contact" }
+        ]}
+        schemaMarkup={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Contact Tussuto",
+          "description": "Tussuto customer support and boutique concierge contact desk.",
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "Tussuto",
+            "telephone": "+91-22-4900-8800",
+            "email": "concierge@tussuto.com"
+          }
+        }}
       />
 
       <div className="border-b border-luxury-gold/20 pb-6">

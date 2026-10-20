@@ -80,21 +80,35 @@ const Landing = () => {
       
       {/* Dynamic SEO Meta Header */}
       <SeoHelper 
-        title="Wear Luxury. Pay Less."
-        description="Rent premium designer lehengas, bridal wear, sherwanis, and tuxedos from India's top boutiques. 5-stage sanitization, custom sizing, and secure payments."
-        keywords="luxury fashion rental, designer lehenga on rent, rent sherwani, wedding lehenga rental, Sabyasachi lehenga rental, Manish Malhotra rent"
-        schemaMarkup={{
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          "name": "Tussuto",
-          "url": "https://tussuto-rental.web.app",
-          "description": "Premium luxury designer outfit rental marketplace",
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://tussuto-rental.web.app/catalog?q={search_term_string}",
-            "query-input": "required name=search_term_string"
+        title="Tussuto | Luxury Designer Outfits on Rent | India's #1 Fashion Rental"
+        description="Tussuto is India's premier luxury fashion rental platform. Rent authentic designer bridal lehengas, sherwanis, gowns, and tuxedos from verified boutiques with custom sizing & 5-stage sanitization."
+        keywords="Tussuto, Tussuto fashion, Tussuto rental, Tussuto luxury, Tussuto designer wear, rent lehenga online, designer sherwani on rent, wedding outfit rental India, Sabyasachi lehenga rent, Manish Malhotra on rent, circular fashion India"
+        schemaMarkup={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Tussuto",
+            "url": "https://tussuto-rental.web.app",
+            "description": "Premium luxury designer outfit rental marketplace",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://tussuto-rental.web.app/catalog?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": MOCK_FAQS.map(faq => ({
+              "@type": "Question",
+              "name": faq.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.answer
+              }
+            }))
           }
-        }}
+        ]}
       />
 
       {/* 1. HERO SECTION */}
@@ -122,7 +136,7 @@ const Landing = () => {
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }} className="inline-flex items-center space-x-2 bg-luxury-gold/15 border border-luxury-gold/30 px-3.5 py-1.5 rounded-full">
               <Sparkles size={14} className="text-luxury-gold" />
               <span className="text-[10px] uppercase font-bold tracking-widest text-luxury-gold">
-                The Circular Luxury Revolution
+                Tussuto • The Circular Luxury Revolution
               </span>
             </motion.div>
 
@@ -132,7 +146,7 @@ const Landing = () => {
             </motion.h1>
 
             <motion.p variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }} className="text-lg md:text-xl font-light text-luxury-charcoal/70 dark:text-luxury-alabaster/70 max-w-xl leading-relaxed">
-              Rent premium designer couture for weddings, sangeets, cocktail parties, and festivals at the comfort of your home.
+              Welcome to <strong className="font-semibold text-luxury-gold">Tussuto</strong>, India's premier designer fashion rental atelier. Rent authentic couture for weddings, sangeets, cocktail galas, and festivals at a fraction of retail.
             </motion.p>
 
             {/* CTAs */}
@@ -211,7 +225,7 @@ const Landing = () => {
                   >
                     <img 
                       src={card.img} 
-                      alt={card.title} 
+                      alt={`Tussuto ${card.title} - Designer Fashion Rental`} 
                       className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     />
                   </motion.div>
@@ -251,7 +265,7 @@ const Landing = () => {
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-black/35 z-10 transition-all"></div>
                 <img 
                   src={cat.img} 
-                  alt={cat.name} 
+                  alt={`Rent Tussuto ${cat.name} Collection`} 
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-125 group-hover:-rotate-3" 
                 />
                 <motion.div initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="relative z-20 text-left text-white w-full space-y-0.5 overflow-hidden">
@@ -338,7 +352,7 @@ const Landing = () => {
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -top-12 -left-4 w-20 h-26 md:-top-20 md:-left-16 md:w-28 md:h-36 rounded-2xl overflow-hidden border-2 border-luxury-gold/25 shadow-xl opacity-30 md:opacity-85 z-0 block pointer-events-none"
             >
-              <img src="/assets/bridal_wear_1787054110911.jpg" alt="Deco Top Left" className="w-full h-full object-cover" />
+              <img src="/assets/bridal_wear_1787054110911.jpg" alt="Tussuto Luxury Bridal Lehenga Rental" className="w-full h-full object-cover" />
             </motion.div>
 
             {/* Bottom-Left Floating Card (Saree fabric detail) */}
@@ -347,7 +361,7 @@ const Landing = () => {
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               className="absolute -bottom-10 left-6 w-16 h-22 md:-bottom-16 md:left-1/4 md:w-24 md:h-32 rounded-2xl overflow-hidden border-2 border-luxury-gold/20 shadow-xl opacity-20 md:opacity-75 z-0 block pointer-events-none"
             >
-              <img src="/assets/cat_designer_sarees_1787056158750.jpg" alt="Deco Bottom Left" className="w-full h-full object-cover" />
+              <img src="/assets/cat_designer_sarees_1787056158750.jpg" alt="Tussuto Designer Silk Saree on Rent" className="w-full h-full object-cover" />
             </motion.div>
 
             {/* Top-Right Floating Card (Tuxedo texture) */}
@@ -356,7 +370,7 @@ const Landing = () => {
               transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
               className="absolute -top-6 right-6 w-16 h-22 md:-top-12 md:right-1/4 md:w-24 md:h-32 rounded-2xl overflow-hidden border-2 border-luxury-gold/20 shadow-xl opacity-20 md:opacity-75 z-0 block pointer-events-none"
             >
-              <img src="/assets/cat_tuxedos_1787057033970.jpg" alt="Deco Top Right" className="w-full h-full object-cover" />
+              <img src="/assets/cat_tuxedos_1787057033970.jpg" alt="Tussuto Black Tie Formal Tuxedo Rental" className="w-full h-full object-cover" />
             </motion.div>
 
             {/* Bottom-Right Floating Card (Anarkali close-up) */}
@@ -365,7 +379,7 @@ const Landing = () => {
               transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
               className="absolute -bottom-12 -right-4 w-20 h-26 md:-bottom-20 md:-right-16 md:w-28 md:h-36 rounded-2xl overflow-hidden border-2 border-luxury-gold/25 shadow-xl opacity-30 md:opacity-85 z-0 block pointer-events-none"
             >
-              <img src="/assets/cat_anarkalis_1787056519153.jpg" alt="Deco Bottom Right" className="w-full h-full object-cover" />
+              <img src="/assets/cat_anarkalis_1787056519153.jpg" alt="Tussuto Hand-Embroidered Anarkali Rental" className="w-full h-full object-cover" />
             </motion.div>
 
           </motion.div>
@@ -476,7 +490,7 @@ const Landing = () => {
                   className="bg-white dark:bg-luxury-charcoal rounded-xl overflow-hidden shadow-2xl border border-luxury-gold/15 group flex flex-col justify-between h-full"
                 >
                   <div className="h-40 overflow-hidden relative">
-                    <img src={boutique.coverImage} alt={boutique.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <img src={boutique.coverImage} alt={`Tussuto Verified Partner Boutique - ${boutique.name}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                     <div className="absolute top-3 right-3 bg-luxury-gold text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-lg">
                       Verified
                     </div>

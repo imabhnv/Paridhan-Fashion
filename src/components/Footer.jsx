@@ -69,6 +69,7 @@ const Footer = () => {
             <h4 className="text-xs font-bold tracking-widest text-white uppercase">Tussuto</h4>
             <ul className="space-y-2.5 text-sm font-light text-luxury-cream/70">
               <li><Link to="/about" className="hover:text-luxury-gold transition-colors">Our Story & Sustainability</Link></li>
+              <li><Link to="/blog" className="hover:text-luxury-gold transition-colors">Editorial & Styling Guides</Link></li>
               <li><Link to="/contact" className="hover:text-luxury-gold transition-colors">Contact Support</Link></li>
               <li><Link to="/auth?role=store" className="hover:text-luxury-gold transition-colors">List Your Boutique</Link></li>
               <li><Link to="/trust" className="hover:text-luxury-gold transition-colors">Sanitization Standards</Link></li>

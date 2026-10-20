@@ -17,12 +17,36 @@ const TrustPages = () => {
     }
   }, [policyName]);
 
+  const tabTitles = {
+    'rental-policy': 'Rental Agreement & SLA Guidelines',
+    'damage-protection': 'Damage Protection Shield & Coverage',
+    'refund-policy': 'Refunds, Security Deposits & Returns Policy',
+    'terms': 'Terms of Service & User Agreement',
+    'privacy': 'Privacy Policy & Customer Data Safeguards'
+  };
+  const activeLabel = tabTitles[activeTab] || 'Trust & Policy Guidelines';
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-left animate-fade-in">
       
       <SeoHelper 
-        title={`${activeTab.replace('-', ' ').toUpperCase()} Agreement`}
-        description="Review Tussuto's legal guidelines, deposit claims policy, and dry-cleaning safety standards."
+        title={`${activeLabel} | Tussuto Luxury Rental Trust & Safety`}
+        description="Review Tussuto's official rental guidelines, zero-stress damage protection shields, fast security deposit refunds, hygiene standards, and data privacy safeguards."
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Trust & Safety', path: '/trust' },
+          { name: activeLabel, path: `/trust/${activeTab}` }
+        ]}
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": `${activeLabel} - Tussuto`,
+          "description": "Official trust and safety policy guidelines for Tussuto luxury fashion rental platform.",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Tussuto"
+          }
+        }}
       />
 
       <div className="border-b border-luxury-gold/20 pb-6 mb-8">

@@ -1,10 +1,30 @@
 User-agent: *
 Allow: /
+Allow: /catalog
+Allow: /product/
+Allow: /about
+Allow: /contact
+Allow: /blog
+Allow: /blog/*
+Allow: /trust
+Allow: /trust/*
+Allow: /auth
 
-# Exclude protected dashboard checkouts and auth pages from search engine indexing
+# Exclude private customer/store/admin dashboards & payment screens
 Disallow: /checkout
 Disallow: /order-confirmation/
 Disallow: /tracking/
 Disallow: /dashboard/
+Disallow: /dashboard/*
+
+# Googlebot specific directives
+User-agent: Googlebot
+Allow: /
+Disallow: /checkout
+Disallow: /dashboard/
+
+User-agent: Googlebot-Image
+Allow: /
+Allow: /assets/
 
 Sitemap: https://tussuto-rental.web.app/sitemap.xml

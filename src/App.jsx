@@ -25,6 +25,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import TrustPages from './pages/TrustPages';
+import Blog from './pages/Blog';
 
 // Scroll to top helper on page transitions
 const ScrollToTop = () => {
@@ -54,6 +55,8 @@ function App() {
                   <Route path="/" element={<Landing />} />
                   <Route path="/catalog" element={<Catalog />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<Blog />} />
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/about" element={<About />} />

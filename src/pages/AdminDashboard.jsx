@@ -159,7 +159,7 @@ const AdminDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-left animate-fade-in">
       
-      <SeoHelper title="Admin Command Center" description="Oversee disputes, onboard partner boutiques, and audit gross marketplace bookings." />
+      <SeoHelper title="Admin Command Center | Tussuto Platform" description="Oversee disputes, onboard partner boutiques, and audit gross marketplace bookings." noindex={true} />
 
       {/* Header */}
       <div className="border-b border-luxury-gold/20 pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

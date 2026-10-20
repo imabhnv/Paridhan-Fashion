@@ -148,9 +148,13 @@ const Catalog = () => {
       
       {/* Dynamic SEO Head */}
       <SeoHelper 
-        title={`${category !== 'All' ? category : 'Luxury Outfits'} on Rent`}
-        description={`Browse our premium catalog of designer wear. Rent wedding lehengas, sherwanis, tuxedos and gowns. Filter by size, price, and boutique.`}
-        keywords="designer wear rent catalog, luxury fashion search, rent lehenga online, rent sherwani online"
+        title={`${category !== 'All' ? category : 'Luxury Outfits'} on Rent | Tussuto Designer Collection`}
+        description={`Explore Tussuto's luxury rental catalog. Rent ${category !== 'All' ? category.toLowerCase() : 'designer bridal lehengas, sherwanis, tuxedos, and gowns'} from verified Indian boutiques at 90% off retail with custom doorstep fittings.`}
+        keywords={`Tussuto catalog, Tussuto ${category.toLowerCase()}, rent designer wear Tussuto, luxury fashion rental, rent lehenga online, rent sherwani online`}
+        breadcrumbs={[
+          { name: "Home", item: "https://tussuto-rental.web.app/" },
+          { name: "Catalog", item: "https://tussuto-rental.web.app/catalog" }
+        ]}
       />
 
       <div className="border-b border-luxury-gold/20 pb-6">
@@ -373,7 +377,7 @@ const Catalog = () => {
 
                     <img 
                       src={product.images[0]} 
-                      alt={product.title} 
+                      alt={`Rent ${product.title} on Tussuto - ${product.storeName}`} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
 

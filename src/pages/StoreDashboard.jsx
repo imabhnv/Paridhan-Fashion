@@ -336,7 +336,7 @@ const StoreDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-left animate-fade-in">
       
-      <SeoHelper title="Showroom Portal" description="Manage listings, analyze monthly earnings, and verify return inspections." />
+      <SeoHelper title="Showroom Portal | Tussuto Partner Boutique" description="Manage listings, analyze monthly earnings, and verify return inspections." noindex={true} />
 
       {user?.role === 'admin' && !selectedAdminBoutiqueId ? (
         <div className="space-y-6">

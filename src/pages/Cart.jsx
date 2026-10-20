@@ -50,9 +50,10 @@ const Cart = () => {
       
       {/* SEO dynamic page metadata */}
       <SeoHelper 
-        title="Your Rental Cart"
+        title="Your Rental Cart | Tussuto"
         description="Review your luxury outfits cart, apply coupons, and calculate rental deposits before checkout."
         keywords="fashion rental bag, tussuto checkout, rent summary"
+        noindex={true}
       />
 
       <div className="border-b border-luxury-gold/20 pb-6">

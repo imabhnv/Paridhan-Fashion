@@ -70,8 +70,12 @@ const Auth = () => {
     <div className="min-h-[85vh] flex items-center justify-center bg-luxury-cream/20 dark:bg-luxury-charcoal/20 py-16 px-4 relative">
 
       <SeoHelper
-        title="Account Access"
-        description="Sign in or create an account to access Tussuto — India's luxury fashion rental platform."
+        title="Sign In or Create Account | Tussuto Luxury Rental"
+        description="Sign in or register for your Tussuto account. Access India's premier luxury fashion rental platform for bridal lehengas, groom sherwanis, and designer wear."
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Account Sign In', path: '/auth' }
+        ]}
       />
 
       {/* Background glow accents */}

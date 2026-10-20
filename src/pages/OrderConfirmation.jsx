@@ -48,7 +48,7 @@ const OrderConfirmation = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-10 space-y-8 text-left animate-fade-in print:bg-white print:text-black">
       
-      <SeoHelper title="Order Reserved" description="Your rental order is confirmed." />
+      <SeoHelper title="Order Reserved | Tussuto" description="Your rental order is confirmed." noindex={true} />
 
       {/* Success banner (hide in print) */}
       <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-8 text-center space-y-4 print:hidden">

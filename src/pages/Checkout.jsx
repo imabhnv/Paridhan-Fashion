@@ -144,8 +144,9 @@ const Checkout = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 text-left animate-fade-in">
       
       <SeoHelper 
-        title="Luxury Checkout"
+        title="Secure Checkout | Tussuto Luxury Rental"
         description="Provide your delivery address and sizing specs to complete your designer rental order securely."
+        noindex={true}
       />
 
       <div className="border-b border-luxury-gold/20 pb-6">

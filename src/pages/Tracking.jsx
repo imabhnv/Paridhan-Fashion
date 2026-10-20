@@ -77,7 +77,7 @@ const Tracking = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 text-left animate-fade-in">
       
-      <SeoHelper title={`Track Order ${order.id}`} description="Monitor your luxury outfit rental logistics and schedule returns." />
+      <SeoHelper title={`Track Order ${order.id} | Tussuto`} description="Monitor your luxury outfit rental logistics and schedule returns." noindex={true} />
 
       <div>
         <Link to="/dashboard/customer" className="inline-flex items-center text-xs font-semibold uppercase tracking-widest text-luxury-gold hover:text-luxury-bronze">

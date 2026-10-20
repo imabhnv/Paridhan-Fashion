@@ -37,6 +37,13 @@ const Blog = () => {
           title={post.metaTitle}
           description={post.metaDescription}
           keywords={post.keywords}
+          ogType="article"
+          ogImage={post.coverImage}
+          breadcrumbs={[
+            { name: "Home", item: "https://tussuto-rental.web.app/" },
+            { name: "Editorial", item: "https://tussuto-rental.web.app/blog" },
+            { name: post.title, item: `https://tussuto-rental.web.app/blog/${post.slug}` }
+          ]}
           schemaMarkup={{
             "@context": "https://schema.org",
             "@type": "BlogPosting",
@@ -137,9 +144,13 @@ const Blog = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 text-left animate-fade-in">
       
       <SeoHelper 
-        title="Fashion Editorial Blog" 
-        description="Explore style advice, lehenga rental guides, and sustainable luxury fashion tips in our editorial blog." 
-        keywords="fashion rental blog, dress rent guides, lehenga rent trends India"
+        title="Tussuto Editorial | Fashion Guides, Styling Tips & Bridal Trends" 
+        description="Explore expert styling advice, wedding outfit rental guides, and sustainable fashion insights on the Tussuto Editorial blog." 
+        keywords="Tussuto blog, Tussuto editorial, fashion rental guides, wedding lehenga trends, rent sherwani guide"
+        breadcrumbs={[
+          { name: "Home", item: "https://tussuto-rental.web.app/" },
+          { name: "Editorial", item: "https://tussuto-rental.web.app/blog" }
+        ]}
       />
 
       <div className="border-b border-luxury-gold/20 pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
